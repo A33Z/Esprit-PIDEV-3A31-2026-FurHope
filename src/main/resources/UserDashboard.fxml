@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane fx:id="rootPane"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.UserDashboardController"
+            styleClass="user-page"
+            stylesheets="@AppTheme.css"
+            prefHeight="820.0" prefWidth="1280.0">
+
+    <children>
+        <VBox styleClass="page-content" spacing="16.0"
+              AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                <children>
+                    <VBox spacing="2.0">
+                        <children>
+                            <Label text="User Dashboard" styleClass="header-title" />
+                            <Label text="Browse hotels and manage your own reservations only." styleClass="header-subtitle" />
+                        </children>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Label fx:id="sessionLabel" styleClass="session-chip user-chip" />
+                    <Button text="Refresh" styleClass="button secondary-button" onAction="#handleRefreshData" />
+                    <Button text="Logout" styleClass="button ghost-button" onAction="#handleLogout" />
+                </children>
+            </HBox>
+
+            <HBox spacing="14.0" VBox.vgrow="ALWAYS">
+                <children>
+                    <VBox styleClass="card" spacing="8.0" HBox.hgrow="ALWAYS">
+                        <children>
+                            <Label text="Hotels (Read-Only)" styleClass="section-title" />
+                            <TableView fx:id="hotelTable" VBox.vgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="hotelIdColumn" text="ID" prefWidth="60.0" />
+                                    <TableColumn fx:id="hotelNameColumn" text="Name" prefWidth="180.0" />
+                                    <TableColumn fx:id="hotelAddressColumn" text="Address" prefWidth="250.0" />
+                                    <TableColumn fx:id="hotelManagerIdColumn" text="Manager ID" prefWidth="90.0" />
+                                    <TableColumn fx:id="hotelCapacityColumn" text="Capacity" prefWidth="90.0" />
+                                </columns>
+                                <columnResizePolicy>
+                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                </columnResizePolicy>
+                            </TableView>
+                        </children>
+                    </VBox>
+
+                    <VBox spacing="12.0" HBox.hgrow="ALWAYS">
+                        <children>
+                            <VBox styleClass="card reservation-edit-card" spacing="10.0">
+                                <children>
+                                    <Label text="My Reservation Actions" styleClass="section-title" />
+
+                                    <Label text="Reservation ID" styleClass="field-label" />
+                                    <TextField fx:id="reservationIdField" promptText="Required for update/delete" />
+
+                                    <Label text="Animal ID" styleClass="field-label" />
+                                    <TextField fx:id="animalIdField" promptText="Animal ID" />
+
+                                    <Label text="Hotel ID" styleClass="field-label" />
+                                    <TextField fx:id="reservationHotelIdField" promptText="Hotel ID" />
+
+                                    <Label text="Start Date" styleClass="field-label" />
+                                    <DatePicker fx:id="startDatePicker" />
+
+                                    <Label text="End Date" styleClass="field-label" />
+                                    <DatePicker fx:id="endDatePicker" />
+
+                                    <Label text="Status" styleClass="field-label" />
+                                    <ComboBox fx:id="statusComboBox" promptText="Select status" />
+
+                                    <Label fx:id="reservationErrorLabel" text="" styleClass="form-error" />
+
+                                    <HBox spacing="8.0">
+                                        <children>
+                                            <Button text="Add" styleClass="button primary-button" onAction="#handleAddReservation" />
+                                            <Button text="Update" styleClass="button secondary-button" onAction="#handleUpdateReservation" />
+                                            <Button text="Delete" styleClass="button danger-button" onAction="#handleDeleteReservation" />
+                                            <Button text="Clear" styleClass="button ghost-button" onAction="#handleClearReservationForm" />
+                                        </children>
+                                    </HBox>
+                                </children>
+                            </VBox>
+
+                            <VBox styleClass="card" spacing="8.0" VBox.vgrow="ALWAYS">
+                                <children>
+                                    <Label text="My Reservations" styleClass="section-title" />
+                                    <TableView fx:id="myReservationTable" VBox.vgrow="ALWAYS">
+                                        <columns>
+                                            <TableColumn fx:id="myReservationIdColumn" text="ID" prefWidth="60.0" />
+                                            <TableColumn fx:id="myAnimalIdColumn" text="Animal ID" prefWidth="90.0" />
+                                            <TableColumn fx:id="myHotelIdColumn" text="Hotel ID" prefWidth="90.0" />
+                                            <TableColumn fx:id="myStartDateColumn" text="Start Date" prefWidth="120.0" />
+                                            <TableColumn fx:id="myEndDateColumn" text="End Date" prefWidth="120.0" />
+                                            <TableColumn fx:id="myStatusColumn" text="Status" prefWidth="110.0" />
+                                        </columns>
+                                        <columnResizePolicy>
+                                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                        </columnResizePolicy>
+                                    </TableView>
+                                </children>
+                            </VBox>
+                        </children>
+                    </VBox>
+                </children>
+            </HBox>
+        </VBox>
+    </children>
+</AnchorPane>

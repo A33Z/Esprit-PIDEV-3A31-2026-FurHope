@@ -1,0 +1,217 @@
+/* Shared palette from reference: warm beige -> soft mint + coral actions */
+.landing-page,
+.page,
+.manager-page,
+.user-page {
+    -fx-font-family: "Segoe UI";
+    -fx-accent: #ff6c4f;
+    -fx-focus-color: #ff6c4f;
+    -fx-faint-focus-color: rgba(255, 108, 79, 0.18);
+    -fx-background-color:
+        linear-gradient(to right, #f5f1e7, #e8f2ee);
+}
+
+.landing-container {
+    -fx-padding: 42 26 42 26;
+    -fx-spacing: 14;
+}
+
+.logo-title {
+    -fx-font-family: "Segoe Script";
+    -fx-font-size: 56px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #19352c;
+}
+
+.logo-subtitle {
+    -fx-font-size: 27px;
+    -fx-text-fill: rgba(25, 53, 44, 0.75);
+    -fx-padding: 0 0 10 0;
+}
+
+.pill-input {
+    -fx-min-width: 560;
+    -fx-max-width: 560;
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-border-color: rgba(28, 45, 37, 0.18);
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-padding: 12 18 12 18;
+}
+
+.button {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-padding: 10 18 10 18;
+}
+
+.primary-pill-button,
+.primary-button {
+    -fx-background-color: linear-gradient(to bottom, #ff7f61, #ff6446);
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(79, 32, 22, 0.20), 18, 0.2, 0, 7);
+}
+
+.primary-pill-button:hover,
+.primary-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #ff8b6f, #ff6f52);
+}
+
+.secondary-pill-button,
+.secondary-button {
+    -fx-background-color: rgba(255, 255, 255, 0.92);
+    -fx-text-fill: #223d34;
+    -fx-border-color: rgba(34, 61, 52, 0.20);
+    -fx-border-width: 1;
+}
+
+.secondary-pill-button:hover,
+.secondary-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 1.0);
+}
+
+.danger-button {
+    -fx-background-color: linear-gradient(to bottom, #e75b63, #d2434b);
+    -fx-text-fill: white;
+}
+
+.danger-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #ee6770, #db4e56);
+}
+
+.ghost-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(25, 53, 44, 0.9);
+    -fx-border-color: rgba(25, 53, 44, 0.25);
+    -fx-border-width: 1;
+}
+
+.primary-pill-button,
+.secondary-pill-button {
+    -fx-min-width: 560;
+    -fx-max-width: 560;
+    -fx-padding: 12 20 12 20;
+    -fx-font-size: 22px;
+}
+
+.form-error {
+    -fx-font-size: 12px;
+    -fx-text-fill: #a92c34;
+}
+
+.page-content {
+    -fx-padding: 18;
+}
+
+.header-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #17352d;
+}
+
+.header-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: rgba(23, 53, 45, 0.70);
+}
+
+.session-chip {
+    -fx-padding: 6 12 6 12;
+    -fx-background-radius: 999;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
+
+.manager-chip {
+    -fx-background-color: rgba(60, 92, 80, 0.16);
+    -fx-text-fill: #29493d;
+}
+
+.user-chip {
+    -fx-background-color: rgba(255, 108, 79, 0.18);
+    -fx-text-fill: #7a2e1f;
+}
+
+.card {
+    -fx-background-color: rgba(255, 255, 255, 0.78);
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: rgba(29, 54, 46, 0.12);
+    -fx-border-width: 1;
+    -fx-padding: 14;
+}
+
+.admin-card {
+    -fx-background-color: rgba(255, 255, 255, 0.84);
+}
+
+.reservation-view-card {
+    -fx-background-color: rgba(252, 255, 254, 0.88);
+}
+
+.reservation-edit-card {
+    -fx-background-color: rgba(255, 255, 255, 0.90);
+}
+
+.section-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #18372e;
+}
+
+.field-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(24, 55, 46, 0.80);
+}
+
+.text-field,
+.date-picker,
+.combo-box {
+    -fx-background-color: rgba(255, 255, 255, 0.96);
+    -fx-border-color: rgba(24, 55, 46, 0.18);
+    -fx-border-radius: 11;
+    -fx-background-radius: 11;
+    -fx-padding: 10 12 10 12;
+}
+
+.text-field:focused,
+.date-picker:focused,
+.combo-box:focused {
+    -fx-border-color: rgba(255, 108, 79, 0.58);
+    -fx-effect: dropshadow(gaussian, rgba(255, 108, 79, 0.18), 13, 0.2, 0, 4);
+}
+
+.table-view {
+    -fx-background-color: rgba(255, 255, 255, 0.92);
+    -fx-border-color: rgba(24, 55, 46, 0.14);
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 5;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: rgba(255, 255, 255, 0.96);
+    -fx-background-radius: 12 12 0 0;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header .label {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(24, 55, 46, 0.82);
+}
+
+.table-row-cell:odd {
+    -fx-background-color: rgba(247, 252, 250, 0.88);
+}
+
+.table-row-cell:selected {
+    -fx-background-color: rgba(255, 108, 79, 0.15);
+}
