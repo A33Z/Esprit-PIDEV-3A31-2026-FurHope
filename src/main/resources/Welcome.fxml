@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.esprit.controllers.WelcomeController"
+           stylesheets="@styles.css"
+           styleClass="page">
+
+    <ScrollPane fitToWidth="true" styleClass="page-scroll" hbarPolicy="NEVER">
+        <content>
+            <VBox spacing="24" alignment="CENTER" styleClass="page-content">
+                <padding>
+                    <Insets top="60" right="24" bottom="60" left="24" />
+                </padding>
+
+                <VBox spacing="14" alignment="CENTER" styleClass="card hero-card">
+                    <Label text="FurHope" styleClass="title" />
+
+                    <Label text="Animal Shelter Platform" styleClass="subtitle" />
+
+                    <Button text="Sign In" styleClass="primary-button" onAction="#goToSignIn" maxWidth="Infinity"/>
+
+                    <Button text="Sign Up" styleClass="secondary-button" onAction="#goToSignUp" maxWidth="Infinity"/>
+
+                    <Button text="Continue as Guest" styleClass="ghost-button" onAction="#continueAsGuest" maxWidth="Infinity"/>
+                </VBox>
+
+            </VBox>
+        </content>
+    </ScrollPane>
+</StackPane>
