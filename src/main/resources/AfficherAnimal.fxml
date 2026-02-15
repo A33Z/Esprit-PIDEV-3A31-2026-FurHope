@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane prefHeight="605.0" prefWidth="792.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controllers.AfficherAnimal">
+   <children>
+      <ListView fx:id="listview" layoutX="39.0" layoutY="47.0" prefHeight="512.0" prefWidth="521.0" />
+   </children>
+</AnchorPane>
