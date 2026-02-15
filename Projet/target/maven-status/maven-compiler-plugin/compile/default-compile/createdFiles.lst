@@ -1,0 +1,10 @@
+com\projet\controller\ajouterproduit.class
+com\projet\utils\MyDataBase.class
+com\projet\entities\Panier.class
+com\projet\services\ProduitService.class
+com\projet\services\PanierService.class
+com\projet\services\CrudService.class
+com\projet\test\Main.class
+com\projet\controller\produits.class
+com\projet\test\mainfx.class
+com\projet\entities\Produit.class
