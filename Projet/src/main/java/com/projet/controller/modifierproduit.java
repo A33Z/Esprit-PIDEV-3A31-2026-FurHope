@@ -15,7 +15,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-public class ajouterproduit {
+public class modifierproduit {
 
     @FXML private TextField titleField;
     @FXML private TextField priceField;
@@ -24,36 +24,61 @@ public class ajouterproduit {
     @FXML private TextArea descriptionField;
     @FXML private ImageView imagePreview;
 
+    private int produitId;
     private String imagePath;
 
-    ProduitService ps = new ProduitService();
+    private final ProduitService ps = new ProduitService();
 
-    // Upload image
-    @FXML
+    // Called from admin page
+    public void loadProduit(int id) {
 
-    void uploadImage()  {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choisir une image");
-        fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg")
-        );
+        this.produitId = id;
 
-        File file = fileChooser.showOpenDialog(null);
+        try {
+            Produit p = ps.findById(id);
 
-        if (file != null) {
-            imagePath = file.getAbsolutePath();
-            Image image = new Image(file.toURI().toString());
-            imagePreview.setImage(image);
+            titleField.setText(p.getTitle());
+            priceField.setText(String.valueOf(p.getPrice()));
+            tvaField.setText(String.valueOf(p.getTva()));
+            stockField.setText(String.valueOf(p.getStock()));
+            descriptionField.setText(p.getDescription());
+
+            imagePath = p.getImage();
+
+            if (imagePath != null && !imagePath.isEmpty()) {
+                imagePreview.setImage(new Image("file:" + imagePath));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    // Add product
+    // Upload image
     @FXML
-    void ajouterProduit() {
+    void uploadImage() {
+
+        FileChooser fc = new FileChooser();
+        fc.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg")
+        );
+
+        File file = fc.showOpenDialog(null);
+
+        if (file != null) {
+            imagePath = file.getAbsolutePath();
+            imagePreview.setImage(new Image(file.toURI().toString()));
+        }
+    }
+
+    @FXML
+    void modifierproduit() {
 
         try {
+
             Produit p = new Produit();
 
+            p.setId(produitId); // locked id from selected product
             p.setTitle(titleField.getText());
             p.setPrice(Double.parseDouble(priceField.getText()));
             p.setTva(Double.parseDouble(tvaField.getText()));
@@ -61,32 +86,22 @@ public class ajouterproduit {
             p.setDescription(descriptionField.getText());
             p.setStock(Integer.parseInt(stockField.getText()));
 
-            ps.ajouter(p);
+            ps.modifier(p);
 
-            System.out.println("Produit ajouté !");
-            clearForm();
+            System.out.println("Produit mis à jour !");
+            goBack();
 
         } catch (Exception e) {
-            System.out.println("Erreur : " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
-
-    // Reset form
-    void clearForm() {
-        titleField.clear();
-        priceField.clear();
-        tvaField.clear();
-        stockField.clear();
-        descriptionField.clear();
-        imagePreview.setImage(null);
-        imagePath = null;
-    }
+    // Return to admin
     @FXML
-    void controlproduit() {
+    void goBack() {
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/produitcontrol.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/admin.fxml"));
             Parent root = loader.load();
 
             Stage stage = (Stage) titleField.getScene().getWindow();

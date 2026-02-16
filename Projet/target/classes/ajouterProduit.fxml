@@ -27,7 +27,7 @@
                   styleClass="card">
 
                 <Button text="← Retour"
-                        onAction="#goBack"
+                        onAction="#controlproduit"
                         styleClass="secondary-button"
                         AnchorPane.topAnchor="20"
                         AnchorPane.leftAnchor="20"/>

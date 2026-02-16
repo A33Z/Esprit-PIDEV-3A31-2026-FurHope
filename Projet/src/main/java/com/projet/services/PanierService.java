@@ -1,6 +1,7 @@
 package com.projet.services;
 
 import com.projet.entities.Panier;
+import com.projet.entities.Produit;
 import com.projet.utils.MyDataBase;
 
 import java.sql.*;
@@ -80,48 +81,22 @@ public class PanierService implements CrudService<Panier> {
     }
 
     @Override
-    public void modifier(int id) throws SQLException {
+    public void modifier(Panier p) throws SQLException {
 
-        // get panier info
-        String getPanier = "SELECT idProduit, qty FROM panier WHERE id=?";
-        PreparedStatement ps1 = con.prepareStatement(getPanier);
-        ps1.setInt(1, id);
-        ResultSet rs1 = ps1.executeQuery();
+        String sql = "UPDATE produit SET title=?, price=?, tva=?, image=?, description=?, stock=? WHERE id=?";
 
-        if (rs1.next()) {
+        PreparedStatement ps = con.prepareStatement(sql);
 
-            int idProduit = rs1.getInt("idProduit");
-            int qty = rs1.getInt("qty");
+        ps.setString(1, p.getTitle());
+        ps.setDouble(2, p.getTotalP());
+        ps.setDouble(3, p.getTotalt());
+        ps.setString(4, p.getTitle());
+        ps.setString(5, p.getTitle());
+        ps.setInt(7, p.getId()); // only used for WHERE
 
-            // fetch product
-            String getProduit = "SELECT price, tva FROM produit WHERE id=?";
-            PreparedStatement ps2 = con.prepareStatement(getProduit);
-            ps2.setInt(1, idProduit);
-            ResultSet rs2 = ps2.executeQuery();
+        ps.executeUpdate();
 
-            if (rs2.next()) {
-
-                double price = rs2.getDouble("price");
-                double tva = rs2.getDouble("tva");
-
-                double totalP = price * qty;
-                double totalt = tva * qty;
-
-                // update panier
-                String update = "UPDATE panier SET totalP=?, totalt=? WHERE id=?";
-                PreparedStatement ps3 = con.prepareStatement(update);
-
-                ps3.setDouble(1, totalP);
-                ps3.setDouble(2, totalt);
-                ps3.setInt(3, id);
-
-                ps3.executeUpdate();
-
-                System.out.println("Totaux recalculés !");
-            }
-        }
+        System.out.println("Produit modifié (id inchangé)");
+    }
     }
 
-
-
-}

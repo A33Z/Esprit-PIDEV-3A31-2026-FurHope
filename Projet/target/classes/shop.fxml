@@ -10,64 +10,108 @@
 <?import javafx.scene.layout.VBox?>
 
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Region?>
 <AnchorPane stylesheets="@style.css"
             xmlns="http://javafx.com/javafx/25"
             xmlns:fx="http://javafx.com/fxml/1"
+            fx:id="contentPane"
             fx:controller="com.projet.controller.produits">
 
     <children>
 
-        <!-- Return button top-left -->
-        <Button text="← Retour"
-                onAction="#goHome"
-                styleClass="secondary-button"
-                AnchorPane.topAnchor="20"
-                AnchorPane.leftAnchor="20"/>
-
-        <!-- Top center search + filter -->
-        <HBox spacing="10"
-              alignment="CENTER"
-              AnchorPane.topAnchor="20"
+        <!-- Header bar -->
+        <HBox fx:id="topbar"
+              spacing="10"
+              alignment="CENTER_LEFT"
+              styleClass="topbar"
+              AnchorPane.topAnchor="0"
               AnchorPane.leftAnchor="0"
-              AnchorPane.rightAnchor="0">
+              AnchorPane.rightAnchor="0"
+              prefHeight="60">
 
-            <TextField fx:id="searchField"
-                       promptText="Rechercher produit..."
-                       prefWidth="260"/>
+            <Button text="☰"
+                    onAction="#toggleDrawer"
+                    styleClass="menu-button"/>
 
-            <Button text="Filtrer"
-                    onAction="#filter"
+            <Button text="Retour"
+                    onAction="#goBack"
                     styleClass="secondary-button"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Label text="Shop"
+                   styleClass="title"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
 
         </HBox>
 
-        <!-- Scroll product grid -->
-        <ScrollPane fitToWidth="true"
-                    AnchorPane.topAnchor="80"
-                    AnchorPane.bottomAnchor="80"
-                    AnchorPane.leftAnchor="40"
-                    AnchorPane.rightAnchor="40">
+        <!-- Main content -->
+        <AnchorPane AnchorPane.topAnchor="60"
+                    AnchorPane.bottomAnchor="0"
+                    AnchorPane.leftAnchor="0"
+                    AnchorPane.rightAnchor="0">
 
-            <FlowPane fx:id="productGrid"
-                      hgap="20"
-                      vgap="20"
-                      alignment="CENTER">
+            <HBox spacing="10"
+                  alignment="CENTER"
+                  AnchorPane.topAnchor="20"
+                  AnchorPane.leftAnchor="0"
+                  AnchorPane.rightAnchor="0">
+
+                <TextField fx:id="searchField"
+                           promptText="Rechercher produit..."
+                           prefWidth="260"/>
+
+                <Button text="Filtrer"
+                        onAction="#filter"
+                        styleClass="secondary-button"/>
+            </HBox>
+
+            <ScrollPane fitToWidth="true"
+                        AnchorPane.topAnchor="80"
+                        AnchorPane.bottomAnchor="40"
+                        AnchorPane.leftAnchor="40"
+                        AnchorPane.rightAnchor="40">
+
+                <FlowPane fx:id="productGrid"
+                          hgap="20"
+                          vgap="20"
+                          alignment="CENTER">
+
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                </FlowPane>
+
+            </ScrollPane>
+
+            <VBox fx:id="drawer"
+                  prefWidth="200"
+                  spacing="15"
+                  styleClass="drawer"
+                  alignment="TOP_CENTER"
+                  AnchorPane.topAnchor="0"
+                  AnchorPane.bottomAnchor="0"
+                  AnchorPane.leftAnchor="0">
 
                 <padding>
                     <Insets top="20" right="20" bottom="20" left="20"/>
                 </padding>
 
-            </FlowPane>
+                <Label text="Admin" styleClass="drawer-title"/>
 
-        </ScrollPane>
+                <Button text="Gestion Produits"
+                        onAction="#controlproduit"
+                        styleClass="drawer-button"/>
+            </VBox>
 
-        <!-- Floating add button bottom-right -->
-        <Button text="+ Ajouter"
-                onAction="#addproduit"
-                styleClass="primary-button"
-                AnchorPane.bottomAnchor="20"
-                AnchorPane.rightAnchor="20"/>
+        </AnchorPane>
+
+
 
     </children>
+
 </AnchorPane>
+
 

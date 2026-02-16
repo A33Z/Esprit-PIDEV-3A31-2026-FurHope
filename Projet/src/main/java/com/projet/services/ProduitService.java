@@ -68,27 +68,47 @@ public class ProduitService implements CrudService<Produit> {
         return produits;
     }
     @Override
-    public void modifier(int id) throws SQLException {}
-/*
-    @Override
-    public void modifier(int id) throws SQLException {
+    public void modifier(Produit p) throws SQLException {
 
         String sql = "UPDATE produit SET title=?, price=?, tva=?, image=?, description=?, stock=? WHERE id=?";
 
         PreparedStatement ps = con.prepareStatement(sql);
 
-        // values coming from UI
-        ps.setString(1, titleField.getText());
-        ps.setDouble(2, Double.parseDouble(priceField.getText()));
-        ps.setDouble(3, Double.parseDouble(tvaField.getText()));
-        ps.setString(4, imageField.getText());
-        ps.setString(5, descriptionField.getText());
-        ps.setInt(6, Integer.parseInt(stockField.getText()));
-        ps.setInt(7, id);
+        ps.setString(1, p.getTitle());
+        ps.setDouble(2, p.getPrice());
+        ps.setDouble(3, p.getTva());
+        ps.setString(4, p.getImage());
+        ps.setString(5, p.getDescription());
+        ps.setInt(6, p.getStock());
+        ps.setInt(7, p.getId()); // only used for WHERE
 
         ps.executeUpdate();
 
-        System.out.println("Produit modifié !");
+        System.out.println("Produit modifié (id inchangé)");
     }
-*/
+
+
+    public Produit findById(int id) throws SQLException {
+
+        String sql = "SELECT * FROM produit WHERE id=?";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setInt(1, id);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            Produit p = new Produit();
+            p.setId(rs.getInt("id"));
+            p.setTitle(rs.getString("title"));
+            p.setPrice(rs.getDouble("price"));
+            p.setTva(rs.getDouble("tva"));
+            p.setImage(rs.getString("image"));
+            p.setDescription(rs.getString("description"));
+            p.setStock(rs.getInt("stock"));
+            return p;
+        }
+
+        return null;
+    }
+
+
 }

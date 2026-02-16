@@ -2,6 +2,7 @@ package com.projet.controller;
 
 import com.projet.entities.Produit;
 import com.projet.services.ProduitService;
+import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -10,10 +11,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class produits {
 
@@ -25,6 +25,8 @@ public class produits {
     @FXML
     public void initialize() {
         loadProducts();
+        drawer.setTranslateX(-200);
+        drawer.setMouseTransparent(true);
     }
 
     // Load products from DB
@@ -97,11 +99,33 @@ public class produits {
         return card;
     }
 
-    // Go to add product screen
+
+
+
+    // Placeholder buttons
     @FXML
-    void addproduit() {
+    void goBack() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ajouterProduit.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/shop.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) productGrid.getScene().getWindow();
+            stage.setScene(new Scene(root));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    void filter() {
+        System.out.println("Filtres à venir");
+    }
+
+    @FXML
+    void controlproduit() {
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/produitcontrol.fxml"));
             Parent root = loader.load();
 
             Stage stage = (Stage) productGrid.getScene().getWindow();
@@ -112,14 +136,32 @@ public class produits {
         }
     }
 
-    // Placeholder buttons
-    @FXML
-    void goHome() {
-        System.out.println("Retour accueil");
-    }
+
+    @FXML private VBox drawer;
+    @FXML private HBox topbar;
+    @FXML private AnchorPane contentPane;
+
+    private boolean drawerOpen = false;
+
 
     @FXML
-    void filter() {
-        System.out.println("Filtres à venir");
+    void toggleDrawer() {
+
+        drawer.toFront(); // always above
+
+        TranslateTransition tt =
+                new TranslateTransition(Duration.millis(250), drawer);
+
+        if (drawerOpen) {
+            tt.setToX(-200);
+            drawer.setMouseTransparent(true);
+        } else {
+            tt.setToX(0);
+            drawer.setMouseTransparent(false);
+        }
+
+        drawerOpen = !drawerOpen;
+        tt.play();
     }
+
 }

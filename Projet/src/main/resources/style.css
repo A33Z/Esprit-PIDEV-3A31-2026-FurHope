@@ -73,3 +73,89 @@
     -fx-font-weight: bold;
     -fx-font-size: 13px;
 }
+
+.drawer {
+    -fx-background-color: #2b1d17;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 10, 0.5, 0, 0);
+}
+
+.drawer-title {
+    -fx-text-fill: #f4d4b4;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.drawer-button {
+    -fx-background-color: #c56a2d;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-padding: 8 12;
+}
+
+.drawer-button:hover {
+    -fx-background-color: #a95522;
+}
+
+.menu-button {
+    -fx-background-color: #c56a2d;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-background-radius: 6;
+}
+
+.menu-button:hover {
+    -fx-background-color: #a95522;
+}
+
+.list-view {
+    -fx-background-color: transparent;
+}
+
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 10;
+}
+
+.product-card {
+    -fx-background-color: #f3eee9;
+    -fx-background-radius: 14;
+    -fx-padding: 14;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0.3, 0, 3);
+}
+
+.product-card:hover {
+    -fx-background-color: #ebe3db;
+}
+
+.product-name {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #3b2a22;
+}
+
+.primary-button {
+    -fx-background-color: #c56a2d;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+}
+
+.primary-button:hover {
+    -fx-background-color: #a95522;
+}
+
+.danger-button {
+    -fx-background-color: #8b2e2e;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+}
+
+.danger-button:hover {
+    -fx-background-color: #6f2323;
+}
+
+
+.topbar {
+    -fx-background-color: #3b2a22;
+    -fx-padding: 10 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 8, 0.5, 0, 2);
+}
