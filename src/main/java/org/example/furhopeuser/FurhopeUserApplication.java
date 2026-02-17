@@ -13,30 +13,38 @@ public class FurhopeUserApplication {
 
         try {
 
+            // Create new user
             User u = new User(
-                    "Hamza Ben Yahia",
+                    "Hamza",
+                    "Ben Yahia",
                     "hamza@test.com",
+                    "123456",        // password (temporary plain text)
                     "22123456",
-                    "CLIENT",
+                    "Rue de Paris",
                     "Tunis",
-                    false
+                    "CLIENT"
             );
 
             service.ajouter(u);
 
             System.out.println("---- LIST USERS ----");
+
             for (User user : service.afficher()) {
                 System.out.println(user);
             }
 
+            // Update first user (if exists)
+            if (!service.afficher().isEmpty()) {
 
-            User toUpdate = service.afficher().get(0); // first user
-            toUpdate.setCity("Ariana");
-            toUpdate.setVerified(true);
+                User toUpdate = service.afficher().get(0);
 
-            service.modifier(toUpdate);
+                toUpdate.setCity("Ariana");
+                toUpdate.setPhone("99999999");
 
+                service.modifier(toUpdate);
 
+                System.out.println("User updated successfully!");
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();

@@ -13,23 +13,19 @@
 
     <ScrollPane fitToWidth="true" styleClass="page-scroll" hbarPolicy="NEVER">
         <content>
-            <VBox spacing="24" alignment="CENTER" styleClass="page-content">
+            <VBox spacing="26" alignment="CENTER" styleClass="page-content">
                 <padding>
-                    <Insets top="60" right="24" bottom="60" left="24" />
+                    <Insets top="70" right="24" bottom="70" left="24" />
                 </padding>
 
-                <VBox spacing="14" alignment="CENTER" styleClass="card hero-card">
-                    <Label text="FurHope" styleClass="title" />
-
-                    <Label text="Animal Shelter Platform" styleClass="subtitle" />
+                <VBox spacing="16" alignment="CENTER" styleClass="card hero-card">
+                    <Label text="Welcome to FurHope" styleClass="title" />
+                    <Label text="A calm, caring place for every animal and every helper." styleClass="subtitle" />
 
                     <Button text="Sign In" styleClass="primary-button" onAction="#goToSignIn" maxWidth="Infinity"/>
-
                     <Button text="Sign Up" styleClass="secondary-button" onAction="#goToSignUp" maxWidth="Infinity"/>
-
                     <Button text="Continue as Guest" styleClass="ghost-button" onAction="#continueAsGuest" maxWidth="Infinity"/>
                 </VBox>
-
             </VBox>
         </content>
     </ScrollPane>
