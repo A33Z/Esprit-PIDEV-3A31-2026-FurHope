@@ -1,0 +1,30 @@
+package com.esprit.test;
+
+import com.esprit.Services.adoptionservices;
+import com.esprit.Services.animalServices;
+import com.esprit.entities.adoptionRequest;
+
+import java.sql.SQLException;
+
+public class Main {
+    public static void main(String[] args) {
+     // MyDataBase.getInstance(); connexion de bd
+        animalServices ps = new animalServices();
+        try {
+           // ps.ajouter(new animal("loulou","cat","americain",2,animal.gender.FEMALE,"great cat",  animal.status.AVAILABLE));
+            //ps.supprimer(3);
+            System.out.println(ps.afficher());
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        adoptionservices adreq = new adoptionservices();
+        try {
+            adreq.ajouter(new adoptionRequest(6,1,"je veux adopter ce chat svp!","5464646587","odsfdjhfejfe",adoptionRequest.status.PENDING));
+            //ps.supprimer(3);
+            System.out.println(ps.afficher());
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
