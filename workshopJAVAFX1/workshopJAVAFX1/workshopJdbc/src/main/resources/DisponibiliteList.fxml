@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.DisponibiliteListController"
+      spacing="12" style="-fx-background-color: linear-gradient(to bottom right, #ecfccb, #bbf7d0, #dcfce7); -fx-padding: 24;">
+
+    <Label text="Affichage Disponibilites" style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #14532d;"/>
+    <Label text="Cliquez sur un element ajoute pour modifier ou supprimer" style="-fx-text-fill: #166534;"/>
+
+    <ListView fx:id="disponibiliteList" prefHeight="520"/>
+
+    <Label fx:id="detailsLabel" text="Selectionnez une disponibilite pour voir details, modifier ou supprimer."
+           wrapText="true" style="-fx-text-fill: #14532d; -fx-font-size: 13;"/>
+
+    <HBox spacing="10">
+        <Button text="Ajouter" onAction="#onAdd" style="-fx-background-color: #22c55e; -fx-text-fill: white;"/>
+        <Button text="Modifier" onAction="#onEdit" style="-fx-background-color: #2563eb; -fx-text-fill: white;"/>
+        <Button text="Supprimer" onAction="#onDelete" style="-fx-background-color: #dc2626; -fx-text-fill: white;"/>
+        <Button text="Actualiser" onAction="#onRefresh" style="-fx-background-color: #0f766e; -fx-text-fill: white;"/>
+        <Button text="Accueil" onAction="#onBackHome" style="-fx-background-color: #374151; -fx-text-fill: white;"/>
+    </HBox>
+</VBox>

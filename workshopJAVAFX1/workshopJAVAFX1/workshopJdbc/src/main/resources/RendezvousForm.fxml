@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.RendezvousFormController"
+      spacing="10" style="-fx-background-color: linear-gradient(to bottom right, #dbeafe, #bfdbfe, #fde68a); -fx-padding: 24;">
+
+    <Label fx:id="titleLabel" text="Ajouter rendez-vous" style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #1e3a8a;"/>
+    <Label text="status (max 30)"/>
+    <TextField fx:id="statusField" promptText="pending"/>
+
+    <Label text="description (optionnelle)"/>
+    <TextArea fx:id="descriptionArea" prefRowCount="3" promptText="motif"/>
+
+    <Label text="client_id"/>
+    <TextField fx:id="clientIdField" promptText="entier > 0"/>
+
+    <Label text="disponibilite_id (selection)"/>
+    <ComboBox fx:id="disponibiliteBox" promptText="choisir disponibilite" prefWidth="600"/>
+
+    <HBox spacing="10">
+        <VBox spacing="6">
+            <Label text="vet_id (auto depuis disponibilite)"/>
+            <TextField fx:id="vetIdField" editable="false" promptText="auto"/>
+        </VBox>
+        <VBox spacing="6">
+            <Label text="animal_id"/>
+            <TextField fx:id="animalIdField" promptText="entier > 0"/>
+        </VBox>
+        <Button text="Actualiser disponibilites" onAction="#onRefreshDisponibilites"
+                style="-fx-background-color: #1e40af; -fx-text-fill: white; -fx-background-radius: 10;"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <VBox spacing="6">
+            <Label text="app_date"/>
+            <DatePicker fx:id="appDatePicker"/>
+        </VBox>
+        <VBox spacing="6">
+            <Label text="app_time (HH:mm)"/>
+            <TextField fx:id="appTimeField" promptText="09:45"/>
+        </VBox>
+    </HBox>
+
+    <HBox spacing="12">
+        <Button fx:id="saveButton" text="Ajouter" onAction="#onSave"
+                style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-background-radius: 10;"/>
+        <Button text="Voir affichage" onAction="#onGoList"
+                style="-fx-background-color: #1d4ed8; -fx-text-fill: white; -fx-background-radius: 10;"/>
+        <Button text="Accueil" onAction="#onGoHome"
+                style="-fx-background-color: #374151; -fx-text-fill: white; -fx-background-radius: 10;"/>
+    </HBox>
+</VBox>

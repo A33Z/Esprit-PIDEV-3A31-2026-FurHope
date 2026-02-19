@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.RendezvousController" prefWidth="1250" prefHeight="760">
+    <top>
+        <VBox spacing="4" style="-fx-background-color: linear-gradient(to right, #1d4ed8, #1e40af); -fx-padding: 16;">
+            <children>
+                <Label text="Gestion des rendez-vous clients" style="-fx-text-fill: white; -fx-font-size: 22; -fx-font-weight: bold;"/>
+                <Label text="Le client prend un rendez-vous sur une disponibilite VALABLE du veterinaire" style="-fx-text-fill: #dbeafe;"/>
+            </children>
+        </VBox>
+    </top>
+
+    <left>
+        <VBox spacing="10" style="-fx-padding: 16; -fx-background-color: #eff6ff;" prefWidth="390">
+            <children>
+                <Label text="Formulaire rendez-vous" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+                <Label text="Status"/>
+                <ComboBox fx:id="statusBox" promptText="Selectionner"/>
+
+                <Label text="Client ID"/>
+                <TextField fx:id="clientIdField" promptText="Ex: 12"/>
+
+                <Label text="Animal ID"/>
+                <TextField fx:id="animalIdField" promptText="Ex: 8"/>
+
+                <Label text="Description"/>
+                <TextArea fx:id="descriptionArea" promptText="Motif du rendez-vous" prefRowCount="3"/>
+
+                <Label text="Date rendez-vous"/>
+                <DatePicker fx:id="appDateField"/>
+
+                <Label text="Heure rendez-vous (HH:mm)"/>
+                <TextField fx:id="appTimeField" promptText="09:30"/>
+
+                <Label text="Disponibilite veterinaire"/>
+                <ComboBox fx:id="disponibiliteBox" promptText="Choisir une disponibilite" prefWidth="360"/>
+
+                <HBox spacing="8">
+                    <children>
+                        <TextField fx:id="vetIdField" editable="false" promptText="Vet ID auto" prefWidth="160"/>
+                        <Button text="Actualiser disponibilites" onAction="#onRefreshDisponibilites"/>
+                    </children>
+                </HBox>
+
+                <HBox spacing="8">
+                    <children>
+                        <Button text="Ajouter" onAction="#onCreate" style="-fx-background-color: #10b981; -fx-text-fill: white;"/>
+                        <Button text="Modifier" onAction="#onUpdate" style="-fx-background-color: #2563eb; -fx-text-fill: white;"/>
+                        <Button text="Supprimer" onAction="#onDelete" style="-fx-background-color: #dc2626; -fx-text-fill: white;"/>
+                        <Button text="Vider" onAction="#onClear"/>
+                    </children>
+                </HBox>
+            </children>
+            <padding>
+                <Insets top="16" right="16" bottom="16" left="16"/>
+            </padding>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox style="-fx-padding: 16;" spacing="10">
+            <children>
+                <Label text="Liste des rendez-vous" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                <TableView fx:id="rendezvousTable" prefHeight="620">
+                    <columns>
+                        <TableColumn fx:id="colRdvId" text="ID" prefWidth="70"/>
+                        <TableColumn fx:id="colStatus" text="Status" prefWidth="120"/>
+                        <TableColumn fx:id="colClient" text="Client" prefWidth="80"/>
+                        <TableColumn fx:id="colVet" text="Vet" prefWidth="80"/>
+                        <TableColumn fx:id="colAnimal" text="Animal" prefWidth="80"/>
+                        <TableColumn fx:id="colDisponibilite" text="Dispo" prefWidth="80"/>
+                        <TableColumn fx:id="colDate" text="Date" prefWidth="110"/>
+                        <TableColumn fx:id="colTime" text="Heure" prefWidth="90"/>
+                    </columns>
+                </TableView>
+            </children>
+        </VBox>
+    </center>
+</BorderPane>

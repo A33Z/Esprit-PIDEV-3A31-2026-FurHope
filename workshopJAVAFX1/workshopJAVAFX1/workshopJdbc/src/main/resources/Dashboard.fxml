@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<TabPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" tabClosingPolicy="UNAVAILABLE">
+    <tabs>
+        <Tab text="Disponibilites Vet">
+            <content>
+                <AnchorPane>
+                    <children>
+                        <fx:include source="DisponibiliteView.fxml"/>
+                    </children>
+                </AnchorPane>
+            </content>
+        </Tab>
+        <Tab text="Rendez-vous Client">
+            <content>
+                <AnchorPane>
+                    <children>
+                        <fx:include source="RendezvousView.fxml"/>
+                    </children>
+                </AnchorPane>
+            </content>
+        </Tab>
+    </tabs>
+</TabPane>
