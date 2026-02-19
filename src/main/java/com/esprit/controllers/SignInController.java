@@ -3,12 +3,15 @@ package com.esprit.controllers;
 import com.esprit.entities.User;
 import com.esprit.services.userservices;
 import com.esprit.utils.AuthValidation;
+import com.esprit.utils.ThemeManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -31,7 +34,15 @@ public class SignInController {
     @FXML
     private Label formErrorLabel;
 
+    @FXML
+    private Button themeToggleButton;
+
     private final userservices service = new userservices();
+
+    @FXML
+    private void initialize() {
+        Platform.runLater(this::syncThemeToggleIcon);
+    }
 
     @FXML
     private void login(ActionEvent event) {
@@ -101,7 +112,9 @@ public class SignInController {
         Parent root = FXMLLoader.load(getClass().getResource("/accueil.fxml"));
         Stage stage = (Stage) ((javafx.scene.Node) event.getSource())
                 .getScene().getWindow();
-        stage.setScene(new Scene(root));
+        Scene newScene = new Scene(root);
+        ThemeManager.applyToScene(newScene);
+        stage.setScene(newScene);
         stage.show();
     }
 
@@ -116,7 +129,9 @@ public class SignInController {
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource())
                     .getScene().getWindow();
 
-            stage.setScene(new Scene(root));
+            Scene newScene = new Scene(root);
+            ThemeManager.applyToScene(newScene);
+            stage.setScene(newScene);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,11 +144,42 @@ public class SignInController {
             Parent root = FXMLLoader.load(getClass().getResource("/forgot_password.fxml"));
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource())
                     .getScene().getWindow();
-            stage.setScene(new Scene(root));
+            Scene newScene = new Scene(root);
+            ThemeManager.applyToScene(newScene);
+            stage.setScene(newScene);
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
             setFormError("Unable to open password recovery page.");
+        }
+    }
+
+    @FXML
+    private void toggleDarkMode(ActionEvent event) {
+        Scene scene = ((javafx.scene.Node) event.getSource()).getScene();
+        ThemeManager.toggle(scene);
+        syncThemeToggleIcon();
+    }
+
+    @FXML
+    private void goToSignUp(ActionEvent event) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/signup.fxml"));
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource())
+                    .getScene().getWindow();
+            Scene newScene = new Scene(root);
+            ThemeManager.applyToScene(newScene);
+            stage.setScene(newScene);
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            setFormError("Unable to open sign up page.");
+        }
+    }
+
+    private void syncThemeToggleIcon() {
+        if (themeToggleButton != null) {
+            themeToggleButton.setText(ThemeManager.isDarkModeEnabled() ? "\uD83C\uDF19" : "\u2600");
         }
     }
 

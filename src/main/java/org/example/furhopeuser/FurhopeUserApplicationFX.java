@@ -1,5 +1,6 @@
 package org.example.furhopeuser;
 
+import com.esprit.utils.ThemeManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -17,6 +18,9 @@ public class FurhopeUserApplicationFX extends Application{
         Parent root = loader.load();
 
         Scene scene = new Scene(root, 1100, 700);
+        ThemeManager.applyToScene(scene);
+
+        stage.sceneProperty().addListener((obs, oldScene, newScene) -> ThemeManager.applyToScene(newScene));
 
         stage.setTitle("FurHope - Animal Shelter Platform");
         stage.setScene(scene);

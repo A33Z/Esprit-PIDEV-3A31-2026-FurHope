@@ -18,6 +18,10 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.Locale;
+
 public class ReclamationController {
 
     @FXML
@@ -30,7 +34,14 @@ public class ReclamationController {
     @FXML
     private ComboBox<String> statusCombo;
 
+    @FXML
+    private TextField searchField;
+
+    @FXML
+    private ComboBox<String> sortCombo;
+
     private final ReclamationService service = new ReclamationService();
+    private final ObservableList<Reclamation> sourceData = FXCollections.observableArrayList();
 
     @FXML
     private void initialize() {
@@ -49,8 +60,11 @@ public class ReclamationController {
 
         statusCombo.setItems(FXCollections.observableArrayList("OPEN", "IN_PROGRESS", "RESOLVED"));
         statusCombo.getSelectionModel().select("OPEN");
+        sortCombo.setItems(FXCollections.observableArrayList("Newest first", "Oldest first", "Status A-Z", "Sujet A-Z"));
+        sortCombo.getSelectionModel().selectFirst();
 
         reclamationTable.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, selected) -> fillForm(selected));
+        searchField.textProperty().addListener((obs, oldText, newText) -> applyFilters());
         refreshTable();
 
         if (!SessionContext.isAdmin()) {
@@ -156,17 +170,29 @@ public class ReclamationController {
     @FXML
     private void refreshTable() {
         try {
-            ObservableList<Reclamation> data;
             if (SessionContext.isAdmin()) {
-                data = FXCollections.observableArrayList(service.afficher());
+                sourceData.setAll(service.afficher());
             } else {
-                data = FXCollections.observableArrayList(service.afficherParClient(SessionContext.getCurrentUser().getId()));
+                sourceData.setAll(service.afficherParClient(SessionContext.getCurrentUser().getId()));
             }
-            reclamationTable.setItems(data);
+            applyFilters();
         } catch (Exception e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Error", "Unable to load reclamations.");
         }
+    }
+
+    @FXML
+    private void applyFilters() {
+        String query = searchField == null || searchField.getText() == null
+                ? ""
+                : searchField.getText().trim().toLowerCase(Locale.ROOT);
+
+        ObservableList<Reclamation> filtered = FXCollections.observableArrayList(
+                sourceData.filtered(rec -> matchesSearch(rec, query))
+        );
+        FXCollections.sort(filtered, buildComparator(sortCombo == null ? null : sortCombo.getValue()));
+        reclamationTable.setItems(filtered);
     }
 
     @FXML
@@ -221,5 +247,42 @@ public class ReclamationController {
         alert.setTitle(title);
         alert.setContentText(message);
         alert.show();
+    }
+
+    private boolean matchesSearch(Reclamation rec, String query) {
+        if (query == null || query.isEmpty()) {
+            return true;
+        }
+
+        return containsIgnoreCase(rec.getSujet(), query)
+                || containsIgnoreCase(rec.getDescription(), query)
+                || containsIgnoreCase(rec.getStatus(), query)
+                || String.valueOf(rec.getClientId()).contains(query)
+                || String.valueOf(rec.getId()).contains(query);
+    }
+
+    private boolean containsIgnoreCase(String value, String query) {
+        return value != null && value.toLowerCase(Locale.ROOT).contains(query);
+    }
+
+    private Comparator<Reclamation> buildComparator(String selectedSort) {
+        if ("Oldest first".equals(selectedSort)) {
+            return Comparator.comparing(this::safeCreatedAt);
+        }
+        if ("Status A-Z".equals(selectedSort)) {
+            return Comparator.comparing(rec -> safeString(rec.getStatus()));
+        }
+        if ("Sujet A-Z".equals(selectedSort)) {
+            return Comparator.comparing(rec -> safeString(rec.getSujet()));
+        }
+        return Comparator.comparing(this::safeCreatedAt).reversed();
+    }
+
+    private LocalDateTime safeCreatedAt(Reclamation rec) {
+        return rec.getCreatedAt() == null ? LocalDateTime.MIN : rec.getCreatedAt();
+    }
+
+    private String safeString(String value) {
+        return value == null ? "" : value.toLowerCase(Locale.ROOT);
     }
 }

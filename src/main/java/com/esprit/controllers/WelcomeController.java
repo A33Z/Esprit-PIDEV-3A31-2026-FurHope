@@ -1,5 +1,6 @@
 package com.esprit.controllers;
 
+import com.esprit.utils.ThemeManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,6 +24,12 @@ public class WelcomeController {
     private void continueAsGuest(ActionEvent event) {
         SessionContext.clear();
         switchScene(event, "/accueil.fxml");
+    }
+
+    @FXML
+    private void toggleDarkMode(ActionEvent event) {
+        Scene scene = ((javafx.scene.Node) event.getSource()).getScene();
+        ThemeManager.toggle(scene);
     }
 
     private void switchScene(ActionEvent event, String fxmlFile) {

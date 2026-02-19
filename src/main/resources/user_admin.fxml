@@ -2,8 +2,10 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
@@ -22,6 +24,11 @@
 
     <Label text="User Management" styleClass="title" />
     <Label text="Block, activate, or delete user accounts." styleClass="subtitle" />
+
+    <FlowPane hgap="10" vgap="10" alignment="CENTER" prefWrapLength="900">
+        <TextField fx:id="searchField" promptText="Recherche (nom, email, role...)" prefWidth="360" minWidth="220"/>
+        <ComboBox fx:id="sortCombo" prefWidth="190" minWidth="170" onAction="#applyFilters"/>
+    </FlowPane>
 
     <ListView fx:id="userTable" prefHeight="380.0" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS"/>
 

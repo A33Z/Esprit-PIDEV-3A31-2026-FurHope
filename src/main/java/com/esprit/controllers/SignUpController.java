@@ -3,6 +3,8 @@ package com.esprit.controllers;
 import com.esprit.entities.User;
 import com.esprit.services.userservices;
 import com.esprit.utils.AuthValidation;
+import com.esprit.utils.ThemeManager;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -44,12 +47,16 @@ public class SignUpController {
     @FXML
     private ComboBox<String> roleCombo;
 
+    @FXML
+    private Button themeToggleButton;
+
     private final userservices service = new userservices();
 
     @FXML
     private void initialize() {
         roleCombo.setItems(FXCollections.observableArrayList("CLIENT", "VETERINAIRE"));
         roleCombo.getSelectionModel().selectFirst();
+        Platform.runLater(this::syncThemeToggleIcon);
     }
 
     @FXML
@@ -93,6 +100,18 @@ public class SignUpController {
         switchScene(event, "/Welcome.fxml");
     }
 
+    @FXML
+    private void goToSignIn(ActionEvent event) {
+        switchToSignIn(event);
+    }
+
+    @FXML
+    private void toggleDarkMode(ActionEvent event) {
+        Scene scene = ((javafx.scene.Node) event.getSource()).getScene();
+        ThemeManager.toggle(scene);
+        syncThemeToggleIcon();
+    }
+
     private void switchToSignIn(ActionEvent event) {
         switchScene(event, "/signin.fxml");
     }
@@ -102,7 +121,9 @@ public class SignUpController {
             Parent root = FXMLLoader.load(getClass().getResource(fxmlFile));
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource())
                     .getScene().getWindow();
-            stage.setScene(new Scene(root));
+            Scene newScene = new Scene(root);
+            ThemeManager.applyToScene(newScene);
+            stage.setScene(newScene);
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
@@ -235,5 +256,11 @@ public class SignUpController {
         alert.setTitle(title);
         alert.setContentText(message);
         alert.show();
+    }
+
+    private void syncThemeToggleIcon() {
+        if (themeToggleButton != null) {
+            themeToggleButton.setText(ThemeManager.isDarkModeEnabled() ? "\uD83C\uDF19" : "\u2600");
+        }
     }
 }

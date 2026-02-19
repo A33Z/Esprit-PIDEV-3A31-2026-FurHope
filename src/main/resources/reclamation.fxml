@@ -18,11 +18,16 @@
         <Insets top="18" right="24" bottom="24" left="24"/>
     </padding>
 
-    <Label text="Client Reclamation - CRUD" styleClass="title"/>
+            <Label text="Client Reclamation" styleClass="title"/>
 
     <FlowPane hgap="10" vgap="10" alignment="CENTER" prefWrapLength="900">
         <TextField fx:id="sujetField" promptText="Sujet" prefWidth="260" minWidth="220"/>
         <ComboBox fx:id="statusCombo" prefWidth="140" minWidth="120"/>
+    </FlowPane>
+
+    <FlowPane hgap="10" vgap="10" alignment="CENTER" prefWrapLength="900">
+        <TextField fx:id="searchField" promptText="Recherche (sujet, statut, client...)" prefWidth="360" minWidth="220"/>
+        <ComboBox fx:id="sortCombo" prefWidth="190" minWidth="170" onAction="#applyFilters"/>
     </FlowPane>
 
     <TextArea fx:id="descriptionArea" promptText="Describe the problem" prefHeight="90" maxWidth="1.7976931348623157E308" wrapText="true"/>

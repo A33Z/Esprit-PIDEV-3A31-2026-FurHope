@@ -10,16 +10,28 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+
+import java.util.Comparator;
+import java.util.Locale;
 
 public class UserAdminController {
 
     @FXML
     private ListView<User> userTable;
 
+    @FXML
+    private TextField searchField;
+
+    @FXML
+    private ComboBox<String> sortCombo;
+
     private final userservices service = new userservices();
+    private final ObservableList<User> sourceData = FXCollections.observableArrayList();
 
     @FXML
     private void initialize() {
@@ -35,6 +47,9 @@ public class UserAdminController {
                 setText(empty || user == null ? null : formatUser(user));
             }
         });
+        sortCombo.setItems(FXCollections.observableArrayList("Newest ID", "Oldest ID", "Name A-Z", "Role A-Z"));
+        sortCombo.getSelectionModel().selectFirst();
+        searchField.textProperty().addListener((obs, oldText, newText) -> applyFilters());
 
         refreshTable();
     }
@@ -42,13 +57,26 @@ public class UserAdminController {
     @FXML
     private void refreshTable() {
         try {
-            ObservableList<User> data = FXCollections.observableArrayList(service.afficher());
-            data.removeIf(this::isAdminUser);
-            userTable.setItems(data);
+            sourceData.setAll(service.afficher());
+            sourceData.removeIf(this::isAdminUser);
+            applyFilters();
         } catch (Exception e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Error", "Unable to load users.");
         }
+    }
+
+    @FXML
+    private void applyFilters() {
+        String query = searchField == null || searchField.getText() == null
+                ? ""
+                : searchField.getText().trim().toLowerCase(Locale.ROOT);
+
+        ObservableList<User> filtered = FXCollections.observableArrayList(
+                sourceData.filtered(user -> matchesSearch(user, query))
+        );
+        FXCollections.sort(filtered, buildComparator(sortCombo == null ? null : sortCombo.getValue()));
+        userTable.setItems(filtered);
     }
 
     @FXML
@@ -151,5 +179,41 @@ public class UserAdminController {
         alert.setTitle(title);
         alert.setContentText(message);
         alert.show();
+    }
+
+    private boolean matchesSearch(User user, String query) {
+        if (query == null || query.isEmpty()) {
+            return true;
+        }
+        return containsIgnoreCase(user.getFirstName(), query)
+                || containsIgnoreCase(user.getLastName(), query)
+                || containsIgnoreCase(user.getEmail(), query)
+                || containsIgnoreCase(user.getRole(), query)
+                || String.valueOf(user.getId()).contains(query);
+    }
+
+    private boolean containsIgnoreCase(String value, String query) {
+        return value != null && value.toLowerCase(Locale.ROOT).contains(query);
+    }
+
+    private Comparator<User> buildComparator(String selectedSort) {
+        if ("Oldest ID".equals(selectedSort)) {
+            return Comparator.comparingInt(User::getId);
+        }
+        if ("Name A-Z".equals(selectedSort)) {
+            return Comparator.comparing(this::fullNameKey);
+        }
+        if ("Role A-Z".equals(selectedSort)) {
+            return Comparator.comparing(user -> safeString(user.getRole()));
+        }
+        return Comparator.comparingInt(User::getId).reversed();
+    }
+
+    private String fullNameKey(User user) {
+        return safeString(user.getFirstName()) + " " + safeString(user.getLastName());
+    }
+
+    private String safeString(String value) {
+        return value == null ? "" : value.toLowerCase(Locale.ROOT);
     }
 }

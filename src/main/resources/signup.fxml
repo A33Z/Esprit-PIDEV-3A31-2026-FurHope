@@ -7,6 +7,7 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
@@ -72,9 +73,23 @@
                     </VBox>
 
                     <Button text="Create Account" styleClass="primary-button" onAction="#signUp" maxWidth="Infinity"/>
+                    <HBox spacing="8" alignment="CENTER" styleClass="inline-link-row">
+                        <Label text="Already have an account?" styleClass="field-label"/>
+                        <Button text="Sign in" styleClass="inline-link-button" onAction="#goToSignIn"/>
+                    </HBox>
                     <Button text="Back" styleClass="secondary-button" onAction="#goBack" maxWidth="Infinity"/>
                 </VBox>
             </VBox>
         </content>
     </ScrollPane>
+
+    <Button fx:id="themeToggleButton"
+            text="&#9728;"
+            onAction="#toggleDarkMode"
+            styleClass="theme-toggle-button"
+            StackPane.alignment="TOP_RIGHT">
+        <StackPane.margin>
+            <Insets top="16" right="16" bottom="0" left="0"/>
+        </StackPane.margin>
+    </Button>
 </StackPane>

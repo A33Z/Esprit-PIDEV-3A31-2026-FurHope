@@ -10,22 +10,28 @@ public class MyDataBase {
     private final String USER = "root";
     private final String PASSWORD = "";
 
-    private Connection connection;
-    private static MyDataBase instance;
+    private final Connection connection;
+    private static volatile MyDataBase instance;
 
     private MyDataBase() {
+        Connection tempConnection = null;
         try {
-            connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            tempConnection = DriverManager.getConnection(URL, USER, PASSWORD);
             System.out.println("Connected to database successfully");
         } catch (SQLException e) {
             System.err.println("Database connection failed:");
             e.printStackTrace();
         }
+        connection = tempConnection;
     }
 
     public static MyDataBase getInstance() {
         if (instance == null) {
-            instance = new MyDataBase();
+            synchronized (MyDataBase.class) {
+                if (instance == null) {
+                    instance = new MyDataBase();
+                }
+            }
         }
         return instance;
     }

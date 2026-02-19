@@ -146,9 +146,10 @@ public class userservices implements ICrud<User> {
             throw new RuntimeException("WRONG_PASSWORD");
         }
 
-        // Correct login
+        // Correct login:
+        // pending vets can still access regular user pages until approval.
         User user = mapUser(rs);
-        if (!user.isActive()) {
+        if (!user.isActive() && !"VETERINAIRE".equalsIgnoreCase(user.getRole())) {
             throw new RuntimeException("ACCOUNT_INACTIVE");
         }
 
