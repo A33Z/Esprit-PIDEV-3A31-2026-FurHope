@@ -1,6 +1,9 @@
 package com.projet.controller;
 
+
+import com.projet.entities.Panier;
 import com.projet.entities.Produit;
+import com.projet.services.PanierService;
 import com.projet.services.ProduitService;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
@@ -9,11 +12,17 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+
 
 public class produits {
 
@@ -25,8 +34,12 @@ public class produits {
     @FXML
     public void initialize() {
         loadProducts();
+        updateCartButton();
         drawer.setTranslateX(-200);
         drawer.setMouseTransparent(true);
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filterProducts(newValue);
+        });
     }
 
     // Load products from DB
@@ -96,10 +109,27 @@ public class produits {
             front.setVisible(true);
         });
 
+// 🔥 CLICK → OPEN DETAIL
+        card.setOnMouseClicked(e -> openDetail(p));
+
         return card;
     }
 
+    private void openDetail(Produit produit) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/productdetail.fxml"));
+            Parent root = loader.load();
 
+            produitdetail controller = loader.getController();
+            controller.setProduit(produit);
+
+            Stage stage = (Stage) productGrid.getScene().getWindow(); // 🔥 same stage
+            stage.setScene(new Scene(root));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
     // Placeholder buttons
@@ -136,11 +166,11 @@ public class produits {
         }
     }
 
-
+    @FXML private Button cartBtn;
     @FXML private VBox drawer;
     @FXML private HBox topbar;
     @FXML private AnchorPane contentPane;
-
+    @FXML private TextField searchField;
     private boolean drawerOpen = false;
 
 
@@ -164,4 +194,44 @@ public class produits {
         tt.play();
     }
 
+    @FXML
+    void openCart() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/cart.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) productGrid.getScene().getWindow();
+            stage.setScene(new Scene(root));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateCartButton() {
+        try {
+            int count = new PanierService().afficher()
+                    .stream()
+                    .mapToInt(Panier::getQty)
+                    .sum();            cartBtn.setText("🛒 Cart (" + count + ")");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void filterProducts(String keyword) {
+        try {
+            productGrid.getChildren().clear();
+
+            for (Produit p : ps.afficher()) {
+
+                if (p.getTitle().toLowerCase().contains(keyword.toLowerCase())) {
+                    productGrid.getChildren().add(createCard(p));
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

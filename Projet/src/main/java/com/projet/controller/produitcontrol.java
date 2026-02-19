@@ -137,4 +137,23 @@ public class produitcontrol {
             e.printStackTrace();
         }
     }
+
+    private void openDetail(Produit produit) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/productdetail.fxml"));
+            Parent root = loader.load();
+
+            produitdetail controller = loader.getController();
+            controller.setProduit(produit);
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Product Detail");
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -9,6 +9,8 @@ import javafx.stage.Stage;
 public class mainfx extends Application {
     @Override
     public void start(Stage stage) throws Exception {
+        stage.setWidth(1000);
+        stage.setHeight(650);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/shop.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root);

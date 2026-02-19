@@ -44,6 +44,11 @@
 
             <Region HBox.hgrow="ALWAYS"/>
 
+            <Button text="🛒 Cart"
+                    fx:id="cartBtn"
+                    onAction="#openCart"
+                    styleClass="secondary-button"/>
+
         </HBox>
 
         <!-- Main content -->
@@ -62,9 +67,7 @@
                            promptText="Rechercher produit..."
                            prefWidth="260"/>
 
-                <Button text="Filtrer"
-                        onAction="#filter"
-                        styleClass="secondary-button"/>
+
             </HBox>
 
             <ScrollPane fitToWidth="true"
