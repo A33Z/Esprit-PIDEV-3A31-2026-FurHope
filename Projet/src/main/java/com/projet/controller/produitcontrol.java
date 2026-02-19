@@ -156,4 +156,24 @@ public class produitcontrol {
         }
     }
 
+    @FXML
+    void goBack() {
+
+        try {
+
+            FXMLLoader loader =
+                    new FXMLLoader(getClass().getResource("/shop.fxml"));
+
+            Parent root = loader.load();
+
+            Stage stage = (Stage) listView.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

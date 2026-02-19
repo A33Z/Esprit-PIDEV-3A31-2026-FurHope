@@ -101,7 +101,7 @@ public class modifierproduit {
     void goBack() {
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/admin.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/produitcontrol.fxml"));
             Parent root = loader.load();
 
             Stage stage = (Stage) titleField.getScene().getWindow();

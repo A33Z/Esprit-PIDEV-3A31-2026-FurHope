@@ -11,6 +11,10 @@
             >
     <children>
 
+        <Button text="Retour"
+                onAction="#goBack"
+                styleClass="secondary-button"/>
+
         <VBox spacing="15"
               alignment="CENTER"
               AnchorPane.topAnchor="20"
@@ -20,6 +24,7 @@
 
             <Label text="Gestion des Produits"
                    styleClass="title"/>
+
 
             <ListView fx:id="listView" prefHeight="500"/>
 
