@@ -22,8 +22,14 @@ public class postService extends ConnectToDbService implements C_R_U_D<post> {
             ps.setInt(1, p.getAuthorId());
             ps.setString(2, p.getCaption());
             ps.setString(3, p.getMediaType());
-            ps.setString(4, p.getMediaPath());
-            ps.setString(5, p.getThumbnailPath());
+            if (p.getMediaPath() == null || p.getMediaPath().isEmpty())
+                ps.setNull(4, Types.VARCHAR);
+            else
+                ps.setString(4, p.getMediaPath());
+            if (p.getThumbnailPath() == null || p.getThumbnailPath().isEmpty())
+                ps.setNull(5, Types.VARCHAR);
+            else
+                ps.setString(5, p.getThumbnailPath());
 
             if (p.getDurationSeconds() == null) ps.setNull(6, Types.INTEGER);
             else ps.setInt(6, p.getDurationSeconds());
@@ -95,6 +101,43 @@ public class postService extends ConnectToDbService implements C_R_U_D<post> {
                 if (!rs.next()) return null;
                 return map(rs);
             }
+        }
+    }
+
+    public void incrementLikes(long postId, int delta) throws SQLException {
+        String sql = "UPDATE post SET likes_count = GREATEST(likes_count + ?, 0) WHERE id = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, delta);
+            ps.setLong(2, postId);
+            ps.executeUpdate();
+        }
+    }
+
+    public void incrementDislikes(long postId, int delta) throws SQLException {
+        String sql = "UPDATE post SET dislikes_count = GREATEST(dislikes_count + ?, 0) WHERE id = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, delta);
+            ps.setLong(2, postId);
+            ps.executeUpdate();
+        }
+    }
+
+    public void incrementShares(long postId, int delta) throws SQLException {
+        String sql = "UPDATE post SET shares_count = GREATEST(shares_count + ?, 0) WHERE id = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, delta);
+            ps.setLong(2, postId);
+            ps.executeUpdate();
+        }
+    }
+
+    /** Returns the id of the first post (by id), or null if there are no posts. */
+    public Long getFirstPostId() throws SQLException {
+        String sql = "SELECT id FROM post ORDER BY id ASC LIMIT 1";
+        try (PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (!rs.next()) return null;
+            return rs.getLong("id");
         }
     }
 
