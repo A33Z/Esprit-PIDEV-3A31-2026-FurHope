@@ -1,44 +1,83 @@
 package controllers;
 
+import entities.ManagerAccount;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import security.SessionContext;
+import services.ManagerAuthService;
+import services.SessionContext;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class RoleSelectionController {
 
     @FXML
     private AnchorPane rootPane;
     @FXML
+    private TextField managerIdField;
+    @FXML
+    private PasswordField managerPasswordField;
+    @FXML
     private TextField userIdField;
     @FXML
     private Label errorLabel;
 
+    private ManagerAuthService managerAuthService;
+
     @FXML
-    private void handleContinueAsManager() {
-        SessionContext.loginAsManager();
-        navigateTo("/HotelManagerDashboard.fxml", "FurHope - Hotel Manager Dashboard");
+    public void initialize() {
+        managerAuthService = new ManagerAuthService();
+    }
+
+    @FXML
+    private void handleManagerLogin() {
+        clearError();
+
+        String managerId = managerIdField.getText();
+        if (managerId == null || managerId.trim().isEmpty()) {
+            showError("Manager ID is required.");
+            return;
+        }
+
+        char[] password = managerPasswordField.getText() == null
+                ? new char[0]
+                : managerPasswordField.getText().toCharArray();
+
+        try {
+            Optional<ManagerAccount> account = managerAuthService.authenticate(managerId, password);
+            if (account.isEmpty()) {
+                showError("Invalid manager credentials.");
+                return;
+            }
+            SessionContext.startManagerSession(account.get());
+            navigateTo("/HotelManagerDashboard.fxml", "FurHope - Hotel Manager Dashboard");
+        } catch (RuntimeException e) {
+            showError("Authentication service unavailable.");
+        } finally {
+            managerPasswordField.clear();
+        }
     }
 
     @FXML
     private void handleContinueAsUser() {
+        clearError();
         try {
-            int userId = parseUserId(userIdField.getText());
-            SessionContext.loginAsUser(userId);
+            int userId = resolveUserId(userIdField.getText());
+            SessionContext.startUserSession(userId);
             navigateTo("/UserDashboard.fxml", "FurHope - User Dashboard");
         } catch (IllegalArgumentException e) {
             showError(e.getMessage());
         }
     }
 
-    private int parseUserId(String rawValue) {
+    private int resolveUserId(String rawValue) {
         if (rawValue == null || rawValue.trim().isEmpty()) {
             throw new IllegalArgumentException("User ID is required.");
         }
@@ -67,5 +106,9 @@ public class RoleSelectionController {
 
     private void showError(String message) {
         errorLabel.setText(message);
+    }
+
+    private void clearError() {
+        errorLabel.setText("");
     }
 }

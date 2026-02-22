@@ -1,9 +1,7 @@
 package services;
 
 import entities.Reservation;
-import entities.Role;
-import security.AuthorizationException;
-import security.SessionContext;
+import entities.ReservationStatus;
 
 import java.util.List;
 
@@ -20,6 +18,16 @@ public class ReservationAccessService {
         return reservationService.getAllReservations();
     }
 
+    public boolean approveReservation(int reservationId) {
+        requireManager();
+        return reservationService.updateReservationStatusByManager(reservationId, ReservationStatus.APPROVED);
+    }
+
+    public boolean declineReservation(int reservationId) {
+        requireManager();
+        return reservationService.updateReservationStatusByManager(reservationId, ReservationStatus.DECLINED);
+    }
+
     public List<Reservation> viewCurrentUserReservations() {
         int userId = requireUserId();
         return reservationService.getReservationsByClientId(userId);
@@ -28,6 +36,7 @@ public class ReservationAccessService {
     public boolean addReservationForCurrentUser(Reservation reservation) {
         int userId = requireUserId();
         reservation.setClientId(userId);
+        reservation.setStatus(ReservationStatus.PENDING);
         return reservationService.addReservation(reservation);
     }
 
@@ -43,15 +52,18 @@ public class ReservationAccessService {
     }
 
     private int requireUserId() {
-        if (SessionContext.requireUser().getRole() != Role.USER) {
+        try {
+            return SessionContext.requireNormalUser().getId();
+        } catch (AuthorizationException e) {
             throw new AuthorizationException("Only normal users can manage reservations.");
         }
-        return SessionContext.requireUser().getId();
     }
 
     private void requireManager() {
-        if (SessionContext.requireUser().getRole() != Role.HOTEL_MANAGER) {
-            throw new AuthorizationException("Only hotel managers can view all reservations.");
+        try {
+            SessionContext.requireManager();
+        } catch (AuthorizationException e) {
+            throw new AuthorizationException("Only hotel managers can approve or decline reservations.");
         }
     }
 }

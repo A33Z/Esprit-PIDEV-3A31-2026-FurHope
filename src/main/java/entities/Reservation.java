@@ -10,12 +10,12 @@ public class Reservation {
     private int hotelId;
     private Date startDate;
     private Date endDate;
-    private String status;
+    private ReservationStatus status;
 
     public Reservation() {}
 
     public Reservation(int clientId, int animalId, int hotelId,
-                       Date startDate, Date endDate, String status) {
+                       Date startDate, Date endDate, ReservationStatus status) {
         this.clientId = clientId;
         this.animalId = animalId;
         this.hotelId = hotelId;
@@ -25,7 +25,7 @@ public class Reservation {
     }
 
     public Reservation(int id, int clientId, int animalId, int hotelId,
-                       Date startDate, Date endDate, String status) {
+                       Date startDate, Date endDate, ReservationStatus status) {
         this.id = id;
         this.clientId = clientId;
         this.animalId = animalId;
@@ -54,7 +54,7 @@ public class Reservation {
     public Date getEndDate() { return endDate; }
     public void setEndDate(Date endDate) { this.endDate = endDate; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public ReservationStatus getStatus() { return status; }
+    public void setStatus(ReservationStatus status) { this.status = status; }
 }
 

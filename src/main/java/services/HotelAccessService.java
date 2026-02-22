@@ -1,9 +1,6 @@
 package services;
 
 import entities.Hotel;
-import entities.Role;
-import security.AuthorizationException;
-import security.SessionContext;
 
 import java.util.List;
 
@@ -35,7 +32,9 @@ public class HotelAccessService {
     }
 
     private void requireManager() {
-        if (SessionContext.requireUser().getRole() != Role.HOTEL_MANAGER) {
+        try {
+            SessionContext.requireManager();
+        } catch (AuthorizationException e) {
             throw new AuthorizationException("Only hotel managers can modify hotels.");
         }
     }
