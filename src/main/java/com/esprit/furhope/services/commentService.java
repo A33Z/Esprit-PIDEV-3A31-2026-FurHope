@@ -96,6 +96,14 @@ public class commentService extends ConnectToDbService implements C_R_U_D<commen
         return comments;
     }
 
+    public void deleteByPostId(long postId) throws SQLException {
+        String sql = "DELETE FROM comment WHERE post_id = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setLong(1, postId);
+            ps.executeUpdate();
+        }
+    }
+
     private comment map(ResultSet rs) throws SQLException {
         comment c = new comment();
         c.setId(rs.getLong("id"));

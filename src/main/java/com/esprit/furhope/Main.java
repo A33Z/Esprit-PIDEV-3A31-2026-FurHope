@@ -1,6 +1,7 @@
 
 package com.esprit.furhope;
 
+import com.esprit.furhope.utils.AppSession;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -12,6 +13,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        AppSession.initializeFromSystemProperties();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/app.fxml"));
         Scene scene = new Scene(loader.load(), 900, 600);
         scene.getStylesheets().add(getClass().getResource("/css/app.css").toExternalForm());

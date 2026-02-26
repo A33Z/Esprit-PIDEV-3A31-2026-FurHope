@@ -5,10 +5,12 @@ import com.esprit.furhope.entities.post;
 import com.esprit.furhope.services.commentService;
 import com.esprit.furhope.services.postService;
 import com.esprit.furhope.utils.TimeUtils;
+import com.esprit.furhope.utils.AppSession;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -16,6 +18,7 @@ import javafx.scene.layout.VBox;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 public class commentscontroller {
 
@@ -47,7 +50,7 @@ public class commentscontroller {
             comment newComment = new comment();
             newComment.setBody(bodyText);
             newComment.setPostId(postId);
-            newComment.setAuthorId(1);
+            newComment.setAuthorId(AppSession.getCurrentUserId());
             newComment.setStatus("ACTIVE");
             commentSvc.ajouter(newComment);
             bodyfield.clear();
@@ -112,9 +115,39 @@ public class commentscontroller {
             }
         });
 
-        HBox actions = new HBox(12, deleteBtn);
+        Button editBtn = new Button("Edit");
+        editBtn.getStyleClass().add("action-button-small");
+        editBtn.setOnAction(e -> onEditComment(c));
+
+        HBox actions = new HBox(12, editBtn, deleteBtn);
         actions.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         card.getChildren().addAll(meta, bodyLabel, actions);
         return card;
+    }
+
+    private void onEditComment(comment c) {
+        TextInputDialog dialog = new TextInputDialog(c.getBody() != null ? c.getBody() : "");
+        dialog.setTitle("Edit Comment");
+        dialog.setHeaderText("Update comment text");
+        dialog.setContentText("Comment:");
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isEmpty()) return;
+
+        String updatedBody = result.get().trim();
+        if (updatedBody.isEmpty()) {
+            new Alert(Alert.AlertType.WARNING, "Comment cannot be empty.").showAndWait();
+            return;
+        }
+
+        try {
+            c.setBody(updatedBody);
+            if (c.getStatus() == null) c.setStatus("ACTIVE");
+            commentSvc.modifier(c);
+            loadComments();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Failed to update comment: " + e.getMessage()).showAndWait();
+        }
     }
 }

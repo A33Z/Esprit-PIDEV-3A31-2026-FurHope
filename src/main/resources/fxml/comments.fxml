@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.esprit.furhope.controllers.commentscontroller" styleClass="comments-root" spacing="0">
+    <Label text="Comments" styleClass="section-title"/>
+    <HBox styleClass="comments-input-bar" spacing="10" alignment="CENTER_LEFT" VBox.vgrow="NEVER">
+        <TextField fx:id="bodyfield" promptText="Write a comment..." HBox.hgrow="ALWAYS"/>
+        <Button fx:id="addbtn" text="Post comment" onAction="#onAddClick"/>
+    </HBox>
+    <ScrollPane styleClass="comments-scroll" fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+        <VBox fx:id="commentsbox" styleClass="comments-list">
+            <padding>
+                <Insets top="16" right="0" bottom="24" left="0"/>
+            </padding>
+        </VBox>
+    </ScrollPane>
+</VBox>

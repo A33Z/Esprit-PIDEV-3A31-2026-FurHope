@@ -8,34 +8,41 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.SVGPath;
 
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
-/**
- * Single comment or reply row. Supports nested replies via indent and style.
- */
 public class CommentItem extends VBox {
 
     private static final int REPLY_INDENT = 24;
 
     private final comment c;
-    private final boolean isReply;
-    private final VBox repliesContainer;
-    private final Label likeCountLabel;
-    private final Label dislikeCountLabel;
 
-    public CommentItem(comment c, List<comment> replies, boolean isReply,
-                       java.util.function.Consumer<comment> onReplyClicked,
-                       java.util.function.Consumer<comment> onDeleteClicked) {
+    public CommentItem(comment c,
+                       List<comment> replies,
+                       boolean isReply,
+                       Consumer<comment> onReplyClicked,
+                       Consumer<comment> onEditClicked,
+                       Consumer<comment> onDeleteClicked,
+                       Function<comment, Integer> likeCountProvider,
+                       Function<comment, Integer> dislikeCountProvider,
+                       Predicate<comment> isLiked,
+                       Predicate<comment> isDisliked,
+                       Consumer<comment> onLikeToggle,
+                       Consumer<comment> onDislikeToggle) {
+
         this.c = c;
-        this.isReply = isReply;
         getStyleClass().add(isReply ? "reply-item" : "comment-item");
 
         setSpacing(6);
         setPadding(new Insets(isReply ? 10 : 12, isReply ? REPLY_INDENT : 16, 12, isReply ? REPLY_INDENT : 16));
         if (isReply) {
-            setStyle("-fx-background-color: #f0f2f5; -fx-background-radius: 8;");
+            setStyle("-fx-background-color: #f4f7fb; -fx-background-radius: 10;");
         }
 
         Region avatar = new Region();
@@ -49,52 +56,101 @@ public class CommentItem extends VBox {
         Label timeLabel = new Label(TimeUtils.formatAgo(c.getCreatedAt()));
         timeLabel.getStyleClass().add("comment-time");
 
-        HBox metaRow = new HBox(8, authorLabel, timeLabel);
+        HBox metaRow = new HBox(8, avatar, authorLabel, timeLabel);
         metaRow.setAlignment(Pos.CENTER_LEFT);
 
         Label bodyLabel = new Label(c.getBody() != null ? c.getBody() : "");
         bodyLabel.getStyleClass().add("comment-body");
         bodyLabel.setWrapText(true);
 
-        int likes = 0;
-        int dislikes = 0;
-        likeCountLabel = new Label(String.valueOf(likes));
+        Label likeCountLabel = new Label(String.valueOf(likeCountProvider.apply(c)));
         likeCountLabel.getStyleClass().add("comment-count");
-        dislikeCountLabel = new Label(String.valueOf(dislikes));
+        Label dislikeCountLabel = new Label(String.valueOf(dislikeCountProvider.apply(c)));
         dislikeCountLabel.getStyleClass().add("comment-count");
 
-        Button likeBtn = new Button("Like");
-        likeBtn.getStyleClass().add("action-button-small");
-        likeBtn.setOnAction(e -> { /* TODO: increment comment like */ });
-        Button dislikeBtn = new Button("Dislike");
-        dislikeBtn.getStyleClass().add("action-button-small");
-        dislikeBtn.setOnAction(e -> { /* TODO: increment comment dislike */ });
-        Button replyBtn = new Button("Reply");
-        replyBtn.getStyleClass().add("action-button-small");
-        replyBtn.setOnAction(e -> {
-            if (onReplyClicked != null) onReplyClicked.accept(c);
-        });
-        Button deleteBtn = new Button("Delete");
-        deleteBtn.getStyleClass().add("action-button-small");
-        deleteBtn.setStyle("-fx-text-fill: #b02828;");
-        deleteBtn.setOnAction(e -> {
-            if (onDeleteClicked != null) onDeleteClicked.accept(c);
+        Button likeBtn = smallIconButton("Like", "M12 21C12 21 5 14.7 5 9.5C5 7 7 5 9.5 5C10.9 5 12 5.8 12 5.8C12 5.8 13.1 5 14.5 5C17 5 19 7 19 9.5C19 14.7 12 21 12 21Z", false);
+        Button dislikeBtn = smallIconButton("Dislike", "M12 3C12 3 19 9.3 19 14.5C19 17 17 19 14.5 19C13.1 19 12 18.2 12 18.2C12 18.2 10.9 19 9.5 19C7 19 5 17 5 14.5C5 9.3 12 3 12 3Z", false);
+        Button replyBtn = smallIconButton("Reply", "M4 10L12 4V8H17C19.2 8 21 9.8 21 12V16H19V12C19 10.9 18.1 10 17 10H12V14L4 10Z", false);
+        Button editBtn = smallIconButton("Edit", "M4 17.5V20H6.5L16.8 9.7L14.3 7.2L4 17.5Z", false);
+        Button deleteBtn = smallIconButton("Delete", "M6 7H18V9H17L16 20H8L7 9H6V7Z", true);
+
+        likeBtn.setOnAction(e -> {
+            onLikeToggle.accept(c);
+            likeCountLabel.setText(String.valueOf(likeCountProvider.apply(c)));
+            dislikeCountLabel.setText(String.valueOf(dislikeCountProvider.apply(c)));
+            applyReactionUi(likeBtn, dislikeBtn, isLiked.test(c), isDisliked.test(c));
         });
 
-        HBox actionsRow = new HBox(12, likeBtn, likeCountLabel, dislikeBtn, dislikeCountLabel, replyBtn, deleteBtn);
+        dislikeBtn.setOnAction(e -> {
+            onDislikeToggle.accept(c);
+            likeCountLabel.setText(String.valueOf(likeCountProvider.apply(c)));
+            dislikeCountLabel.setText(String.valueOf(dislikeCountProvider.apply(c)));
+            applyReactionUi(likeBtn, dislikeBtn, isLiked.test(c), isDisliked.test(c));
+        });
+
+        replyBtn.setOnAction(e -> onReplyClicked.accept(c));
+        editBtn.setOnAction(e -> onEditClicked.accept(c));
+        deleteBtn.setOnAction(e -> onDeleteClicked.accept(c));
+
+        applyReactionUi(likeBtn, dislikeBtn, isLiked.test(c), isDisliked.test(c));
+
+        HBox actionsRow = new HBox(12, likeBtn, likeCountLabel, dislikeBtn, dislikeCountLabel, replyBtn, editBtn, deleteBtn);
         actionsRow.setAlignment(Pos.CENTER_LEFT);
 
         getChildren().addAll(metaRow, bodyLabel, actionsRow);
 
-        repliesContainer = new VBox(6);
-        repliesContainer.setPadding(new Insets(8, 0, 0, REPLY_INDENT));
         if (replies != null && !replies.isEmpty()) {
+            VBox repliesContainer = new VBox(6);
+            repliesContainer.setPadding(new Insets(8, 0, 0, REPLY_INDENT));
             for (comment reply : replies) {
-                repliesContainer.getChildren().add(new CommentItem(reply, null, true, onReplyClicked, onDeleteClicked));
+                repliesContainer.getChildren().add(new CommentItem(
+                        reply,
+                        null,
+                        true,
+                        onReplyClicked,
+                        onEditClicked,
+                        onDeleteClicked,
+                        likeCountProvider,
+                        dislikeCountProvider,
+                        isLiked,
+                        isDisliked,
+                        onLikeToggle,
+                        onDislikeToggle
+                ));
             }
             getChildren().add(repliesContainer);
         }
     }
 
-    public comment getComment() { return c; }
+    private Button smallIconButton(String text, String svgPathData, boolean danger) {
+        Button b = new Button(text);
+        b.getStyleClass().add("action-button-small");
+        if (danger) b.getStyleClass().add("danger-button-small");
+        b.setGraphic(createIcon(svgPathData));
+        return b;
+    }
+
+    private StackPane createIcon(String svgPathData) {
+        SVGPath icon = new SVGPath();
+        icon.setContent(svgPathData);
+        icon.getStyleClass().add("action-icon-shape");
+
+        StackPane wrap = new StackPane(icon);
+        wrap.getStyleClass().add("action-icon-wrap");
+        wrap.setMinSize(11, 11);
+        wrap.setPrefSize(11, 11);
+        wrap.setMaxSize(11, 11);
+        return wrap;
+    }
+
+    private void applyReactionUi(Button likeBtn, Button dislikeBtn, boolean liked, boolean disliked) {
+        likeBtn.getStyleClass().remove("reaction-active-like");
+        dislikeBtn.getStyleClass().remove("reaction-active-dislike");
+        if (liked) likeBtn.getStyleClass().add("reaction-active-like");
+        if (disliked) dislikeBtn.getStyleClass().add("reaction-active-dislike");
+    }
+
+    public comment getComment() {
+        return c;
+    }
 }
