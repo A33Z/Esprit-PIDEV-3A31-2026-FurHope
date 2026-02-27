@@ -127,6 +127,30 @@ public class UserDashboardController {
     }
 
     @FXML
+    private void handleOpenSupportCenter() {
+        try {
+            SessionContext.requireNormalUser();
+        } catch (AuthorizationException e) {
+            redirectToRoleSelection();
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/SupportCenter.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("FurHope - Support Center");
+            stage.setScene(new Scene(root));
+            stage.setMinWidth(920);
+            stage.setMinHeight(700);
+            stage.show();
+        } catch (IOException e) {
+            showMessage("Unable to open support center.", true);
+        }
+    }
+
+    @FXML
     private void handleOpenMapView() {
         if (hotelExplorationService == null) {
             showMessage("Hotel service unavailable.", true);

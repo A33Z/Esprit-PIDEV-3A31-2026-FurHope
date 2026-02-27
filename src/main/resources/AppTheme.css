@@ -1135,3 +1135,57 @@
 .hotel-scroll-pane > .viewport {
     -fx-background-color: transparent;
 }
+
+.support-chat-shell {
+    -fx-padding: 12;
+    -fx-background-color: linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(243, 250, 247, 0.92));
+}
+
+.support-chat-scroll {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(24, 55, 46, 0.14);
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 0;
+}
+
+.support-chat-scroll > .viewport {
+    -fx-background-color: rgba(248, 252, 250, 0.92);
+}
+
+.support-chat-flow {
+    -fx-padding: 10 10 10 10;
+}
+
+.support-message-row {
+    -fx-padding: 1 2 1 2;
+}
+
+.support-message-bubble {
+    -fx-font-size: 13px;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-padding: 10 12 10 12;
+    -fx-effect: dropshadow(gaussian, rgba(16, 39, 33, 0.12), 10, 0.18, 0, 2);
+}
+
+.support-assistant-bubble {
+    -fx-background-color: rgba(255, 255, 255, 0.97);
+    -fx-border-color: rgba(24, 55, 46, 0.13);
+    -fx-text-fill: rgba(20, 53, 45, 0.95);
+}
+
+.support-user-bubble {
+    -fx-background-color: linear-gradient(to right, #ff7f61, #ff6446);
+    -fx-border-color: rgba(124, 47, 31, 0.24);
+    -fx-text-fill: #ffffff;
+}
+
+.support-message-time {
+    -fx-font-size: 10px;
+    -fx-text-fill: rgba(24, 55, 46, 0.60);
+}
+
+.support-chat-input-row {
+    -fx-padding: 2 0 0 0;
+}

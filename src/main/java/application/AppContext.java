@@ -1,7 +1,9 @@
 package application;
 
+import application.controller.SupportChatController;
 import application.service.HotelExplorationService;
 import application.service.ManagerDashboardService;
+import application.service.SupportAssistantService;
 import application.service.UserReservationService;
 import integrations.content.WikipediaContentClient;
 import integrations.travel.OverpassHotelClient;
@@ -17,6 +19,8 @@ public final class AppContext {
     private HotelExplorationService hotelExplorationService;
     private UserReservationService userReservationService;
     private ManagerDashboardService managerDashboardService;
+    private SupportAssistantService supportAssistantService;
+    private SupportChatController supportChatController;
 
     private AppContext() {
     }
@@ -50,5 +54,19 @@ public final class AppContext {
             managerDashboardService = new ManagerDashboardService(new HotelAccessService(), new ReservationAccessService());
         }
         return managerDashboardService;
+    }
+
+    public synchronized SupportAssistantService supportAssistantService() {
+        if (supportAssistantService == null) {
+            supportAssistantService = new SupportAssistantService(userReservationService(), hotelExplorationService());
+        }
+        return supportAssistantService;
+    }
+
+    public synchronized SupportChatController supportChatController() {
+        if (supportChatController == null) {
+            supportChatController = new SupportChatController(supportAssistantService());
+        }
+        return supportChatController;
     }
 }
