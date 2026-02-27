@@ -3,8 +3,9 @@ package application.model;
 public record HotelMapMarkerModel(
         int hotelId,
         String name,
-        double rating,
-        String pricePerNight,
+        String address,
+        int capacity,
+        String shortDescription,
         double latitude,
         double longitude
 ) {

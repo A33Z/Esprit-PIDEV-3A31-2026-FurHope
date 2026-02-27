@@ -1,7 +1,6 @@
 package controllers;
 
 import application.AppContext;
-import application.model.ManagerAnalyticsModel;
 import application.model.ManagerHotelInfoModel;
 import application.model.ManagerReservationTicketModel;
 import application.service.ManagerDashboardService;
@@ -13,13 +12,11 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.PieChart;
-import javafx.scene.chart.XYChart;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
@@ -31,13 +28,13 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.Pair;
 import services.AuthorizationException;
@@ -48,13 +45,12 @@ import services.UserReservationActionCode;
 import services.UserReservationActionResult;
 import utils.DBConnection;
 
-import java.math.BigDecimal;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -70,7 +66,6 @@ public class HotelManagerDashboardController {
     private static final String ALL_RATINGS = "All ratings";
     private static final String ALL_AVAILABILITY = "All availability";
 
-    private static final NumberFormat CURRENCY_FORMAT = NumberFormat.getCurrencyInstance(Locale.US);
     private static final DateTimeFormatter CREATED_AT_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.US);
 
     @FXML
@@ -84,8 +79,6 @@ public class HotelManagerDashboardController {
     private VBox reservationPanel;
     @FXML
     private VBox resourcePanel;
-    @FXML
-    private VBox analyticsPanel;
 
     @FXML
     private Label sessionLabel;
@@ -130,24 +123,6 @@ public class HotelManagerDashboardController {
     @FXML
     private Label resourceSuccessLabel;
 
-    // Analytics
-    @FXML
-    private Label totalRevenueValueLabel;
-    @FXML
-    private Label totalReservationsValueLabel;
-    @FXML
-    private Label mostBookedHotelValueLabel;
-    @FXML
-    private Label averageOccupancyValueLabel;
-    @FXML
-    private LineChart<String, Number> monthlyReservationTrendChart;
-    @FXML
-    private BarChart<String, Number> monthlyRevenueTrendChart;
-    @FXML
-    private PieChart occupancyRatePieChart;
-    @FXML
-    private Label occupancySummaryLabel;
-
     private ManagerDashboardService managerDashboardService;
 
     private final Map<Integer, Hotel> hotelsById = new HashMap<>();
@@ -182,7 +157,6 @@ public class HotelManagerDashboardController {
         configureReservationListView();
         configureHotelFilters();
         configureResourceForm();
-        configureCharts();
         configureResponsiveLayout();
 
         refreshAll();
@@ -253,12 +227,6 @@ public class HotelManagerDashboardController {
         ));
     }
 
-    private void configureCharts() {
-        monthlyReservationTrendChart.setAnimated(false);
-        monthlyRevenueTrendChart.setAnimated(false);
-        occupancyRatePieChart.setLabelsVisible(true);
-    }
-
     private void configureResponsiveLayout() {
         if (rootPane == null) {
             return;
@@ -284,16 +252,17 @@ public class HotelManagerDashboardController {
         if (compact) {
             dashboardGrid.getColumnConstraints().add(growColumn(100.0));
             dashboardGrid.getRowConstraints().addAll(
-                    growRow(25.0),
-                    growRow(25.0),
-                    growRow(25.0),
-                    growRow(25.0)
+                    growRow(33.4),
+                    growRow(33.3),
+                    growRow(33.3)
             );
 
             placePanel(allHotelsPanel, 0, 0);
             placePanel(reservationPanel, 0, 1);
             placePanel(resourcePanel, 0, 2);
-            placePanel(analyticsPanel, 0, 3);
+            GridPane.setRowSpan(allHotelsPanel, 1);
+            GridPane.setRowSpan(reservationPanel, 1);
+            GridPane.setRowSpan(resourcePanel, 1);
             return;
         }
 
@@ -303,7 +272,9 @@ public class HotelManagerDashboardController {
         placePanel(allHotelsPanel, 0, 0);
         placePanel(resourcePanel, 1, 0);
         placePanel(reservationPanel, 0, 1);
-        placePanel(analyticsPanel, 1, 1);
+        GridPane.setRowSpan(allHotelsPanel, 1);
+        GridPane.setRowSpan(reservationPanel, 1);
+        GridPane.setRowSpan(resourcePanel, 2);
     }
 
     private ColumnConstraints growColumn(double percentWidth) {
@@ -336,6 +307,21 @@ public class HotelManagerDashboardController {
     }
 
     @FXML
+    private void handleOpenAnalytics() {
+        try {
+            SessionContext.requireManager();
+        } catch (AuthorizationException e) {
+            redirectToRoleSelection();
+            return;
+        }
+
+        if (autoRefreshTimeline != null) {
+            autoRefreshTimeline.stop();
+        }
+        navigateTo("/Analytics.fxml", "FurHope - Analytics");
+    }
+
+    @FXML
     private void handleLogout() {
         if (autoRefreshTimeline != null) {
             autoRefreshTimeline.stop();
@@ -348,7 +334,6 @@ public class HotelManagerDashboardController {
         refreshHotels();
         refreshReservations();
         refreshResources();
-        refreshAnalytics();
     }
 
     private void refreshHotels() {
@@ -592,7 +577,6 @@ public class HotelManagerDashboardController {
                 return;
             }
             refreshHotels();
-            refreshAnalytics();
             handleClearResourceForm();
             showResourceSuccess("Hotel added successfully.");
         } catch (IllegalArgumentException e) {
@@ -636,7 +620,6 @@ public class HotelManagerDashboardController {
                 return;
             }
             refreshHotels();
-            refreshAnalytics();
             focusResourcePanelForHotel(hotelId);
             showResourceSuccess("Hotel updated successfully.");
         } catch (IllegalArgumentException e) {
@@ -680,7 +663,6 @@ public class HotelManagerDashboardController {
             }
             refreshHotels();
             refreshReservations();
-            refreshAnalytics();
             handleClearResourceForm();
             showResourceSuccess("Hotel deleted successfully.");
         } catch (RuntimeException e) {
@@ -772,128 +754,6 @@ public class HotelManagerDashboardController {
         resourceSuccessLabel.setText("");
     }
 
-    private void refreshAnalytics() {
-        if (managerDashboardService == null) {
-            applyAnalyticsFallback();
-            return;
-        }
-
-        try {
-            ManagerAnalyticsModel analytics = managerDashboardService.getAnalyticsForManager();
-            totalRevenueValueLabel.setText(formatCurrency(analytics.totalRevenue()));
-            totalReservationsValueLabel.setText(String.valueOf(Math.max(0, analytics.totalReservations())));
-            mostBookedHotelValueLabel.setText(safeDisplay(analytics.mostBookedHotel(), "N/A"));
-            averageOccupancyValueLabel.setText(String.format(Locale.US, "%.1f%%", Math.max(0.0, analytics.averageOccupancyRate())));
-
-            renderReservationTrendChart(analytics);
-            renderRevenueTrendChart(analytics);
-            renderOccupancyChart();
-        } catch (RuntimeException e) {
-            applyAnalyticsFallback();
-        }
-    }
-
-    private void applyAnalyticsFallback() {
-        totalRevenueValueLabel.setText("$0.00");
-        totalReservationsValueLabel.setText("0");
-        mostBookedHotelValueLabel.setText("N/A");
-        averageOccupancyValueLabel.setText("0.0%");
-        monthlyReservationTrendChart.getData().clear();
-        monthlyRevenueTrendChart.getData().clear();
-        occupancyRatePieChart.getData().clear();
-        occupancySummaryLabel.setText("Occupancy data unavailable.");
-    }
-
-    private void renderReservationTrendChart(ManagerAnalyticsModel analytics) {
-        monthlyReservationTrendChart.getData().clear();
-
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        if (analytics.monthlyTrend() != null) {
-            analytics.monthlyTrend().forEach(point ->
-                    series.getData().add(new XYChart.Data<>(safeDisplay(point.monthLabel(), "N/A"), Math.max(0, point.reservationCount())))
-            );
-        }
-
-        monthlyReservationTrendChart.getData().add(series);
-
-        Platform.runLater(() -> series.getData().forEach(data -> {
-            if (data.getNode() == null) {
-                return;
-            }
-            Tooltip.install(data.getNode(), new Tooltip(data.getXValue() + ": " + data.getYValue().intValue() + " reservations"));
-        }));
-    }
-
-    private void renderRevenueTrendChart(ManagerAnalyticsModel analytics) {
-        monthlyRevenueTrendChart.getData().clear();
-
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        if (analytics.revenueTrend() != null) {
-            analytics.revenueTrend().forEach(point -> {
-                BigDecimal totalRevenue = point.totalRevenue() == null ? BigDecimal.ZERO : point.totalRevenue();
-                series.getData().add(new XYChart.Data<>(safeDisplay(point.monthLabel(), "N/A"), totalRevenue));
-            });
-        }
-
-        monthlyRevenueTrendChart.getData().add(series);
-
-        Platform.runLater(() -> series.getData().forEach(data -> {
-            if (data.getNode() == null) {
-                return;
-            }
-            BigDecimal revenue = new BigDecimal(data.getYValue().toString());
-            Tooltip.install(data.getNode(), new Tooltip(data.getXValue() + ": " + formatCurrency(revenue)));
-        }));
-    }
-
-    private void renderOccupancyChart() {
-        int totalRooms = allHotels.stream().mapToInt(hotel -> Math.max(0, hotel.totalRooms())).sum();
-        int availableRooms = allHotels.stream()
-                .mapToInt(hotel -> Math.max(0, Math.min(hotel.totalRooms(), hotel.availableRooms())))
-                .sum();
-        int occupiedRooms = Math.max(0, totalRooms - availableRooms);
-
-        if (totalRooms <= 0) {
-            occupancyRatePieChart.setData(FXCollections.observableArrayList(
-                    new PieChart.Data("No occupancy data", 1)
-            ));
-            occupancySummaryLabel.setText("Occupied 0 of 0 rooms (0.0%).");
-            installPieChartTooltips();
-            return;
-        }
-
-        occupancyRatePieChart.setData(FXCollections.observableArrayList(
-                new PieChart.Data("Occupied", occupiedRooms),
-                new PieChart.Data("Available", availableRooms)
-        ));
-
-        double occupancyPercent = Math.min(100.0, Math.max(0.0, (occupiedRooms * 100.0) / totalRooms));
-        occupancySummaryLabel.setText(String.format(
-                Locale.US,
-                "Occupied %d of %d rooms (%.1f%%).",
-                occupiedRooms,
-                totalRooms,
-                occupancyPercent
-        ));
-
-        installPieChartTooltips();
-    }
-
-    private void installPieChartTooltips() {
-        Platform.runLater(() -> occupancyRatePieChart.getData().forEach(data -> {
-            if (data.getNode() == null) {
-                return;
-            }
-            String valueLabel = Math.round(data.getPieValue()) + " rooms";
-            Tooltip.install(data.getNode(), new Tooltip(data.getName() + ": " + valueLabel));
-        }));
-    }
-
-    private String formatCurrency(BigDecimal amount) {
-        BigDecimal normalized = amount == null ? BigDecimal.ZERO : amount;
-        return CURRENCY_FORMAT.format(normalized);
-    }
-
     private void startAutoRefresh() {
         if (autoRefreshTimeline != null) {
             autoRefreshTimeline.stop();
@@ -904,10 +764,34 @@ public class HotelManagerDashboardController {
         autoRefreshTimeline.play();
     }
 
-    private void redirectToRoleSelection() {
-        if (rootPane != null && rootPane.getScene() != null && rootPane.getScene().getWindow() != null) {
-            rootPane.getScene().getWindow().hide();
+    private void navigateTo(String fxmlPath, String title) {
+        if (rootPane == null || rootPane.getScene() == null) {
+            return;
         }
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
+            Stage stage = (Stage) rootPane.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle(title);
+            stage.show();
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR, "Unable to open requested view.");
+        }
+    }
+
+    private void redirectToRoleSelection() {
+        if (rootPane == null) {
+            return;
+        }
+        if (rootPane.getScene() == null) {
+            rootPane.sceneProperty().addListener((obs, oldScene, newScene) -> {
+                if (newScene != null) {
+                    redirectToRoleSelection();
+                }
+            });
+            return;
+        }
+        navigateTo("/RoleSelection.fxml", "FurHope - Access Portal");
     }
 
     private void handleModifyReservation(ManagerReservationTicketModel ticket) {
@@ -958,7 +842,6 @@ public class HotelManagerDashboardController {
 
         refreshReservations();
         refreshHotels();
-        refreshAnalytics();
     }
 
     private void handleCancelReservation(ManagerReservationTicketModel ticket) {
@@ -974,7 +857,6 @@ public class HotelManagerDashboardController {
 
         refreshReservations();
         refreshHotels();
-        refreshAnalytics();
     }
 
     private void handleApproveReservation(ManagerReservationTicketModel ticket) {
@@ -990,7 +872,6 @@ public class HotelManagerDashboardController {
 
         refreshReservations();
         refreshHotels();
-        refreshAnalytics();
     }
 
     private void handleDeclineReservation(ManagerReservationTicketModel ticket) {
@@ -1006,7 +887,6 @@ public class HotelManagerDashboardController {
 
         refreshReservations();
         refreshHotels();
-        refreshAnalytics();
     }
 
     private String reservationActionMessage(UserReservationActionCode code) {

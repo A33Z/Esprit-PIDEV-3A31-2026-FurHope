@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane fx:id="rootPane"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.AnalyticsController"
+            styleClass="manager-page"
+            stylesheets="@AppTheme.css"
+            prefHeight="860.0" prefWidth="1380.0">
+
+    <children>
+        <VBox styleClass="page-content" spacing="14.0"
+              AnchorPane.topAnchor="0.0"
+              AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0"
+              AnchorPane.rightAnchor="0.0">
+
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                <children>
+                    <VBox spacing="2.0">
+                        <children>
+                            <Label text="Analytics Overview" styleClass="header-title" />
+                            <Label text="Revenue, reservations, and occupancy insights" styleClass="header-subtitle" />
+                        </children>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Label fx:id="sessionLabel" styleClass="session-chip manager-chip" />
+                    <Button text="Dashboard" styleClass="button secondary-button" onAction="#handleBackToDashboard" />
+                    <Button text="Refresh" styleClass="button secondary-button" onAction="#handleRefreshAnalytics" />
+                    <Button text="Logout" styleClass="button ghost-button" onAction="#handleLogout" />
+                </children>
+            </HBox>
+
+            <ScrollPane fitToWidth="true"
+                        fitToHeight="true"
+                        styleClass="hotel-scroll-pane"
+                        VBox.vgrow="ALWAYS">
+                <content>
+                    <VBox spacing="14.0" styleClass="manager-analytics-page-content">
+                        <children>
+                            <VBox styleClass="card manager-grid-panel manager-analytics-panel" spacing="12.0">
+                                <children>
+                                    <FlowPane fx:id="metricsFlowPane" hgap="10.0" vgap="10.0" prefWrapLength="1100.0">
+                                        <children>
+                                            <VBox styleClass="analytics-metric-card" spacing="4.0" prefWidth="245.0">
+                                                <children>
+                                                    <Label text="Total Revenue" styleClass="analytics-metric-label" />
+                                                    <Label fx:id="totalRevenueValueLabel" text="0.00 USD" styleClass="analytics-metric-value" />
+                                                </children>
+                                            </VBox>
+                                            <VBox styleClass="analytics-metric-card" spacing="4.0" prefWidth="245.0">
+                                                <children>
+                                                    <Label text="Total Reservations" styleClass="analytics-metric-label" />
+                                                    <Label fx:id="totalReservationsValueLabel" text="0" styleClass="analytics-metric-value" />
+                                                </children>
+                                            </VBox>
+                                            <VBox styleClass="analytics-metric-card" spacing="4.0" prefWidth="245.0">
+                                                <children>
+                                                    <Label text="Most Booked Hotel" styleClass="analytics-metric-label" />
+                                                    <Label fx:id="mostBookedHotelValueLabel" text="N/A" styleClass="analytics-metric-value" wrapText="true" />
+                                                </children>
+                                            </VBox>
+                                            <VBox styleClass="analytics-metric-card" spacing="4.0" prefWidth="245.0">
+                                                <children>
+                                                    <Label text="Average Occupancy" styleClass="analytics-metric-label" />
+                                                    <Label fx:id="averageOccupancyValueLabel" text="0.0%" styleClass="analytics-metric-value" />
+                                                </children>
+                                            </VBox>
+                                        </children>
+                                    </FlowPane>
+
+                                    <LineChart fx:id="monthlyReservationTrendChart"
+                                               title="Reservations Over Time"
+                                               legendVisible="false"
+                                               minHeight="260.0"
+                                               styleClass="analytics-line-chart"
+                                               VBox.vgrow="ALWAYS">
+                                        <xAxis>
+                                            <CategoryAxis label="Month" />
+                                        </xAxis>
+                                        <yAxis>
+                                            <NumberAxis label="Reservations" />
+                                        </yAxis>
+                                    </LineChart>
+                                </children>
+                            </VBox>
+
+                            <FlowPane fx:id="chartsFlowPane" hgap="14.0" vgap="14.0" prefWrapLength="1100.0">
+                                <children>
+                                    <VBox styleClass="card manager-grid-panel" spacing="8.0" minWidth="680.0" prefWidth="860.0">
+                                        <children>
+                                            <BarChart fx:id="monthlyRevenueTrendChart"
+                                                      title="Revenue Trend"
+                                                      legendVisible="false"
+                                                      minHeight="280.0"
+                                                      prefHeight="320.0"
+                                                      styleClass="analytics-bar-chart"
+                                                      VBox.vgrow="ALWAYS">
+                                                <xAxis>
+                                                    <CategoryAxis label="Month" />
+                                                </xAxis>
+                                                <yAxis>
+                                                    <NumberAxis label="Revenue" />
+                                                </yAxis>
+                                            </BarChart>
+                                        </children>
+                                    </VBox>
+
+                                    <VBox styleClass="card manager-grid-panel analytics-occupancy-panel" spacing="6.0" minWidth="320.0" prefWidth="360.0">
+                                        <children>
+                                            <Label text="Occupancy Rate" styleClass="analytics-metric-label" />
+                                            <PieChart fx:id="occupancyRatePieChart" minHeight="250.0" VBox.vgrow="ALWAYS" />
+                                            <Label fx:id="occupancySummaryLabel" styleClass="header-subtitle" />
+                                        </children>
+                                    </VBox>
+                                </children>
+                            </FlowPane>
+                        </children>
+                    </VBox>
+                </content>
+            </ScrollPane>
+        </VBox>
+    </children>
+</AnchorPane>

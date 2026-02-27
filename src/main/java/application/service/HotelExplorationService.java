@@ -2,12 +2,14 @@ package application.service;
 
 import application.model.HotelCardModel;
 import application.model.HotelDetailsModel;
+import application.model.HotelMapDatasetModel;
 import application.model.HotelMapMarkerModel;
 import config.AppConfig;
 import entities.Hotel;
 import integrations.content.RealHotelImageCatalog;
 import integrations.content.WikiContent;
 import integrations.content.WikipediaContentClient;
+import integrations.geo.NominatimGeocodingClient;
 import integrations.http.ExternalApiException;
 import integrations.travel.ExternalHotelCandidate;
 import integrations.travel.OverpassHotelClient;
@@ -19,6 +21,7 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -31,8 +34,10 @@ public class HotelExplorationService {
     private final OverpassHotelClient overpassHotelClient;
     private final WikipediaContentClient wikipediaContentClient;
     private final OpenMeteoWeatherClient openMeteoWeatherClient;
+    private final NominatimGeocodingClient nominatimGeocodingClient;
 
     private final Map<Integer, HotelDetailsModel> detailsCache = new ConcurrentHashMap<>();
+    private final Map<String, Optional<NominatimGeocodingClient.GeoPoint>> geocodeCache = new ConcurrentHashMap<>();
 
     public HotelExplorationService(
             HotelService hotelService,
@@ -40,10 +45,29 @@ public class HotelExplorationService {
             WikipediaContentClient wikipediaContentClient,
             OpenMeteoWeatherClient openMeteoWeatherClient
     ) {
+        this(
+                hotelService,
+                overpassHotelClient,
+                wikipediaContentClient,
+                openMeteoWeatherClient,
+                new NominatimGeocodingClient()
+        );
+    }
+
+    public HotelExplorationService(
+            HotelService hotelService,
+            OverpassHotelClient overpassHotelClient,
+            WikipediaContentClient wikipediaContentClient,
+            OpenMeteoWeatherClient openMeteoWeatherClient,
+            NominatimGeocodingClient nominatimGeocodingClient
+    ) {
         this.hotelService = hotelService;
         this.overpassHotelClient = overpassHotelClient;
         this.wikipediaContentClient = wikipediaContentClient;
         this.openMeteoWeatherClient = openMeteoWeatherClient;
+        this.nominatimGeocodingClient = nominatimGeocodingClient == null
+                ? new NominatimGeocodingClient()
+                : nominatimGeocodingClient;
     }
 
     public List<HotelCardModel> discoverHotels(String rawCity) {
@@ -113,13 +137,78 @@ public class HotelExplorationService {
                 .filter(card -> !Double.isNaN(card.latitude()) && !Double.isNaN(card.longitude()))
                 .map(card -> new HotelMapMarkerModel(
                         card.hotelId(),
-                        card.name(),
-                        card.rating(),
-                        card.priceLabel(),
+                        sanitizeMapText(card.name(), "Hotel", 120),
+                        sanitizeMapText(card.location(), AppConfig.defaultCity(), 220),
+                        0,
+                        sanitizeMapText(card.shortDescription(), "", 220),
                         card.latitude(),
                         card.longitude()
                 ))
                 .collect(Collectors.toList());
+    }
+
+    public HotelMapDatasetModel loadDatabaseMapDataset(String rawCity) {
+        String city = normalizeCity(rawCity);
+        List<Hotel> hotels = hotelService.getAllHotels();
+        Map<Integer, HotelService.HotelGeoPoint> storedCoordinates = hotelService.getHotelCoordinatesIfAvailable();
+        Optional<NominatimGeocodingClient.GeoPoint> cityCenter = resolveCityCenter(city);
+
+        if (hotels == null || hotels.isEmpty()) {
+            return new HotelMapDatasetModel(
+                    city,
+                    resolveDefaultLatitude(cityCenter, null),
+                    resolveDefaultLongitude(cityCenter, null),
+                    0,
+                    List.of()
+            );
+        }
+
+        List<HotelMapMarkerModel> markers = new ArrayList<>();
+        for (Hotel hotel : hotels) {
+            if (hotel == null || hotel.getId() <= 0) {
+                continue;
+            }
+
+            Optional<NominatimGeocodingClient.GeoPoint> point = resolveHotelCoordinates(hotel, storedCoordinates, city);
+            if (point.isEmpty()) {
+                continue;
+            }
+
+            String hotelName = sanitizeMapText(hotel.getName(), "Hotel", 120);
+            String address = sanitizeMapText(normalizeAddress(hotel.getAddress(), city), city, 220);
+            int capacity = Math.max(0, hotel.getCapacity());
+            String description = capacity > 0
+                    ? "Capacity: " + capacity + " guests"
+                    : "";
+
+            markers.add(new HotelMapMarkerModel(
+                    hotel.getId(),
+                    hotelName,
+                    address,
+                    capacity,
+                    description,
+                    point.get().latitude(),
+                    point.get().longitude()
+            ));
+        }
+
+        markers.sort(Comparator.comparing(HotelMapMarkerModel::name, String.CASE_INSENSITIVE_ORDER));
+
+        NominatimGeocodingClient.GeoPoint firstMarkerPoint = markers.isEmpty()
+                ? null
+                : new NominatimGeocodingClient.GeoPoint(
+                markers.get(0).latitude(),
+                markers.get(0).longitude(),
+                city
+        );
+
+        return new HotelMapDatasetModel(
+                city,
+                resolveDefaultLatitude(cityCenter, firstMarkerPoint),
+                resolveDefaultLongitude(cityCenter, firstMarkerPoint),
+                hotels.size(),
+                markers
+        );
     }
 
     public String resolveHotelName(int hotelId) {
@@ -369,6 +458,109 @@ public class HotelExplorationService {
             return city;
         }
         return rawAddress.trim();
+    }
+
+    private Optional<NominatimGeocodingClient.GeoPoint> resolveCityCenter(String city) {
+        String normalizedCity = normalizeCity(city);
+        return geocodeWithCache(normalizedCity);
+    }
+
+    private Optional<NominatimGeocodingClient.GeoPoint> resolveHotelCoordinates(
+            Hotel hotel,
+            Map<Integer, HotelService.HotelGeoPoint> storedCoordinates,
+            String city
+    ) {
+        if (hotel == null) {
+            return Optional.empty();
+        }
+
+        HotelService.HotelGeoPoint stored = storedCoordinates == null ? null : storedCoordinates.get(hotel.getId());
+        if (stored != null && isValidCoordinate(stored.latitude(), stored.longitude())) {
+            return Optional.of(new NominatimGeocodingClient.GeoPoint(stored.latitude(), stored.longitude(), ""));
+        }
+
+        String primaryQuery = normalizeAddress(hotel.getAddress(), city);
+        Optional<NominatimGeocodingClient.GeoPoint> byAddress = geocodeWithCache(primaryQuery);
+        if (byAddress.isPresent()) {
+            return byAddress;
+        }
+
+        String scopedQuery = primaryQuery.toLowerCase().contains(city.toLowerCase())
+                ? primaryQuery
+                : primaryQuery + ", " + city;
+        Optional<NominatimGeocodingClient.GeoPoint> byScopedAddress = geocodeWithCache(scopedQuery);
+        if (byScopedAddress.isPresent()) {
+            return byScopedAddress;
+        }
+
+        String byName = sanitizeMapText(hotel.getName(), "Hotel", 120) + ", " + city;
+        return geocodeWithCache(byName);
+    }
+
+    private Optional<NominatimGeocodingClient.GeoPoint> geocodeWithCache(String query) {
+        String normalizedQuery = compactText(query);
+        if (normalizedQuery.isBlank()) {
+            return Optional.empty();
+        }
+        return geocodeCache.computeIfAbsent(
+                normalizedQuery.toLowerCase(),
+                key -> nominatimGeocodingClient.geocode(normalizedQuery)
+        );
+    }
+
+    private String sanitizeMapText(String value, String fallback, int maxLength) {
+        String normalized = compactText(value);
+        if (normalized.isBlank()) {
+            return fallback;
+        }
+        if (normalized.length() <= maxLength) {
+            return normalized;
+        }
+        return normalized.substring(0, maxLength);
+    }
+
+    private String compactText(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value
+                .replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", " ")
+                .replaceAll("\\s+", " ")
+                .trim();
+    }
+
+    private boolean isValidCoordinate(double latitude, double longitude) {
+        if (!Double.isFinite(latitude) || !Double.isFinite(longitude)) {
+            return false;
+        }
+        return latitude >= -90.0 && latitude <= 90.0
+                && longitude >= -180.0 && longitude <= 180.0;
+    }
+
+    private double resolveDefaultLatitude(
+            Optional<NominatimGeocodingClient.GeoPoint> cityCenter,
+            NominatimGeocodingClient.GeoPoint firstMarkerPoint
+    ) {
+        if (cityCenter != null && cityCenter.isPresent()) {
+            return cityCenter.get().latitude();
+        }
+        if (firstMarkerPoint != null && isValidCoordinate(firstMarkerPoint.latitude(), firstMarkerPoint.longitude())) {
+            return firstMarkerPoint.latitude();
+        }
+        return 40.7128;
+    }
+
+    private double resolveDefaultLongitude(
+            Optional<NominatimGeocodingClient.GeoPoint> cityCenter,
+            NominatimGeocodingClient.GeoPoint firstMarkerPoint
+    ) {
+        if (cityCenter != null && cityCenter.isPresent()) {
+            return cityCenter.get().longitude();
+        }
+        if (firstMarkerPoint != null && isValidCoordinate(firstMarkerPoint.latitude(), firstMarkerPoint.longitude())) {
+            return firstMarkerPoint.longitude();
+        }
+        return -74.0060;
     }
 
     private String fallbackImage(int hotelId) {

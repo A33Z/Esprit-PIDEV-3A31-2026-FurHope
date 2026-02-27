@@ -2,6 +2,7 @@ package controllers;
 
 import application.AppContext;
 import application.model.HotelCardModel;
+import application.model.HotelMapDatasetModel;
 import application.model.UserReservationActionModel;
 import application.model.UserReservationTicketModel;
 import application.service.HotelExplorationService;
@@ -127,29 +128,26 @@ public class UserDashboardController {
 
     @FXML
     private void handleOpenMapView() {
-        if (loadedHotels.isEmpty()) {
-            showMessage("Load hotels before opening the map.", true);
+        if (hotelExplorationService == null) {
+            showMessage("Hotel service unavailable.", true);
             return;
         }
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/HotelMapView.fxml"));
-            Parent root = loader.load();
+        String city = currentCity();
+        showMessage("Loading hotels from database for map view...", false);
 
-            HotelMapController controller = loader.getController();
-            controller.initializeMap(
-                    currentCity(),
-                    hotelExplorationService.toMapMarkers(loadedHotels)
-            );
-
-            Stage stage = new Stage();
-            stage.setTitle("FurHope - Hotel Map");
-            stage.setScene(new Scene(root));
-            stage.setMinWidth(980);
-            stage.setMinHeight(700);
-            stage.show();
-        } catch (IOException e) {
-            showMessage("Unable to open map view.", true);
-        }
+        Task<HotelMapDatasetModel> task = new Task<>() {
+            @Override
+            protected HotelMapDatasetModel call() {
+                try {
+                    return hotelExplorationService.loadDatabaseMapDataset(city);
+                } catch (RuntimeException e) {
+                    return new HotelMapDatasetModel(city, Double.NaN, Double.NaN, 0, List.of());
+                }
+            }
+        };
+        task.setOnSucceeded(event -> openMapStage(task.getValue()));
+        task.setOnFailed(event -> showMessage("Unable to load hotels for map view.", true));
+        runTask(task, "hotel-map-load-thread");
     }
 
     @FXML
@@ -604,6 +602,28 @@ public class UserDashboardController {
         Thread thread = new Thread(task, name);
         thread.setDaemon(true);
         thread.start();
+    }
+
+    private void openMapStage(HotelMapDatasetModel dataset) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/HotelMapView.fxml"));
+            Parent root = loader.load();
+
+            HotelMapController controller = loader.getController();
+            controller.initializeMap(dataset);
+
+            Stage stage = new Stage();
+            stage.setTitle("FurHope - Hotel Map");
+            stage.setScene(new Scene(root));
+            stage.setMinWidth(980);
+            stage.setMinHeight(700);
+            stage.show();
+
+            int markerCount = dataset == null || dataset.markers() == null ? 0 : dataset.markers().size();
+            showMessage("Map ready: " + markerCount + " hotel pin" + (markerCount == 1 ? "" : "s") + " loaded.", false);
+        } catch (IOException e) {
+            showMessage("Unable to open map view.", true);
+        }
     }
 
     private String currentCity() {

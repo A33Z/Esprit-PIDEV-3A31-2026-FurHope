@@ -1,5 +1,6 @@
 package controllers;
 
+import application.model.HotelMapDatasetModel;
 import application.model.HotelMapMarkerModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,10 +16,11 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import netscape.javascript.JSObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class HotelMapController {
@@ -34,15 +36,24 @@ public class HotelMapController {
     private final MapBridge mapBridge = new MapBridge();
     private final Map<String, Integer> markerTokenToHotelId = new HashMap<>();
 
-    public void initializeMap(String city, List<HotelMapMarkerModel> markers) {
+    public void initializeMap(HotelMapDatasetModel dataset) {
+        String city = dataset == null ? "Hotels" : safeDisplay(dataset.city(), "Hotels");
+        double defaultLatitude = dataset == null ? 40.7128 : sanitizeLatitude(dataset.defaultLatitude());
+        double defaultLongitude = dataset == null ? -74.0060 : sanitizeLongitude(dataset.defaultLongitude());
+        int totalHotels = dataset == null ? 0 : Math.max(0, dataset.totalHotels());
+        List<HotelMapMarkerModel> markers = dataset == null ? List.of() : dataset.markers();
+
         mapTitleLabel.setText("Map - " + city);
-        if (markers == null || markers.isEmpty()) {
-            mapMessageLabel.setText("No map-ready coordinates available for this search.");
+        if (totalHotels <= 0) {
+            mapMessageLabel.setText("No hotels available in database.");
+        } else if (markers == null || markers.isEmpty()) {
+            mapMessageLabel.setText("Hotels found, but no valid coordinates are available for map rendering.");
         } else {
-            mapMessageLabel.setText("Select radius and center mode to filter nearby hotels.");
+            mapMessageLabel.setText("Showing " + markers.size() + " hotel pin" + (markers.size() == 1 ? "" : "s") + ".");
         }
 
         List<PublicMapMarker> publicMarkers = toPublicMarkers(markers);
+
         WebEngine engine = mapWebView.getEngine();
         engine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
             if (newState != Worker.State.SUCCEEDED) {
@@ -53,7 +64,7 @@ public class HotelMapController {
             injectMarkers(engine, publicMarkers);
         });
 
-        engine.loadContent(buildHtml(city));
+        engine.loadContent(buildHtml(city, defaultLatitude, defaultLongitude));
     }
 
     @FXML
@@ -73,28 +84,26 @@ public class HotelMapController {
         List<PublicMapMarker> safeMarkers = new ArrayList<>();
         int markerIndex = 1;
         for (HotelMapMarkerModel marker : markers) {
-            if (marker == null) {
+            if (marker == null || marker.hotelId() <= 0) {
                 continue;
             }
+            if (!isValidCoordinate(marker.latitude(), marker.longitude())) {
+                continue;
+            }
+
             String token = "m" + markerIndex++;
             markerTokenToHotelId.put(token, marker.hotelId());
             safeMarkers.add(new PublicMapMarker(
                     token,
-                    marker.name(),
-                    marker.rating(),
-                    normalizePrice(marker.pricePerNight()),
+                    sanitizeText(marker.name(), "Hotel", 120),
+                    sanitizeText(marker.address(), "Address unavailable", 220),
+                    Math.max(0, marker.capacity()),
+                    sanitizeText(marker.shortDescription(), "", 220),
                     marker.latitude(),
                     marker.longitude()
             ));
         }
         return safeMarkers;
-    }
-
-    private String normalizePrice(String value) {
-        if (value == null || value.isBlank()) {
-            return "$85.00 / night";
-        }
-        return value.trim();
     }
 
     private void injectMarkers(WebEngine engine, List<PublicMapMarker> markers) {
@@ -106,110 +115,62 @@ public class HotelMapController {
         }
     }
 
-    private String buildHtml(String city) {
+    private String buildHtml(String city, double defaultLatitude, double defaultLongitude) {
         String safeCity = escapeForJavaScriptLiteral(city == null ? "Hotels" : city);
+        String safeDefaultLatitude = String.format(Locale.US, "%.6f", defaultLatitude);
+        String safeDefaultLongitude = String.format(Locale.US, "%.6f", defaultLongitude);
+
         return """
                 <!DOCTYPE html>
                 <html>
                 <head>
-                    <meta charset="utf-8"/>
-                    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+                    <meta charset=\"utf-8\"/>
+                    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"/>
+                    <link rel=\"stylesheet\" href=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.css\"/>
+                    <link rel=\"stylesheet\" href=\"https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css\"/>
+                    <link rel=\"stylesheet\" href=\"https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css\"/>
                     <style>
                         html, body { height: 100%%; margin: 0; padding: 0; overflow: hidden; }
-                        body { font-family: "Segoe UI", sans-serif; background: #fffafc; }
+                        body { font-family: \"Segoe UI\", sans-serif; background: #f8faf9; }
                         #map { height: 100%%; width: 100%%; }
-                        .map-toolbar {
+
+                        .map-chip {
                             position: absolute;
                             top: 12px;
-                            left: 12px;
+                            right: 12px;
                             z-index: 1000;
                             background: rgba(255, 255, 255, 0.95);
-                            border: 1px solid rgba(227, 96, 154, 0.22);
-                            border-radius: 14px;
-                            box-shadow: 0 8px 26px rgba(104, 16, 58, 0.14);
-                            padding: 10px 12px;
-                            display: flex;
-                            flex-direction: column;
-                            gap: 8px;
-                            min-width: 230px;
-                        }
-                        .toolbar-title {
-                            font-size: 13px;
-                            font-weight: 800;
-                            color: #8b1f58;
-                        }
-                        .toolbar-row {
-                            display: flex;
-                            align-items: center;
-                            gap: 8px;
-                            font-size: 12px;
-                            color: #5f3247;
-                        }
-                        .toolbar-row label {
-                            font-weight: 600;
-                        }
-                        .toolbar-select {
-                            border: 1px solid rgba(139, 31, 88, 0.18);
-                            border-radius: 8px;
-                            padding: 4px 7px;
-                            background: #fff;
-                            color: #4d2437;
-                        }
-                        .toolbar-btn {
-                            border: none;
+                            border: 1px solid rgba(22, 52, 44, 0.18);
                             border-radius: 999px;
-                            background: linear-gradient(135deg, #ff5da9, #ff7dbf);
-                            color: #fff;
-                            padding: 6px 11px;
+                            padding: 7px 12px;
                             font-size: 12px;
                             font-weight: 700;
-                            cursor: pointer;
+                            color: #1b4b3d;
+                            box-shadow: 0 8px 24px rgba(19, 45, 38, 0.15);
                         }
-                        .toolbar-note {
-                            font-size: 11px;
-                            color: rgba(95, 50, 71, 0.84);
-                        }
-                        .pink-marker span {
-                            display: block;
-                            width: 20px;
-                            height: 20px;
-                            border-radius: 50%%;
-                            background: linear-gradient(145deg, #ff4ea5, #ff80c2);
-                            border: 2px solid #ffffff;
-                            box-shadow: 0 6px 14px rgba(109, 16, 64, 0.34);
-                        }
-                        .pink-marker.selected span {
-                            animation: markerPulse 0.7s ease-out 1;
-                        }
-                        @keyframes markerPulse {
-                            0%% { transform: scale(1); box-shadow: 0 0 0 rgba(255, 78, 165, 0.5); }
-                            40%% { transform: scale(1.28); box-shadow: 0 0 14px rgba(255, 78, 165, 0.58); }
-                            100%% { transform: scale(1); box-shadow: 0 0 0 rgba(255, 78, 165, 0.10); }
-                        }
-                        .popup-shell {
-                            min-width: 180px;
-                            max-width: 220px;
-                        }
+
+                        .popup-shell { min-width: 220px; max-width: 260px; }
                         .popup-title {
                             font-size: 14px;
                             font-weight: 800;
-                            color: #7b2050;
+                            color: #17362d;
+                            margin-bottom: 6px;
+                        }
+                        .popup-line {
+                            font-size: 12px;
+                            color: rgba(23, 54, 45, 0.9);
                             margin-bottom: 4px;
+                            line-height: 1.35;
                         }
-                        .popup-price {
+                        .popup-desc {
                             font-size: 12px;
-                            color: #6a2d48;
-                            margin-bottom: 3px;
-                        }
-                        .popup-rating {
-                            font-size: 12px;
-                            color: #8f3760;
-                            margin-bottom: 8px;
+                            color: rgba(23, 54, 45, 0.75);
+                            margin: 2px 0 10px 0;
+                            line-height: 1.35;
                         }
                         .popup-button {
                             width: 100%%;
-                            background: linear-gradient(135deg, #ff5aa7, #ff7ac0);
+                            background: linear-gradient(135deg, #ef5959, #d84545);
                             color: #fff;
                             border: none;
                             border-radius: 9px;
@@ -218,69 +179,63 @@ public class HotelMapController {
                             font-weight: 700;
                             font-size: 12px;
                         }
+
+                        .leaflet-marker-icon.marker-drop {
+                            animation: markerDrop 0.35s ease-out;
+                        }
+                        @keyframes markerDrop {
+                            0%% { transform: translateY(-24px); opacity: 0; }
+                            100%% { transform: translateY(0); opacity: 1; }
+                        }
+
+                        .marker-cluster-small,
+                        .marker-cluster-medium,
+                        .marker-cluster-large {
+                            background: rgba(223, 64, 64, 0.22);
+                            border: 1px solid rgba(172, 34, 34, 0.28);
+                        }
+                        .marker-cluster-small div,
+                        .marker-cluster-medium div,
+                        .marker-cluster-large div {
+                            background: rgba(221, 59, 59, 0.92);
+                            color: #fff;
+                            font-weight: 800;
+                        }
                     </style>
                 </head>
                 <body>
-                    <div class="map-toolbar">
-                        <div class="toolbar-title">Radius Filter</div>
-                        <div class="toolbar-row">
-                            <label for="radiusSelect">Radius</label>
-                            <select id="radiusSelect" class="toolbar-select">
-                                <option value="1">1 km</option>
-                                <option value="5" selected>5 km</option>
-                                <option value="10">10 km</option>
-                                <option value="20">20 km</option>
-                            </select>
-                        </div>
-                        <div class="toolbar-row">
-                            <label><input type="radio" name="centerMode" value="point" checked /> Map point</label>
-                            <label><input type="radio" name="centerMode" value="current" /> Current</label>
-                        </div>
-                        <div class="toolbar-row">
-                            <button class="toolbar-btn" id="locateMeBtn">Use Current Location</button>
-                        </div>
-                        <div class="toolbar-note">Tip: click anywhere on the map to set the point center.</div>
-                    </div>
-                    <div id="map"></div>
-                    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+                    <div class=\"map-chip\">%s</div>
+                    <div id=\"map\"></div>
+
+                    <script src=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.js\"></script>
+                    <script src=\"https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js\"></script>
                     <script>
-                        const map = L.map('map', { zoomControl: true }).setView([40.7128, -74.0060], 11);
+                        const defaultCenter = [Number(%s), Number(%s)];
+                        const map = L.map('map', { zoomControl: true }).setView(defaultCenter, 12);
+
                         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                             maxZoom: 19,
                             attribution: '&copy; OpenStreetMap contributors'
                         }).addTo(map);
 
-                        const titleControl = L.control({ position: 'topright' });
-                        titleControl.onAdd = function () {
-                            const div = L.DomUtil.create('div');
-                            div.style.background = 'rgba(255,255,255,0.9)';
-                            div.style.padding = '6px 10px';
-                            div.style.borderRadius = '10px';
-                            div.style.fontWeight = '700';
-                            div.style.color = '#7b2050';
-                            div.innerText = '%s';
-                            return div;
-                        };
-                        titleControl.addTo(map);
-
-                        const markerLayer = L.layerGroup().addTo(map);
-                        const radiusSelect = document.getElementById('radiusSelect');
-                        const locateMeBtn = document.getElementById('locateMeBtn');
-                        const centerModeRadios = document.querySelectorAll('input[name="centerMode"]');
-                        const pinkIcon = L.divIcon({
-                            className: 'pink-marker',
-                            html: '<span></span>',
-                            iconSize: [20, 20],
-                            iconAnchor: [10, 10],
-                            popupAnchor: [0, -14]
+                        const redPinIcon = L.icon({
+                            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+                            shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+                            iconSize: [25, 41],
+                            iconAnchor: [12, 41],
+                            popupAnchor: [1, -34],
+                            shadowSize: [41, 41]
                         });
 
-                        let allMarkers = [];
-                        let selectedPointCenter = map.getCenter();
-                        let currentLocationCenter = null;
-                        let centerPin = null;
-                        let radiusCircle = null;
-                        let initialBoundsApplied = false;
+                        const markerCluster = L.markerClusterGroup({
+                            showCoverageOnHover: false,
+                            maxClusterRadius: 52,
+                            spiderfyOnMaxZoom: true
+                        });
+                        map.addLayer(markerCluster);
+
+                        let userCenter = null;
+                        let boundsApplied = false;
 
                         function escapeHtml(text) {
                             return String(text || '')
@@ -296,201 +251,161 @@ public class HotelMapController {
                             }
                         }
 
-                        function getCenterMode() {
-                            const selected = document.querySelector('input[name="centerMode"]:checked');
-                            return selected ? selected.value : 'point';
-                        }
-
-                        function activeCenter() {
-                            if (getCenterMode() === 'current') {
-                                return currentLocationCenter;
-                            }
-                            return selectedPointCenter;
-                        }
-
                         function buildPopup(marker) {
-                            const ratingRaw = Number(marker.rating);
-                            const ratingLabel = Number.isFinite(ratingRaw) ? ratingRaw.toFixed(1) : 'N/A';
+                            const safeCapacity = Number.isFinite(Number(marker.capacity)) && Number(marker.capacity) > 0
+                                ? Math.floor(Number(marker.capacity)).toString()
+                                : 'N/A';
+                            const description = String(marker.shortDescription || '').trim();
                             return `
-                                <div class="popup-shell">
-                                    <div class="popup-title">${escapeHtml(marker.name)}</div>
-                                    <div class="popup-price">Price: ${escapeHtml(marker.pricePerNight || '$85.00 / night')}</div>
-                                    <div class="popup-rating">Rating: ${ratingLabel} / 5.0</div>
-                                    <button class="popup-button" onclick="openQuickReservation('${escapeHtml(marker.markerToken)}')">Quick Reservation</button>
+                                <div class=\"popup-shell\">
+                                    <div class=\"popup-title\">${escapeHtml(marker.name)}</div>
+                                    <div class=\"popup-line\"><strong>Address:</strong> ${escapeHtml(marker.address || 'Address unavailable')}</div>
+                                    <div class=\"popup-line\"><strong>Capacity:</strong> ${escapeHtml(safeCapacity)}</div>
+                                    ${description ? `<div class=\"popup-desc\">${escapeHtml(description)}</div>` : ''}
+                                    <button class=\"popup-button\" onclick=\"openHotelDetails('${escapeHtml(marker.markerToken)}')\">View Details</button>
                                 </div>
                             `;
                         }
 
-                        function openQuickReservation(markerToken) {
-                            if (window.javaBridge && window.javaBridge.openQuickReservation) {
-                                window.javaBridge.openQuickReservation(markerToken);
+                        function openHotelDetails(markerToken) {
+                            if (window.javaBridge && window.javaBridge.openHotelDetails) {
+                                window.javaBridge.openHotelDetails(markerToken);
                             }
                         }
 
-                        function haversineKm(lat1, lon1, lat2, lon2) {
-                            const toRad = (deg) => (deg * Math.PI) / 180;
-                            const earthRadiusKm = 6371;
-                            const deltaLat = toRad(lat2 - lat1);
-                            const deltaLon = toRad(lon2 - lon1);
-                            const a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2)
-                                + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2))
-                                * Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
-                            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                            return earthRadiusKm * c;
-                        }
-
-                        function animateSelection(marker) {
-                            const iconNode = marker.getElement();
-                            if (!iconNode) {
-                                return;
-                            }
-                            iconNode.classList.remove('selected');
-                            void iconNode.offsetWidth;
-                            iconNode.classList.add('selected');
-                        }
-
-                        function updateCenterVisuals(center, radiusKm) {
-                            if (!center) {
-                                if (centerPin) {
-                                    map.removeLayer(centerPin);
-                                    centerPin = null;
-                                }
-                                if (radiusCircle) {
-                                    map.removeLayer(radiusCircle);
-                                    radiusCircle = null;
-                                }
-                                return;
-                            }
-                            if (centerPin) {
-                                centerPin.setLatLng(center);
-                            } else {
-                                centerPin = L.circleMarker(center, {
-                                    radius: 5,
-                                    color: '#7e2e53',
-                                    fillColor: '#ff6db4',
-                                    fillOpacity: 0.95,
-                                    weight: 2
-                                }).addTo(map);
-                            }
-                            if (radiusCircle) {
-                                radiusCircle.setLatLng(center);
-                                radiusCircle.setRadius(radiusKm * 1000);
-                            } else {
-                                radiusCircle = L.circle(center, {
-                                    radius: radiusKm * 1000,
-                                    color: '#ff6db4',
-                                    weight: 2,
-                                    fillColor: '#ff96cb',
-                                    fillOpacity: 0.12
-                                }).addTo(map);
-                            }
-                        }
-
-                        function applyRadiusFilter() {
-                            markerLayer.clearLayers();
-                            const radiusKm = Number(radiusSelect.value || '5');
-                            const center = activeCenter();
-
-                            if (!center) {
-                                updateCenterVisuals(null, radiusKm);
-                                syncStatus('Current location unavailable. Click on map or switch to map point mode.');
-                                return;
-                            }
-
-                            updateCenterVisuals(center, radiusKm);
-                            const visibleBounds = [];
-                            let visibleCount = 0;
-
-                            for (const marker of allMarkers) {
-                                if (!Number.isFinite(Number(marker.latitude)) || !Number.isFinite(Number(marker.longitude))) {
-                                    continue;
-                                }
-                                const distance = haversineKm(center.lat, center.lng, Number(marker.latitude), Number(marker.longitude));
-                                if (distance > radiusKm) {
-                                    continue;
-                                }
-
-                                const leafletMarker = L.marker([marker.latitude, marker.longitude], { icon: pinkIcon }).addTo(markerLayer);
-                                leafletMarker.bindPopup(buildPopup(marker));
-                                leafletMarker.on('click', () => {
-                                    map.flyTo([marker.latitude, marker.longitude], Math.max(13, map.getZoom()), { duration: 0.55 });
-                                    animateSelection(leafletMarker);
-                                });
-                                visibleBounds.push([marker.latitude, marker.longitude]);
-                                visibleCount++;
-                            }
-
-                            if (!initialBoundsApplied && visibleBounds.length > 0) {
-                                map.fitBounds(visibleBounds, { padding: [38, 38], maxZoom: 14 });
-                                initialBoundsApplied = true;
-                            }
-
-                            const modeLabel = getCenterMode() === 'current' ? 'current location' : 'selected point';
-                            syncStatus(`${visibleCount} hotel${visibleCount === 1 ? '' : 's'} within ${radiusKm} km from ${modeLabel}.`);
-                        }
-
-                        function requestCurrentLocation(focusMap) {
+                        function requestUserLocation() {
                             if (!navigator.geolocation) {
-                                syncStatus('Geolocation is not supported. Use map point center mode.');
                                 return;
                             }
                             navigator.geolocation.getCurrentPosition(
                                 (position) => {
-                                    currentLocationCenter = L.latLng(position.coords.latitude, position.coords.longitude);
-                                    if (getCenterMode() === 'current') {
-                                        if (focusMap) {
-                                            map.flyTo(currentLocationCenter, 13, { duration: 0.75 });
-                                        }
-                                        applyRadiusFilter();
-                                    } else if (!focusMap) {
-                                        applyRadiusFilter();
+                                    userCenter = [position.coords.latitude, position.coords.longitude];
+                                    if (!boundsApplied) {
+                                        map.setView(userCenter, 12, { animate: true });
                                     }
                                 },
                                 () => {
-                                    if (getCenterMode() === 'current') {
-                                        syncStatus('Current location unavailable. Click on map to select a center point.');
+                                    if (!boundsApplied) {
+                                        map.setView(defaultCenter, 12, { animate: false });
                                     }
                                 },
-                                { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
+                                { enableHighAccuracy: true, timeout: 8000, maximumAge: 120000 }
                             );
                         }
 
-                        function loadMarkers(markers) {
-                            if (!Array.isArray(markers) || markers.length === 0) {
-                                syncStatus('No coordinates available for this city.');
-                                return;
+                        function isValidMarker(marker) {
+                            if (!marker || typeof marker !== 'object') {
+                                return false;
                             }
-                            allMarkers = markers;
-                            const first = markers.find(item => Number.isFinite(Number(item.latitude)) && Number.isFinite(Number(item.longitude)));
-                            if (first) {
-                                selectedPointCenter = L.latLng(first.latitude, first.longitude);
-                                map.setView(selectedPointCenter, 12, { animate: false });
+                            const lat = Number(marker.latitude);
+                            const lng = Number(marker.longitude);
+                            if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+                                return false;
                             }
-                            applyRadiusFilter();
-                            requestCurrentLocation(false);
+                            if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+                                return false;
+                            }
+                            if (typeof marker.markerToken !== 'string' || marker.markerToken.trim() === '') {
+                                return false;
+                            }
+                            return true;
                         }
 
-                        map.on('click', (event) => {
-                            selectedPointCenter = event.latlng;
-                            if (getCenterMode() === 'point') {
-                                map.flyTo(selectedPointCenter, Math.max(12, map.getZoom()), { duration: 0.5 });
-                            }
-                            applyRadiusFilter();
-                        });
+                        function loadMarkers(markers) {
+                            markerCluster.clearLayers();
+                            boundsApplied = false;
 
-                        radiusSelect.addEventListener('change', applyRadiusFilter);
-                        centerModeRadios.forEach(radio => radio.addEventListener('change', () => {
-                            if (radio.value === 'current' && radio.checked) {
-                                requestCurrentLocation(true);
-                            } else {
-                                applyRadiusFilter();
+                            if (!Array.isArray(markers) || markers.length === 0) {
+                                syncStatus('No hotel coordinates available.');
+                                requestUserLocation();
+                                return;
                             }
-                        }));
-                        locateMeBtn.addEventListener('click', () => requestCurrentLocation(true));
+
+                            const bounds = [];
+                            let validCount = 0;
+
+                            for (const marker of markers) {
+                                if (!isValidMarker(marker)) {
+                                    continue;
+                                }
+
+                                const latitude = Number(marker.latitude);
+                                const longitude = Number(marker.longitude);
+                                const leafletMarker = L.marker([latitude, longitude], { icon: redPinIcon, riseOnHover: true });
+                                leafletMarker.bindPopup(buildPopup(marker));
+                                leafletMarker.on('add', () => {
+                                    const iconNode = leafletMarker.getElement();
+                                    if (!iconNode) {
+                                        return;
+                                    }
+                                    iconNode.classList.remove('marker-drop');
+                                    void iconNode.offsetWidth;
+                                    iconNode.classList.add('marker-drop');
+                                });
+                                markerCluster.addLayer(leafletMarker);
+                                bounds.push([latitude, longitude]);
+                                validCount++;
+                            }
+
+                            if (bounds.length > 0) {
+                                map.fitBounds(bounds, { padding: [42, 42], maxZoom: 15 });
+                                boundsApplied = true;
+                            } else if (userCenter) {
+                                map.setView(userCenter, 12, { animate: true });
+                            } else {
+                                map.setView(defaultCenter, 12, { animate: false });
+                            }
+
+                            syncStatus(`${validCount} hotel pin${validCount === 1 ? '' : 's'} loaded.`);
+                            requestUserLocation();
+                        }
+
+                        requestUserLocation();
                     </script>
                 </body>
                 </html>
-                """.formatted(safeCity);
+                """.formatted(safeCity, safeDefaultLatitude, safeDefaultLongitude);
+    }
+
+    private String safeDisplay(String value, String fallback) {
+        String normalized = sanitizeText(value, "", 180);
+        return normalized.isBlank() ? fallback : normalized;
+    }
+
+    private String sanitizeText(String value, String fallback, int maxLength) {
+        String normalized = value == null
+                ? ""
+                : value.replaceAll("[\\p{Cntrl}&&[^\\r\\n\\t]]", " ")
+                .replaceAll("\\s+", " ")
+                .trim();
+        if (normalized.isBlank()) {
+            return fallback;
+        }
+        if (normalized.length() <= maxLength) {
+            return normalized;
+        }
+        return normalized.substring(0, maxLength);
+    }
+
+    private double sanitizeLatitude(double latitude) {
+        if (!Double.isFinite(latitude) || latitude < -90.0 || latitude > 90.0) {
+            return 40.7128;
+        }
+        return latitude;
+    }
+
+    private double sanitizeLongitude(double longitude) {
+        if (!Double.isFinite(longitude) || longitude < -180.0 || longitude > 180.0) {
+            return -74.0060;
+        }
+        return longitude;
+    }
+
+    private boolean isValidCoordinate(double latitude, double longitude) {
+        return Double.isFinite(latitude)
+                && Double.isFinite(longitude)
+                && latitude >= -90.0 && latitude <= 90.0
+                && longitude >= -180.0 && longitude <= 180.0;
     }
 
     private String escapeForJavaScriptLiteral(String text) {
@@ -502,7 +417,7 @@ public class HotelMapController {
     }
 
     public class MapBridge {
-        public void openQuickReservation(String markerToken) {
+        public void openHotelDetails(String markerToken) {
             Integer hotelId = markerTokenToHotelId.get(markerToken);
             if (hotelId == null || hotelId <= 0) {
                 Platform.runLater(() -> mapMessageLabel.setText("Could not resolve selected hotel."));
@@ -535,8 +450,9 @@ public class HotelMapController {
     private record PublicMapMarker(
             String markerToken,
             String name,
-            double rating,
-            String pricePerNight,
+            String address,
+            int capacity,
+            String shortDescription,
             double latitude,
             double longitude
     ) {

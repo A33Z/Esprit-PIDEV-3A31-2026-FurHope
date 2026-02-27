@@ -6,7 +6,10 @@ import utils.DBConnection;
 import java.sql.*;
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class HotelService {
 
@@ -212,6 +215,39 @@ public class HotelService {
         return null;
     }
 
+    public Map<Integer, HotelGeoPoint> getHotelCoordinatesIfAvailable() {
+        String latitudeColumn = resolveCoordinateColumn("latitude", "lat", "hotel_latitude");
+        String longitudeColumn = resolveCoordinateColumn("longitude", "lng", "lon", "hotel_longitude");
+        if (latitudeColumn == null || longitudeColumn == null) {
+            return Map.of();
+        }
+
+        String sql = "SELECT id, " + latitudeColumn + ", " + longitudeColumn + " FROM hotel";
+        Map<Integer, HotelGeoPoint> points = new HashMap<>();
+
+        try (Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery(sql)) {
+            while (rs.next()) {
+                int hotelId = rs.getInt("id");
+                double latitude = rs.getDouble(latitudeColumn);
+                if (rs.wasNull()) {
+                    continue;
+                }
+                double longitude = rs.getDouble(longitudeColumn);
+                if (rs.wasNull()) {
+                    continue;
+                }
+                if (!isValidCoordinate(latitude, longitude)) {
+                    continue;
+                }
+                points.put(hotelId, new HotelGeoPoint(latitude, longitude));
+            }
+        } catch (SQLException ignored) {
+            return Map.of();
+        }
+        return points;
+    }
+
     private Integer insertHotelRecord(String name, String address, Integer managerId) {
         String sql = "INSERT INTO hotel (name, address, manager_id, capacity) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -304,6 +340,70 @@ public class HotelService {
         return trimmed.matches("[A-Za-z0-9_]+") ? trimmed : null;
     }
 
+    private String resolveCoordinateColumn(String... candidates) {
+        if (candidates == null || candidates.length == 0) {
+            return null;
+        }
+
+        Map<String, String> columnsByLower = loadHotelColumnsByLowerName();
+        if (columnsByLower.isEmpty()) {
+            return null;
+        }
+
+        for (String candidate : candidates) {
+            if (candidate == null || candidate.isBlank()) {
+                continue;
+            }
+            String actual = columnsByLower.get(candidate.toLowerCase(Locale.US));
+            if (actual != null) {
+                String safe = safeIdentifier(actual);
+                if (safe != null) {
+                    return safe;
+                }
+            }
+        }
+        return null;
+    }
+
+    private Map<String, String> loadHotelColumnsByLowerName() {
+        Map<String, String> columns = new HashMap<>();
+        try {
+            DatabaseMetaData metaData = connection.getMetaData();
+            try (ResultSet rs = metaData.getColumns(connection.getCatalog(), null, "hotel", null)) {
+                while (rs.next()) {
+                    String columnName = rs.getString("COLUMN_NAME");
+                    if (columnName == null || columnName.isBlank()) {
+                        continue;
+                    }
+                    columns.putIfAbsent(columnName.toLowerCase(Locale.US), columnName);
+                }
+            }
+            if (!columns.isEmpty()) {
+                return columns;
+            }
+            try (ResultSet rs = metaData.getColumns(connection.getCatalog(), null, "HOTEL", null)) {
+                while (rs.next()) {
+                    String columnName = rs.getString("COLUMN_NAME");
+                    if (columnName == null || columnName.isBlank()) {
+                        continue;
+                    }
+                    columns.putIfAbsent(columnName.toLowerCase(Locale.US), columnName);
+                }
+            }
+        } catch (SQLException ignored) {
+            return Map.of();
+        }
+        return columns;
+    }
+
+    private boolean isValidCoordinate(double latitude, double longitude) {
+        if (!Double.isFinite(latitude) || !Double.isFinite(longitude)) {
+            return false;
+        }
+        return latitude >= -90.0 && latitude <= 90.0
+                && longitude >= -180.0 && longitude <= 180.0;
+    }
+
     private void validateHotelInput(Hotel hotel, boolean idRequired) {
         if (hotel == null) {
             throw new IllegalArgumentException("Hotel is required.");
@@ -359,6 +459,9 @@ public class HotelService {
     }
 
     private record ForeignKeyTarget(String tableName, String columnName) {
+    }
+
+    public record HotelGeoPoint(double latitude, double longitude) {
     }
 }
 
