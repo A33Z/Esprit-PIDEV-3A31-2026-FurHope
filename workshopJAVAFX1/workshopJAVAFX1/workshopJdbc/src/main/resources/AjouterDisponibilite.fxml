@@ -6,11 +6,15 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AjouterDisponibilite">
+<AnchorPane prefHeight="450.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AjouterDisponibilite">
     <children>
         <!-- ID vétérinaire -->
         <TextField fx:id="vetIdTF" layoutX="50.0" layoutY="50.0" promptText="ID Vétérinaire" />
         <Label layoutX="50.0" layoutY="25.0" text="ID Vétérinaire" />
+
+        <!-- Nom vétérinaire -->
+        <TextField fx:id="vetNomTF" layoutX="300.0" layoutY="50.0" promptText="Nom Vétérinaire" />
+        <Label layoutX="300.0" layoutY="25.0" text="Nom Vétérinaire" />
 
         <!-- Heure début -->
         <TextField fx:id="startTimeTF" layoutX="50.0" layoutY="120.0" promptText="Heure Début" />
@@ -21,9 +25,7 @@
         <Label layoutX="50.0" layoutY="165.0" text="Heure Fin" />
 
         <!-- Statut -->
-        <ComboBox fx:id="statutCB" layoutX="50.0" layoutY="260.0" prefWidth="150.0" promptText="Statut">
-            <!-- Les options seront remplies depuis le controller -->
-        </ComboBox>
+        <ComboBox fx:id="statutCB" layoutX="50.0" layoutY="260.0" prefWidth="150.0" promptText="Statut" />
         <Label layoutX="50.0" layoutY="235.0" text="Statut" />
 
         <!-- Bouton enregistrer -->

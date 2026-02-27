@@ -11,18 +11,28 @@
       spacing="10" style="-fx-background-color: linear-gradient(to bottom right, #fef9c3, #bbf7d0); -fx-padding: 28;">
 
     <Label fx:id="titleLabel" text="Ajouter disponibilite" style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #14532d;"/>
-    <Label text="vet_id"/>
+
+    <!-- Champ ID vétérinaire -->
+    <Label text="ID vétérinaire"/>
     <TextField fx:id="vetIdField" promptText="entier > 0"/>
 
-    <Label text="statut"/>
+    <!-- Champ Nom vétérinaire -->
+    <Label text="Nom vétérinaire"/>
+    <TextField fx:id="vetNomField" promptText="ex: Dr Ahmed"/>
+
+    <!-- Champ Statut -->
+    <Label text="Statut"/>
     <ComboBox fx:id="statutBox" promptText="VALABLE / NONVALABLE"/>
 
-    <Label text="starttime (HH:mm)"/>
+    <!-- Champ Heure Début -->
+    <Label text="Heure début (HH:mm)"/>
     <TextField fx:id="startTimeField" promptText="08:30"/>
 
-    <Label text="endtime (HH:mm)"/>
+    <!-- Champ Heure Fin -->
+    <Label text="Heure fin (HH:mm)"/>
     <TextField fx:id="endTimeField" promptText="10:00"/>
 
+    <!-- Boutons -->
     <HBox spacing="12">
         <Button fx:id="saveButton" text="Ajouter" onAction="#onSave"
                 style="-fx-background-color: #22c55e; -fx-text-fill: white; -fx-background-radius: 10;"/>

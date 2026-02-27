@@ -3,6 +3,9 @@ package controllers;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import model.Disponibilite;
 import services.ServiceDisponibilite;
 import utils.EditState;
@@ -21,28 +24,49 @@ public class DisponibiliteListController {
 
     @FXML
     public void initialize() {
+        // ✅ Design moderne, sans afficher les IDs
         disponibiliteList.setCellFactory(list -> new ListCell<>() {
             @Override
             protected void updateItem(Disponibilite item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
-                    setText(null);
+                    setGraphic(null);
                 } else {
-                    setText("#" + item.getId_disponibilite() + "  | Vet " + item.getId() + " | "
-                            + item.getStarttime() + " -> " + item.getEndtime() + " | " + item.getStatut().name().toLowerCase());
+                    VBox box = new VBox();
+                    box.setSpacing(4);
+                    box.setStyle("-fx-background-color: #ffffff; "
+                            + "-fx-background-radius: 10; "
+                            + "-fx-padding: 10;");
+
+                    // Ligne 1 : nom du vétérinaire ou indication
+                    Label vetLabel = new Label("👨‍⚕️ Vétérinaire : " + item.getVetNom());
+                    vetLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16; -fx-text-fill: #064e3b;");
+
+                    // Ligne 2 : horaire et statut
+                    Label horaireLabel = new Label("🕒 " + item.getStarttime() + " → " + item.getEndtime()
+                            + "   •   Statut : " + item.getStatut().name().toLowerCase());
+                    horaireLabel.setStyle("-fx-font-size: 14; -fx-text-fill: #166534;");
+
+                    box.getChildren().addAll(vetLabel, horaireLabel);
+
+                    // Ombre esthétique
+                    box.setEffect(new DropShadow(2, Color.LIGHTGREEN));
+
+                    setGraphic(box);
                 }
             }
         });
 
+        // ✅ Texte de détail simplifié et sans ID
         disponibiliteList.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, selected) -> {
             if (selected == null) {
-                detailsLabel.setText("Selectionnez une disponibilite pour voir details, modifier ou supprimer.");
+                detailsLabel.setText("Sélectionnez une disponibilité pour voir les détails, modifier ou supprimer.");
             } else {
-                detailsLabel.setText("Selection: id_disponibilite=" + selected.getId_disponibilite()
-                        + ", vet_id=" + selected.getId()
-                        + ", statut=" + selected.getStatut().name().toLowerCase()
-                        + ", starttime=" + selected.getStarttime()
-                        + ", endtime=" + selected.getEndtime());
+                detailsLabel.setText(
+                        "👨‍⚕️ " + selected.getVetNom() + "\n" +
+                                "🕒 De " + selected.getStarttime() + " à " + selected.getEndtime() + "\n" +
+                                "📅 Statut : " + selected.getStatut().name().toLowerCase()
+                );
             }
         });
 
@@ -64,7 +88,7 @@ public class DisponibiliteListController {
     private void onEdit(javafx.event.ActionEvent event) {
         Disponibilite selected = disponibiliteList.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showError("Choisissez une disponibilite a modifier.");
+            showError("Choisissez une disponibilité à modifier.");
             return;
         }
         EditState.disponibiliteToEdit = selected;
@@ -75,28 +99,28 @@ public class DisponibiliteListController {
     private void onDelete() {
         Disponibilite selected = disponibiliteList.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showError("Choisissez une disponibilite a supprimer.");
+            showError("Choisissez une disponibilité à supprimer.");
             return;
         }
 
         try {
             service.delete(selected.getId_disponibilite());
-            showInfo("Disponibilite supprimee.");
+            showInfo("Disponibilité supprimée.");
             refresh();
         } catch (SQLException e) {
-            showError("Suppression impossible: " + e.getMessage());
+            showError("Suppression impossible : " + e.getMessage());
         }
     }
 
     @FXML
     private void onBackHome(javafx.event.ActionEvent event) {
-        ViewNavigator.goTo(event, "/Home.fxml", "Gestion Veterinaire");
+        ViewNavigator.goTo(event, "/Home.fxml", "Gestion Vétérinaire");
     }
 
     private void refresh() {
         try {
             disponibiliteList.setItems(FXCollections.observableArrayList(service.read()));
-            detailsLabel.setText("Selectionnez une disponibilite pour voir details, modifier ou supprimer.");
+            detailsLabel.setText("Sélectionnez une disponibilité pour voir les détails, modifier ou supprimer.");
         } catch (SQLException e) {
             showError(e.getMessage());
         }
@@ -105,14 +129,14 @@ public class DisponibiliteListController {
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Erreur");
-        alert.setHeaderText("Affichage disponibilites");
+        alert.setHeaderText("Affichage disponibilités");
         alert.setContentText(message);
         alert.showAndWait();
     }
 
     private void showInfo(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Succes");
+        alert.setTitle("Succès");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();

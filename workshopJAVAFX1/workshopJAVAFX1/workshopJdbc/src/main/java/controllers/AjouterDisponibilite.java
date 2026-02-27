@@ -18,6 +18,9 @@ public class AjouterDisponibilite {
     private TextField vet_idTF;
 
     @FXML
+    private TextField vet_nomTF; // ✅ Nouveau champ pour le nom du vétérinaire
+
+    @FXML
     private TextField starttimeTF;
 
     @FXML
@@ -32,6 +35,7 @@ public class AjouterDisponibilite {
     void save(ActionEvent event) {
         try {
             int vetId = Integer.parseInt(vet_idTF.getText());
+            String vetNom = vet_nomTF.getText(); // ✅ Lecture du nom
             String startTime = starttimeTF.getText();
             String endTime = endtimeTF.getText();
 
@@ -42,7 +46,9 @@ public class AjouterDisponibilite {
                 statut = Disponibilite.Statut.NONVALABLE;
             }
 
+            // ✅ Ajout du nom dans l'objet Disponibilite
             Disponibilite dispo = new Disponibilite(vetId, startTime, endTime, statut);
+            dispo.setVetNom(vetNom);
 
             ps.add(dispo);
 
@@ -73,5 +79,4 @@ public class AjouterDisponibilite {
             System.out.println(e.getMessage());
         }
     }
-
 }

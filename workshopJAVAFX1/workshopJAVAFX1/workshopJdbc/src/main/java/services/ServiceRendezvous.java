@@ -26,8 +26,8 @@ public class ServiceRendezvous implements IService<Rendezvous> {
             ps.setInt(4, rendezvous.getVet_id());
             ps.setInt(5, rendezvous.getAnimal_id());
             ps.setInt(6, rendezvous.getDisponibilite_id());
-            ps.setString(7, rendezvous.getApp_date());
-            ps.setString(8, rendezvous.getApp_time());
+            //ps.setString(7, rendezvous.getApp_date());
+            //ps.setString(8, rendezvous.getApp_time());
             ps.executeUpdate();
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -49,8 +49,8 @@ public class ServiceRendezvous implements IService<Rendezvous> {
             ps.setInt(4, rendezvous.getVet_id());
             ps.setInt(5, rendezvous.getAnimal_id());
             ps.setInt(6, rendezvous.getDisponibilite_id());
-            ps.setString(7, rendezvous.getApp_date());
-            ps.setString(8, rendezvous.getApp_time());
+            //ps.setString(7, rendezvous.getApp_date());
+            //ps.setString(8, rendezvous.getApp_time());
             ps.setInt(9, rendezvous.getId_rdv());
             ps.executeUpdate();
         }
@@ -84,8 +84,8 @@ public class ServiceRendezvous implements IService<Rendezvous> {
                 r.setVet_id(rs.getInt("vet_id"));
                 r.setAnimal_id(rs.getInt("animal_id"));
                 r.setDisponibilite_id(rs.getInt("disponibilite_id"));
-                r.setApp_date(rs.getString("app_date"));
-                r.setApp_time(rs.getString("app_time"));
+                //r.setApp_date(rs.getString("app_date"));
+                //r.setApp_time(rs.getString("app_time"));
                 rendezvousList.add(r);
             }
         }

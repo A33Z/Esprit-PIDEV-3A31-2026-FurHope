@@ -70,8 +70,8 @@ public class RendezvousController {
         colVet.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getVet_id()).asObject());
         colAnimal.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getAnimal_id()).asObject());
         colDisponibilite.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getDisponibilite_id()).asObject());
-        colDate.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getApp_date()));
-        colTime.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getApp_time()));
+        //colDate.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getApp_date()));
+        //colTime.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getApp_time()));
 
         disponibiliteBox.setCellFactory(list -> new ListCell<>() {
             @Override
@@ -205,9 +205,9 @@ public class RendezvousController {
                 clientId,
                 selectedDispo.getId(),
                 animalId,
-                selectedDispo.getId_disponibilite(),
-                appDate.toString(),
-                appTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+                selectedDispo.getId_disponibilite()
+                //appDate.toString(),
+                //appTime.format(DateTimeFormatter.ofPattern("HH:mm"))
         );
     }
 
@@ -216,13 +216,13 @@ public class RendezvousController {
         clientIdField.setText(String.valueOf(rendezvous.getClient_id()));
         animalIdField.setText(String.valueOf(rendezvous.getAnimal_id()));
         descriptionArea.setText(rendezvous.getDescription());
-
+/*
         try {
             appDateField.setValue(LocalDate.parse(rendezvous.getApp_date()));
         } catch (Exception e) {
             appDateField.setValue(null);
         }
-        appTimeField.setText(rendezvous.getApp_time());
+        appTimeField.setText(rendezvous.getApp_time());  */
 
         vetIdField.setText(String.valueOf(rendezvous.getVet_id()));
 

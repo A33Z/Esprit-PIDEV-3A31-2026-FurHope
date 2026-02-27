@@ -2,20 +2,37 @@ package model;
 
 public class Disponibilite {
     public enum Statut {
-        VALABLE , NONVALABLE
+        VALABLE, NONVALABLE
     }
-    private int id_disponibilite , id ;
-    private String starttime , endtime ;
+
+    private int id_disponibilite;
+    private int id; // id du vétérinaire
+    private String vetNom; // nom du vétérinaire
+    private String starttime;
+    private String endtime;
     private Statut statut;
 
-    public Disponibilite(){}
+    // Constructeur vide
+    public Disponibilite() {}
 
-    public Disponibilite(int id , String starttime, String endtime,Statut statut) {
+    // Ancien constructeur (sans vetNom)
+    public Disponibilite(int id, String starttime, String endtime, Statut statut) {
         this.id = id;
         this.starttime = starttime;
         this.endtime = endtime;
-        this.statut = statut ;
+        this.statut = statut;
     }
+
+    // ✅ Nouveau constructeur avec vetNom (dans le bon ordre)
+    public Disponibilite(int id, String vetNom, String starttime, String endtime, Statut statut) {
+        this.id = id;
+        this.vetNom = vetNom;
+        this.starttime = starttime;
+        this.endtime = endtime;
+        this.statut = statut;
+    }
+
+    // ✅ Getters et setters
     public int getId_disponibilite() {
         return id_disponibilite;
     }
@@ -30,6 +47,14 @@ public class Disponibilite {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getVetNom() {
+        return vetNom;
+    }
+
+    public void setVetNom(String vetNom) {
+        this.vetNom = vetNom;
     }
 
     public String getStarttime() {
@@ -59,11 +84,12 @@ public class Disponibilite {
     @Override
     public String toString() {
         return "Disponibilite{" +
-                "id='" + id + '\'' +
+                "id_disponibilite=" + id_disponibilite +
+                ", id=" + id +
+                ", vetNom='" + vetNom + '\'' +
                 ", starttime='" + starttime + '\'' +
-                ", endtime=" + endtime +
+                ", endtime='" + endtime + '\'' +
                 ", statut=" + statut +
                 '}';
     }
 }
-

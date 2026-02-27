@@ -2,8 +2,13 @@ package controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import utils.EditState;
 import utils.ViewNavigator;
+import java.io.IOException;
 
 public class HomeController {
 
@@ -28,4 +33,20 @@ public class HomeController {
     private void goRendezvousList(ActionEvent event) {
         ViewNavigator.goTo(event, "/RendezvousList.fxml", "Rendez-vous - Affichage");
     }
-}
+
+    @FXML
+    private void openChatbot() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/ChatbotView.fxml")  // ← sans "views/"
+            );
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("🩺 Assistant Médical IA");
+            stage.setScene(new Scene(root, 620, 550));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace(); // ← affiche l'erreur dans la console
+            System.out.println("ERREUR: " + e.getMessage());
+        }
+    }}

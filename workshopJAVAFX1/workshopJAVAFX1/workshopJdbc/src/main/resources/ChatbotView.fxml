@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.ChatbotController"
+      spacing="10" prefWidth="620" prefHeight="550"
+      style="-fx-background-color: #f0f4f8; -fx-padding: 15;">
+
+    <!-- En-tête -->
+    <HBox alignment="CENTER_LEFT" spacing="10"
+          style="-fx-background-color: #2c3e50; -fx-padding: 12;
+                 -fx-background-radius: 10;">
+        <Label text="🩺 Assistant Médical IA"
+               style="-fx-font-size: 18px; -fx-font-weight: bold;
+                      -fx-text-fill: white;"/>
+        <Label text="Gemini AI"
+               style="-fx-font-size: 11px; -fx-text-fill: #2ecc71;
+                      -fx-background-color: rgba(46,204,113,0.2);
+                      -fx-padding: 2 8; -fx-background-radius: 10;"/>
+    </HBox>
+
+    <!-- Zone messages -->
+    <ScrollPane fx:id="scrollPane" VBox.vgrow="ALWAYS"
+                fitToWidth="true" hbarPolicy="NEVER"
+                style="-fx-background: transparent;
+                       -fx-background-color: transparent;">
+        <VBox fx:id="messagesContainer" spacing="6"
+              style="-fx-padding: 8;"/>
+    </ScrollPane>
+
+    <!-- Suggestions -->
+    <HBox spacing="6" alignment="CENTER_LEFT">
+        <Label text="Suggestions :"
+               style="-fx-font-size: 11px; -fx-text-fill: #888;"/>
+        <Button text="💉 Vaccins enfants" onAction="#onSuggestionVaccin"
+                style="-fx-background-color: #e8f4fd; -fx-border-color: #3498db;
+                       -fx-border-radius: 12; -fx-background-radius: 12;
+                       -fx-font-size: 11px; -fx-cursor: hand;"/>
+        <Button text="🐶 Vaccins animaux" onAction="#onSuggestionAnimal"
+                style="-fx-background-color: #e8f8e8; -fx-border-color: #27ae60;
+                       -fx-border-radius: 12; -fx-background-radius: 12;
+                       -fx-font-size: 11px; -fx-cursor: hand;"/>
+        <Button text="🌡️ Symptômes" onAction="#onSuggestionSymptomes"
+                style="-fx-background-color: #fef9e7; -fx-border-color: #f39c12;
+                       -fx-border-radius: 12; -fx-background-radius: 12;
+                       -fx-font-size: 11px; -fx-cursor: hand;"/>
+    </HBox>
+
+    <!-- Zone de saisie -->
+    <HBox spacing="8" alignment="CENTER"
+          style="-fx-background-color: white; -fx-padding: 8;
+                 -fx-background-radius: 25;
+                 -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.1),6,0,0,2);">
+        <TextField fx:id="messageField"
+                   promptText="Posez votre question médicale..."
+                   HBox.hgrow="ALWAYS"
+                   onAction="#onSendMessage"
+                   style="-fx-background-color: transparent;
+                          -fx-border-color: transparent;
+                          -fx-font-size: 13px;"/>
+        <Button fx:id="sendButton" text="➤"
+                onAction="#onSendMessage"
+                style="-fx-background-color: #3498db; -fx-text-fill: white;
+                       -fx-font-size: 16px; -fx-background-radius: 50;
+                       -fx-min-width: 36; -fx-min-height: 36;
+                       -fx-cursor: hand;"/>
+    </HBox>
+</VBox>

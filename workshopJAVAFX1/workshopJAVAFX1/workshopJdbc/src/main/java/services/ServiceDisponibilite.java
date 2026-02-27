@@ -18,12 +18,13 @@ public class ServiceDisponibilite implements IService<Disponibilite> {
     @Override
     public void add(Disponibilite disponibilite) throws SQLException {
         Connection connection = database.getConnectionOrThrow();
-        String sql = "INSERT INTO disponibilite (id, starttime, endtime, statut) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO disponibilite (id, vetnom, starttime, endtime, statut) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setInt(1, disponibilite.getId());
-            ps.setString(2, disponibilite.getStarttime());
-            ps.setString(3, disponibilite.getEndtime());
-            ps.setString(4, disponibilite.getStatut().name().toLowerCase());
+            ps.setInt(1, disponibilite.getId());                // id vétérinaire
+            ps.setString(2, disponibilite.getVetNom());         // ✅ nouveau champ vetnom
+            ps.setString(3, disponibilite.getStarttime());      // heure début
+            ps.setString(4, disponibilite.getEndtime());        // heure fin
+            ps.setString(5, disponibilite.getStatut().name().toLowerCase()); // statut
             ps.executeUpdate();
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -37,13 +38,15 @@ public class ServiceDisponibilite implements IService<Disponibilite> {
     @Override
     public void update(Disponibilite disponibilite) throws SQLException {
         Connection connection = database.getConnectionOrThrow();
-        String sql = "UPDATE disponibilite SET id = ?, starttime = ?, endtime = ?, statut = ? WHERE id_disponibilite = ?";
+        // ✅ Ajout de vetnom dans la requête UPDATE
+        String sql = "UPDATE disponibilite SET id = ?, vetnom = ?, starttime = ?, endtime = ?, statut = ? WHERE id_disponibilite = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, disponibilite.getId());
-            ps.setString(2, disponibilite.getStarttime());
-            ps.setString(3, disponibilite.getEndtime());
-            ps.setString(4, disponibilite.getStatut().name().toLowerCase());
-            ps.setInt(5, disponibilite.getId_disponibilite());
+            ps.setString(2, disponibilite.getVetNom()); // ✅ nouveau champ vetnom
+            ps.setString(3, disponibilite.getStarttime());
+            ps.setString(4, disponibilite.getEndtime());
+            ps.setString(5, disponibilite.getStatut().name().toLowerCase());
+            ps.setInt(6, disponibilite.getId_disponibilite());
             ps.executeUpdate();
         }
     }
@@ -71,6 +74,7 @@ public class ServiceDisponibilite implements IService<Disponibilite> {
                 Disponibilite d = new Disponibilite();
                 d.setId_disponibilite(rs.getInt("id_disponibilite"));
                 d.setId(rs.getInt("id"));
+                d.setVetNom(rs.getString("vetnom")); // ✅ lecture du nom vétérinaire
                 d.setStarttime(rs.getString("starttime"));
                 d.setEndtime(rs.getString("endtime"));
                 d.setStatut(parseStatut(rs.getString("statut")));
@@ -92,6 +96,7 @@ public class ServiceDisponibilite implements IService<Disponibilite> {
                 Disponibilite d = new Disponibilite();
                 d.setId_disponibilite(rs.getInt("id_disponibilite"));
                 d.setId(rs.getInt("id"));
+                d.setVetNom(rs.getString("vetnom")); // ✅
                 d.setStarttime(rs.getString("starttime"));
                 d.setEndtime(rs.getString("endtime"));
                 d.setStatut(parseStatut(rs.getString("statut")));
@@ -111,6 +116,7 @@ public class ServiceDisponibilite implements IService<Disponibilite> {
                     Disponibilite d = new Disponibilite();
                     d.setId_disponibilite(rs.getInt("id_disponibilite"));
                     d.setId(rs.getInt("id"));
+                    d.setVetNom(rs.getString("vetnom")); // ✅
                     d.setStarttime(rs.getString("starttime"));
                     d.setEndtime(rs.getString("endtime"));
                     d.setStatut(parseStatut(rs.getString("statut")));

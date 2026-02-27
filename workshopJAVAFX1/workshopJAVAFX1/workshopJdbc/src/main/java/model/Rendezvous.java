@@ -9,22 +9,31 @@ public class Rendezvous {
     private int vet_id;
     private int animal_id;
     private int disponibilite_id;
-    private String app_date;
-    private String app_time;
+    //private String app_date;
+   // private String app_time;
 
+    // 🔹 Champs optionnels pour affichage (non obligatoires en base de données)
+    private String clientNom;
+    private String animalNom;
+    private String vetNom;
+
+    // 🔸 Constructeur vide
     public Rendezvous() {}
 
-    public Rendezvous(String status, String description, int client_id, int vet_id, int animal_id, int disponibilite_id, String app_date, String app_time) {
+    // 🔸 Constructeur complet
+    public Rendezvous(String status, String description, int client_id, int vet_id, int animal_id,
+                      int disponibilite_id) {
         this.status = status;
         this.description = description;
         this.client_id = client_id;
         this.vet_id = vet_id;
         this.animal_id = animal_id;
         this.disponibilite_id = disponibilite_id;
-        this.app_date = app_date;
-        this.app_time = app_time;
+        //this.app_date = app_date;
+        //this.app_time = app_time;
     }
 
+    // ✅ Getters & Setters
     public int getId_rdv() {
         return id_rdv;
     }
@@ -32,7 +41,6 @@ public class Rendezvous {
     public void setId_rdv(int id_rdv) {
         this.id_rdv = id_rdv;
     }
-
 
     public String getStatus() {
         return status;
@@ -82,7 +90,7 @@ public class Rendezvous {
         this.disponibilite_id = disponibilite_id;
     }
 
-    public String getApp_date() {
+   /* public String getApp_date() {
         return app_date;
     }
 
@@ -96,6 +104,30 @@ public class Rendezvous {
 
     public void setApp_time(String app_time) {
         this.app_time = app_time;
+    } */
+
+    public String getClientNom() {
+        return clientNom;
+    }
+
+    public void setClientNom(String clientNom) {
+        this.clientNom = clientNom;
+    }
+
+    public String getAnimalNom() {
+        return animalNom;
+    }
+
+    public void setAnimalNom(String animalNom) {
+        this.animalNom = animalNom;
+    }
+
+    public String getVetNom() {
+        return vetNom;
+    }
+
+    public void setVetNom(String vetNom) {
+        this.vetNom = vetNom;
     }
 
     @Override
@@ -107,9 +139,9 @@ public class Rendezvous {
                 ", client_id=" + client_id +
                 ", vet_id=" + vet_id +
                 ", animal_id=" + animal_id +
-                ", disponibilite_id=" + disponibilite_id +
-                ", app_date='" + app_date + '\'' +
-                ", app_time='" + app_time + '\'' +
+                ", disponibilite_id=" + disponibilite_id +'\''+
+               //", app_date='" + app_date + '\'' +
+               // ", app_time='" + app_time + '\'' +
                 '}';
     }
 }

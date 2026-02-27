@@ -3,120 +3,118 @@ package controllers;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.event.ActionEvent;
 import model.Rendezvous;
 import services.ServiceRendezvous;
 import utils.EditState;
 import utils.ViewNavigator;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class RendezvousListController {
 
     @FXML
-    private ListView<Rendezvous> rendezvousList;
+    private TableView<Rendezvous> rendezvousTable;
     @FXML
-    private Label detailsLabel;
+    private TableColumn<Rendezvous, Integer> colId;
+    @FXML
+    private TableColumn<Rendezvous, String> colStatus;
+    @FXML
+    private TableColumn<Rendezvous, Integer> colClientId;
+    @FXML
+    private TableColumn<Rendezvous, Integer> colVetId;
+    @FXML
+    private TableColumn<Rendezvous, Integer> colAnimalId;
+    @FXML
+    private TableColumn<Rendezvous, Integer> colDisponibiliteId;
 
-    private final ServiceRendezvous service = new ServiceRendezvous();
+    private final ServiceRendezvous serviceRendezvous = new ServiceRendezvous();
 
     @FXML
     public void initialize() {
-        rendezvousList.setCellFactory(list -> new ListCell<>() {
-            @Override
-            protected void updateItem(Rendezvous item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText("#" + item.getId_rdv() + " | status=" + item.getStatus() + " | client=" + item.getClient_id()
-                            + " | vet=" + item.getVet_id() + " | animal=" + item.getAnimal_id());
-                }
-            }
+        // Initialiser les colonnes du TableView
+        colId.setCellValueFactory(new PropertyValueFactory<>("id_rdv"));
+        colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+        //colClientId.setCellValueFactory(new PropertyValueFactory<>("client_id"));
+        //colVetId.setCellValueFactory(new PropertyValueFactory<>("vet_id"));
+        colAnimalId.setCellValueFactory(new PropertyValueFactory<>("animal_id"));
+        colDisponibiliteId.setCellValueFactory(new PropertyValueFactory<>("disponibilite_id"));
+
+        // Afficher les détails sélectionnés
+        rendezvousTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            // Tu peux mettre à jour un label ou un panneau de détails ici si tu veux
         });
 
-        rendezvousList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, selected) -> {
-            if (selected == null) {
-                detailsLabel.setText("Selectionnez un rendez-vous pour modifier/supprimer.");
-            } else {
-                detailsLabel.setText("Selection: id_rdv=" + selected.getId_rdv()
-                        + ", status=" + selected.getStatus()
-                        + ", description=" + (selected.getDescription() == null ? "" : selected.getDescription())
-                        + ", client_id=" + selected.getClient_id()
-                        + ", vet_id=" + selected.getVet_id()
-                        + ", animal_id=" + selected.getAnimal_id()
-                        + ", disponibilite_id=" + selected.getDisponibilite_id()
-                        + ", app_date=" + selected.getApp_date()
-                        + ", app_time=" + selected.getApp_time());
-            }
-        });
-
-        refresh();
+        refreshTable();
     }
 
     @FXML
-    private void onRefresh() {
-        refresh();
-    }
-
-    @FXML
-    private void onAdd(javafx.event.ActionEvent event) {
+    private void onAdd(ActionEvent event) {
         EditState.rendezvousToEdit = null;
-        ViewNavigator.goTo(event, "/RendezvousForm.fxml", "Rendez-vous - Formulaire");
+        ViewNavigator.goTo(event, "/RendezvousForm.fxml", "Ajouter Rendez-vous");
     }
 
     @FXML
-    private void onEdit(javafx.event.ActionEvent event) {
-        Rendezvous selected = rendezvousList.getSelectionModel().getSelectedItem();
+    private void onEdit(ActionEvent event) {
+        Rendezvous selected = rendezvousTable.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showError("Choisissez un rendez-vous a modifier.");
+            showError("Sélectionnez un rendez-vous à modifier.");
             return;
         }
         EditState.rendezvousToEdit = selected;
-        ViewNavigator.goTo(event, "/RendezvousForm.fxml", "Rendez-vous - Modification");
+        ViewNavigator.goTo(event, "/RendezvousForm.fxml", "Modifier Rendez-vous");
     }
 
     @FXML
     private void onDelete() {
-        Rendezvous selected = rendezvousList.getSelectionModel().getSelectedItem();
+        Rendezvous selected = rendezvousTable.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showError("Choisissez un rendez-vous a supprimer.");
+            showError("Sélectionnez un rendez-vous à supprimer.");
             return;
         }
 
         try {
-            service.delete(selected.getId_rdv());
-            showInfo("Rendez-vous supprime.");
-            refresh();
+            serviceRendezvous.delete(selected.getId_rdv());
+            showInfo("Rendez-vous supprimé avec succès !");
+            refreshTable();
         } catch (SQLException e) {
-            showError("Suppression impossible: " + e.getMessage());
+            showError("Erreur SQL : " + e.getMessage());
         }
     }
 
     @FXML
-    private void onBackHome(javafx.event.ActionEvent event) {
-        ViewNavigator.goTo(event, "/Home.fxml", "Gestion Veterinaire");
+    private void onRefresh() {
+        refreshTable();
     }
 
-    private void refresh() {
+    @FXML
+    private void onBackHome(ActionEvent event) {
+        EditState.rendezvousToEdit = null;
+        ViewNavigator.goTo(event, "/Home.fxml", "Accueil");
+    }
+
+    private void refreshTable() {
         try {
-            rendezvousList.setItems(FXCollections.observableArrayList(service.read()));
-            detailsLabel.setText("Selectionnez un rendez-vous pour modifier/supprimer.");
+            List<Rendezvous> rdvs = serviceRendezvous.read();
+            rendezvousTable.setItems(FXCollections.observableArrayList(rdvs));
         } catch (SQLException e) {
-            showError(e.getMessage());
+            showError("Erreur lors du chargement des rendez-vous : " + e.getMessage());
         }
     }
 
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Erreur");
-        alert.setHeaderText("Affichage rendez-vous");
+        alert.setHeaderText("Contrôle de saisie / Opération");
         alert.setContentText(message);
         alert.showAndWait();
     }
 
     private void showInfo(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Succes");
+        alert.setTitle("Succès");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();

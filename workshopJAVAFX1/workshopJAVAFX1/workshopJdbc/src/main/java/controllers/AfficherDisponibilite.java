@@ -19,6 +19,9 @@ public class AfficherDisponibilite {
     private TableColumn<Disponibilite, Integer> IdCol;
 
     @FXML
+    private TableColumn<Disponibilite, String> vetNomCol; // ✅ Nouvelle colonne pour le nom du vétérinaire
+
+    @FXML
     private TableColumn<Disponibilite, String> startTimeCol;
 
     @FXML
@@ -37,12 +40,12 @@ public class AfficherDisponibilite {
 
         try {
             List<Disponibilite> disponibilites = ps.read();
-
             ObservableList<Disponibilite> observableList = FXCollections.observableList(disponibilites);
             tableView.setItems(observableList);
 
             // Lier les colonnes aux propriétés de Disponibilite
             IdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+            vetNomCol.setCellValueFactory(new PropertyValueFactory<>("vetNom")); // ✅ liaison du nom
             startTimeCol.setCellValueFactory(new PropertyValueFactory<>("starttime"));
             endTimeCol.setCellValueFactory(new PropertyValueFactory<>("endtime"));
             statutCol.setCellValueFactory(new PropertyValueFactory<>("statut"));

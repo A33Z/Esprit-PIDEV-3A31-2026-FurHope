@@ -97,8 +97,8 @@ public class RendezvousFormController {
             }
             int vetId = selectedDispo.getId();
 
-            LocalDate appDate = ValidationUtils.requireDate(appDatePicker.getValue(), "app_date");
-            LocalTime appTime = ValidationUtils.parseHourMinute(appTimeField.getText(), "app_time");
+            //LocalDate appDate = ValidationUtils.requireDate(appDatePicker.getValue(), "app_date");
+            //LocalTime appTime = ValidationUtils.parseHourMinute(appTimeField.getText(), "app_time");
 
             Rendezvous rdv = new Rendezvous(
                     status,
@@ -106,9 +106,9 @@ public class RendezvousFormController {
                     clientId,
                     vetId,
                     animalId,
-                    selectedDispo.getId_disponibilite(),
-                    appDate.toString(),
-                    appTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+                    selectedDispo.getId_disponibilite()
+                   // appDate.toString(),
+                   // appTime.format(DateTimeFormatter.ofPattern("HH:mm"))
             );
 
             if (editing == null) {
@@ -149,14 +149,14 @@ public class RendezvousFormController {
         descriptionArea.setText(rdv.getDescription());
         clientIdField.setText(String.valueOf(rdv.getClient_id()));
         animalIdField.setText(String.valueOf(rdv.getAnimal_id()));
-        appTimeField.setText(rdv.getApp_time());
+       // appTimeField.setText(rdv.getApp_time());
 
-        try {
+      /*  try {
             appDatePicker.setValue(LocalDate.parse(rdv.getApp_date()));
         } catch (Exception e) {
             appDatePicker.setValue(null);
         }
-
+*/
         Disponibilite matched = null;
         for (Disponibilite d : disponibiliteBox.getItems()) {
             if (d.getId_disponibilite() == rdv.getDisponibilite_id()) {

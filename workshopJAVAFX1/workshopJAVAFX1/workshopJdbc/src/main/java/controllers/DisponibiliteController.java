@@ -24,6 +24,8 @@ public class DisponibiliteController {
     @FXML
     private TableColumn<Disponibilite, Integer> colVetId;
     @FXML
+    private TableColumn<Disponibilite, String> colVetNom;
+    @FXML
     private TableColumn<Disponibilite, String> colStart;
     @FXML
     private TableColumn<Disponibilite, String> colEnd;
@@ -32,6 +34,8 @@ public class DisponibiliteController {
 
     @FXML
     private TextField vetIdField;
+    @FXML
+    private TextField vetNomField;
     @FXML
     private DatePicker dateField;
     @FXML
@@ -46,14 +50,19 @@ public class DisponibiliteController {
 
     @FXML
     public void initialize() {
+        // Initialisation des statuts
         statutBox.setItems(FXCollections.observableArrayList(Disponibilite.Statut.values()));
 
+        // Lier les colonnes du tableau
         colDispoId.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getId_disponibilite()).asObject());
         colVetId.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getId()).asObject());
+        colVetNom.setCellValueFactory(data -> new SimpleStringProperty(
+                data.getValue().getVetNom() == null ? "" : data.getValue().getVetNom()));
         colStart.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getStarttime()));
         colEnd.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getEndtime()));
         colStatut.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getStatut().name()));
 
+        // Quand on clique sur une ligne du tableau
         disponibiliteTable.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, selected) -> {
             if (selected != null) {
                 fillForm(selected);
@@ -63,12 +72,13 @@ public class DisponibiliteController {
         refreshTable();
     }
 
+    // ➕ Ajouter une disponibilité
     @FXML
     private void onCreate() {
         try {
             Disponibilite disponibilite = readFromForm();
             serviceDisponibilite.add(disponibilite);
-            showInfo("Disponibilite ajoutee avec succes.");
+            showInfo("Disponibilité ajoutée avec succès.");
             clearForm();
             refreshTable();
         } catch (Exception e) {
@@ -76,11 +86,12 @@ public class DisponibiliteController {
         }
     }
 
+    // ✏️ Modifier
     @FXML
     private void onUpdate() {
         Disponibilite selected = disponibiliteTable.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showError("Selectionnez une disponibilite a modifier.");
+            showError("Sélectionnez une disponibilité à modifier.");
             return;
         }
 
@@ -88,7 +99,7 @@ public class DisponibiliteController {
             Disponibilite disponibilite = readFromForm();
             disponibilite.setId_disponibilite(selected.getId_disponibilite());
             serviceDisponibilite.update(disponibilite);
-            showInfo("Disponibilite modifiee avec succes.");
+            showInfo("Disponibilité modifiée avec succès.");
             clearForm();
             refreshTable();
         } catch (Exception e) {
@@ -96,52 +107,61 @@ public class DisponibiliteController {
         }
     }
 
+    // 🗑 Supprimer
     @FXML
     private void onDelete() {
         Disponibilite selected = disponibiliteTable.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showError("Selectionnez une disponibilite a supprimer.");
+            showError("Sélectionnez une disponibilité à supprimer.");
             return;
         }
 
         try {
             serviceDisponibilite.delete(selected.getId_disponibilite());
-            showInfo("Disponibilite supprimee avec succes.");
+            showInfo("Disponibilité supprimée avec succès.");
             clearForm();
             refreshTable();
         } catch (SQLException e) {
-            showError("Suppression impossible: " + e.getMessage());
+            showError("Suppression impossible : " + e.getMessage());
         }
     }
 
+    // 🔄 Vider le formulaire
     @FXML
     private void onClear() {
         clearForm();
     }
 
+    // 🔍 Lecture des données saisies dans le formulaire
     private Disponibilite readFromForm() {
         int vetId = ValidationUtils.parsePositiveInt(vetIdField.getText(), "Vet ID");
+        String vetNom = ValidationUtils.requireText(vetNomField.getText(), "Nom du vétérinaire");
         LocalDate date = ValidationUtils.requireDate(dateField.getValue(), "Date");
-        LocalTime startTime = ValidationUtils.parseHourMinute(startTimeField.getText(), "Heure debut");
+        LocalTime startTime = ValidationUtils.parseHourMinute(startTimeField.getText(), "Heure début");
         LocalTime endTime = ValidationUtils.parseHourMinute(endTimeField.getText(), "Heure fin");
 
         if (!endTime.isAfter(startTime)) {
-            throw new IllegalArgumentException("Heure fin doit etre apres heure debut.");
+            throw new IllegalArgumentException("L'heure de fin doit être après l'heure de début.");
         }
 
         Disponibilite.Statut statut = statutBox.getValue();
         if (statut == null) {
-            throw new IllegalArgumentException("Statut est obligatoire.");
+            throw new IllegalArgumentException("Le statut est obligatoire.");
         }
 
         LocalDateTime startDateTime = LocalDateTime.of(date, startTime);
         LocalDateTime endDateTime = LocalDateTime.of(date, endTime);
 
-        return new Disponibilite(vetId, startDateTime.format(DATETIME_FORMAT), endDateTime.format(DATETIME_FORMAT), statut);
+        // ✅ Création de l’objet Disponibilite avec vetNom
+        Disponibilite disponibilite = new Disponibilite(vetId, startDateTime.format(DATETIME_FORMAT), endDateTime.format(DATETIME_FORMAT), statut);
+        disponibilite.setVetNom(vetNom);
+        return disponibilite;
     }
 
+    // Remplir le formulaire lors d'une sélection
     private void fillForm(Disponibilite disponibilite) {
         vetIdField.setText(String.valueOf(disponibilite.getId()));
+        vetNomField.setText(disponibilite.getVetNom() == null ? "" : disponibilite.getVetNom());
         statutBox.setValue(disponibilite.getStatut());
 
         try {
@@ -157,15 +177,18 @@ public class DisponibiliteController {
         }
     }
 
+    // Réinitialiser les champs
     private void clearForm() {
         disponibiliteTable.getSelectionModel().clearSelection();
         vetIdField.clear();
+        vetNomField.clear();
         dateField.setValue(null);
         startTimeField.clear();
         endTimeField.clear();
         statutBox.setValue(null);
     }
 
+    // Recharger les données du tableau
     private void refreshTable() {
         try {
             disponibiliteTable.setItems(FXCollections.observableArrayList(serviceDisponibilite.read()));
@@ -174,17 +197,19 @@ public class DisponibiliteController {
         }
     }
 
+    // Afficher une alerte d’erreur
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Erreur");
-        alert.setHeaderText("Controle de saisie / Operation");
+        alert.setHeaderText("Contrôle de saisie / Opération");
         alert.setContentText(message);
         alert.showAndWait();
     }
 
+    // Afficher une alerte d’information
     private void showInfo(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Succes");
+        alert.setTitle("Succès");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();

@@ -19,6 +19,8 @@ public class DisponibiliteFormController {
     @FXML
     private TextField vetIdField;
     @FXML
+    private TextField vetNomField; // ✅ nouveau champ pour le nom du vétérinaire
+    @FXML
     private ComboBox<Disponibilite.Statut> statutBox;
     @FXML
     private TextField startTimeField;
@@ -36,8 +38,8 @@ public class DisponibiliteFormController {
 
         editing = EditState.disponibiliteToEdit;
         if (editing != null) {
-            titleLabel.setText("Modifier disponibilite #" + editing.getId_disponibilite());
-            saveButton.setText("Mettre a jour");
+            titleLabel.setText("Modifier disponibilité #" + editing.getId_disponibilite());
+            saveButton.setText("Mettre à jour");
             fillForm(editing);
         }
     }
@@ -47,27 +49,35 @@ public class DisponibiliteFormController {
         try {
             int vetId = ValidationUtils.parsePositiveInt(vetIdField.getText(), "vet_id");
 
+            // ✅ Lecture du nom du vétérinaire
+            String vetNom = vetNomField.getText();
+            if (vetNom == null || vetNom.trim().isEmpty()) {
+                throw new IllegalArgumentException("Le nom du vétérinaire est obligatoire.");
+            }
+
             Disponibilite.Statut statut = statutBox.getValue();
             if (statut == null) {
-                throw new IllegalArgumentException("statut est obligatoire (valable/nonvalable).");
+                throw new IllegalArgumentException("Le statut est obligatoire (valable/nonvalable).");
             }
 
             LocalTime start = ValidationUtils.parseHourMinute(startTimeField.getText(), "starttime");
             LocalTime end = ValidationUtils.parseHourMinute(endTimeField.getText(), "endtime");
             if (!end.isAfter(start)) {
-                throw new IllegalArgumentException("endtime doit etre apres starttime.");
+                throw new IllegalArgumentException("endtime doit être après starttime.");
             }
 
-            Disponibilite d = new Disponibilite(vetId, formatDbTime(start), formatDbTime(end), statut);
+            // ✅ Création de l’objet avec vetNom inclus
+            Disponibilite d = new Disponibilite(vetId, vetNom, formatDbTime(start), formatDbTime(end), statut);
+
             if (editing == null) {
                 service.add(d);
-                showInfo("Disponibilite ajoutee.");
+                showInfo("Disponibilité ajoutée.");
                 clearForm();
             } else {
                 d.setId_disponibilite(editing.getId_disponibilite());
                 service.update(d);
                 EditState.disponibiliteToEdit = null;
-                showInfo("Disponibilite mise a jour.");
+                showInfo("Disponibilité mise à jour.");
             }
         } catch (Exception e) {
             showError(e.getMessage());
@@ -83,25 +93,21 @@ public class DisponibiliteFormController {
     @FXML
     private void onGoHome(javafx.event.ActionEvent event) {
         EditState.disponibiliteToEdit = null;
-        utils.ViewNavigator.goTo(event, "/Home.fxml", "Gestion Veterinaire");
+        utils.ViewNavigator.goTo(event, "/Home.fxml", "Gestion Vétérinaire");
     }
 
     private void fillForm(Disponibilite d) {
         vetIdField.setText(String.valueOf(d.getId()));
+        vetNomField.setText(d.getVetNom()); // ✅ remplir le champ vetNom
         statutBox.setValue(d.getStatut());
         startTimeField.setText(normalizeTimeForInput(d.getStarttime()));
         endTimeField.setText(normalizeTimeForInput(d.getEndtime()));
     }
 
     private String normalizeTimeForInput(String dbValue) {
-        if (dbValue == null) {
-            return "";
-        }
+        if (dbValue == null) return "";
         String trimmed = dbValue.trim();
-        if (trimmed.length() >= 5) {
-            return trimmed.substring(0, 5);
-        }
-        return trimmed;
+        return trimmed.length() >= 5 ? trimmed.substring(0, 5) : trimmed;
     }
 
     private String formatDbTime(LocalTime time) {
@@ -110,6 +116,7 @@ public class DisponibiliteFormController {
 
     private void clearForm() {
         vetIdField.clear();
+        vetNomField.clear(); // ✅ vider aussi le champ du nom
         statutBox.setValue(null);
         startTimeField.clear();
         endTimeField.clear();
@@ -118,14 +125,14 @@ public class DisponibiliteFormController {
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Erreur saisie");
-        alert.setHeaderText("Controle de saisie");
+        alert.setHeaderText("Contrôle de saisie");
         alert.setContentText(message);
         alert.showAndWait();
     }
 
     private void showInfo(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Succes");
+        alert.setTitle("Succès");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
