@@ -36,3 +36,4 @@ build/
 
 ### Mac OS ###
 .DS_Store
+echo "src/main/resources/config.properties" >> .gitignore

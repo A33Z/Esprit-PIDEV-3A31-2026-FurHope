@@ -3,13 +3,29 @@ package services;
 import com.google.gson.*;
 import okhttp3.*;
 import java.io.IOException;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class AnthropicChatService {
 
-    private static final String API_KEY = "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";
-    private static final String API_URL = "https://api.groq.com/openai/v1/chat/completions"; // ✅ Groq
-    private static final String MODEL = "llama-3.3-70b-versatile"; // ✅ Modèle Groq gratuit
+    private static final String API_URL = "https://api.groq.com/openai/v1/chat/completions";
+    private static final String MODEL = "llama-3.3-70b-versatile";
+    private static final String API_KEY;  // ✅ déclaration séparée
+
+    // ✅ bloc static pour initialiser la clé
+    static {
+        String key;
+        try {
+            Properties props = new Properties();
+            props.load(AnthropicChatService.class
+                    .getResourceAsStream("/config.properties"));
+            key = props.getProperty("groq.api.key");
+        } catch (Exception e) {
+            key = "";
+            System.err.println("❌ config.properties introuvable !");
+        }
+        API_KEY = key;
+    }
 
     private final OkHttpClient httpClient = new OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
@@ -30,7 +46,6 @@ public class AnthropicChatService {
 
     public String sendMessage(String userMessage) throws IOException {
 
-        // ✅ Format Groq (différent de Gemini)
         JsonObject systemMsg = new JsonObject();
         systemMsg.addProperty("role", "system");
         systemMsg.addProperty("content", SYSTEM_PROMPT);
@@ -56,7 +71,7 @@ public class AnthropicChatService {
 
         Request request = new Request.Builder()
                 .url(API_URL)
-                .addHeader("Authorization", "Bearer " + API_KEY) // ✅ Groq utilise Bearer
+                .addHeader("Authorization", "Bearer " + API_KEY)
                 .addHeader("Content-Type", "application/json")
                 .post(requestBody)
                 .build();
@@ -67,9 +82,6 @@ public class AnthropicChatService {
                 throw new IOException("Erreur Groq " + response.code() + ": " + errorBody);
             }
             String responseBody = response.body().string();
-            System.out.println("Réponse Groq : " + responseBody);
-
-            // ✅ Format réponse Groq (différent de Gemini)
             JsonObject json = gson.fromJson(responseBody, JsonObject.class);
             return json.getAsJsonArray("choices")
                     .get(0).getAsJsonObject()
