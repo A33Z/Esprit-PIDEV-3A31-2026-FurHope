@@ -76,6 +76,8 @@
                             <Label text="Book Now" styleClass="section-title" />
                             <Label text="Animal ID" styleClass="field-label" />
                             <TextField fx:id="animalIdField" promptText="Enter your animal ID" />
+                            <Label text="Number of Guests" styleClass="field-label" />
+                            <TextField fx:id="guestCountField" promptText="Guests (default 1)" />
                             <Label text="Check-in" styleClass="field-label" />
                             <DatePicker fx:id="checkInDatePicker" />
                             <Label text="Check-out" styleClass="field-label" />

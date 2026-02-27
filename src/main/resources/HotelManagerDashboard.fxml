@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane fx:id="rootPane"
@@ -17,19 +25,21 @@
             fx:controller="controllers.HotelManagerDashboardController"
             styleClass="manager-page"
             stylesheets="@AppTheme.css"
-            prefHeight="820.0" prefWidth="1280.0">
+            prefHeight="860.0" prefWidth="1380.0">
 
     <children>
-        <VBox styleClass="page-content" spacing="16.0"
-              AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
-              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <VBox styleClass="page-content" spacing="14.0"
+              AnchorPane.topAnchor="0.0"
+              AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0"
+              AnchorPane.rightAnchor="0.0">
 
             <HBox alignment="CENTER_LEFT" spacing="12.0">
                 <children>
                     <VBox spacing="2.0">
                         <children>
-                            <Label text="Hotel Manager Dashboard" styleClass="header-title" />
-                            <Label text="Manage hotels and approve or decline reservations." styleClass="header-subtitle" />
+                            <Label text="Hotel Manager Admin Dashboard" styleClass="header-title" />
+                            <Label text="Secure operations view for hotels, reservations, resources, and analytics." styleClass="header-subtitle" />
                         </children>
                     </VBox>
                     <Region HBox.hgrow="ALWAYS" />
@@ -39,71 +49,204 @@
                 </children>
             </HBox>
 
-            <HBox spacing="14.0" VBox.vgrow="ALWAYS">
-                <children>
-                    <VBox styleClass="card admin-card" spacing="10.0">
-                        <children>
-                            <Label text="Hotel" styleClass="section-title" />
+            <GridPane fx:id="dashboardGrid" hgap="14.0" vgap="14.0" VBox.vgrow="ALWAYS">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0" />
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0" />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints vgrow="ALWAYS" percentHeight="46.0" />
+                    <RowConstraints vgrow="ALWAYS" percentHeight="54.0" />
+                </rowConstraints>
 
-                            <Label text="Hotel ID" styleClass="field-label" />
-                            <TextField fx:id="idField" promptText="Required for update/delete" />
+                <children>
+                    <VBox fx:id="allHotelsPanel"
+                          styleClass="card manager-grid-panel"
+                          spacing="10.0"
+                          GridPane.columnIndex="0"
+                          GridPane.rowIndex="0"
+                          GridPane.hgrow="ALWAYS"
+                          GridPane.vgrow="ALWAYS">
+                        <children>
+                            <Label text="All Hotels" styleClass="section-title" />
+                            <Label text="Operational hotel cards with thumbnail, rating, and quick pricing context." styleClass="header-subtitle" />
+
+                            <HBox spacing="8.0" alignment="CENTER_LEFT">
+                                <children>
+                                    <TextField fx:id="hotelSearchField" promptText="Search by hotel name or location" HBox.hgrow="ALWAYS" />
+                                    <ComboBox fx:id="locationFilterCombo" promptText="Location" prefWidth="140.0" />
+                                    <ComboBox fx:id="ratingFilterCombo" promptText="Rating" prefWidth="115.0" />
+                                    <ComboBox fx:id="availabilityFilterCombo" promptText="Availability" prefWidth="150.0" />
+                                    <Button text="Clear" styleClass="button ghost-button" onAction="#handleClearHotelFilters" />
+                                </children>
+                            </HBox>
+
+                            <Label fx:id="hotelResultsLabel" styleClass="header-subtitle" />
+
+                            <ScrollPane fx:id="hotelCardsScrollPane"
+                                        fitToWidth="true"
+                                        fitToHeight="true"
+                                        styleClass="hotel-scroll-pane manager-hotel-scroll"
+                                        VBox.vgrow="ALWAYS">
+                                <content>
+                                    <VBox fx:id="hotelCardContainer" spacing="10.0" styleClass="manager-hotel-list" />
+                                </content>
+                            </ScrollPane>
+                        </children>
+                    </VBox>
+
+                    <VBox fx:id="reservationPanel"
+                          styleClass="card manager-grid-panel reservation-view-card"
+                          spacing="10.0"
+                          GridPane.columnIndex="0"
+                          GridPane.rowIndex="1"
+                          GridPane.hgrow="ALWAYS"
+                          GridPane.vgrow="ALWAYS">
+                        <children>
+                            <Label text="Ticket Reservations" styleClass="section-title" />
+                            <Label text="Structured ticket cards with operational actions and clear status hierarchy." styleClass="header-subtitle" />
+                            <Label fx:id="reservationSummaryLabel" styleClass="header-subtitle" />
+                            <ListView fx:id="reservationTicketListView" styleClass="manager-reservation-list" VBox.vgrow="ALWAYS" />
+                        </children>
+                    </VBox>
+
+                    <VBox fx:id="resourcePanel"
+                          styleClass="card manager-grid-panel admin-card"
+                          spacing="10.0"
+                          GridPane.columnIndex="1"
+                          GridPane.rowIndex="0"
+                          GridPane.hgrow="ALWAYS"
+                          GridPane.vgrow="ALWAYS">
+                        <children>
+                            <Label text="Hotel Management" styleClass="section-title" />
+                            <Label text="Create or edit hotel records." styleClass="header-subtitle" />
+
+                            <Label text="ID" styleClass="field-label" />
+                            <TextField fx:id="hotelIdField" promptText="Auto-generated" editable="false" />
 
                             <Label text="Name" styleClass="field-label" />
-                            <TextField fx:id="nameField" promptText="Hotel name" />
+                            <TextField fx:id="hotelNameField" promptText="Hotel name" />
 
                             <Label text="Address" styleClass="field-label" />
-                            <TextField fx:id="addressField" promptText="Address" />
+                            <TextField fx:id="hotelAddressField" promptText="Hotel address" />
 
-                            <Label text="Manager ID" styleClass="field-label" />
-                            <TextField fx:id="managerIdField" promptText="Manager ID" />
-
-                            <Label text="Capacity" styleClass="field-label" />
-                            <TextField fx:id="capacityField" promptText="Capacity" />
-
-                            <Label fx:id="hotelErrorLabel" text="" styleClass="form-error" />
-
-                            <HBox spacing="8.0">
+                            <HBox spacing="10.0">
                                 <children>
-                                    <Button text="Add" styleClass="button primary-button" onAction="#handleAddHotel" />
-                                    <Button text="Update" styleClass="button secondary-button" onAction="#handleUpdateHotel" />
-                                    <Button text="Delete" styleClass="button danger-button" onAction="#handleDeleteHotel" />
-                                    <Button text="Clear" styleClass="button ghost-button" onAction="#handleClearHotelForm" />
+                                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                        <children>
+                                            <Label text="Manager ID" styleClass="field-label" />
+                                            <TextField fx:id="hotelManagerIdField" promptText="Optional" />
+                                        </children>
+                                    </VBox>
+                                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                        <children>
+                                            <Label text="Capacity" styleClass="field-label" />
+                                            <TextField fx:id="hotelCapacityField" promptText="Capacity" />
+                                        </children>
+                                    </VBox>
+                                </children>
+                            </HBox>
+
+                            <Label text="Created At" styleClass="field-label" />
+                            <TextField fx:id="hotelCreatedAtField" promptText="Set by database" editable="false" />
+
+                            <Label fx:id="resourceErrorLabel" styleClass="form-error" wrapText="true" />
+                            <Label fx:id="resourceSuccessLabel" styleClass="form-success" wrapText="true" />
+
+                            <HBox spacing="8.0" alignment="CENTER_RIGHT">
+                                <children>
+                                    <Button text="Add" styleClass="button primary-button" onAction="#handleAddResource" />
+                                    <Button text="Update" styleClass="button secondary-button" onAction="#handleUpdateResource" />
+                                    <Button text="Delete" styleClass="button danger-button" onAction="#handleDeleteResource" />
+                                    <Button text="Clear" styleClass="button ghost-button" onAction="#handleClearResourceForm" />
                                 </children>
                             </HBox>
                         </children>
                     </VBox>
 
-                    <VBox styleClass="card admin-card" spacing="8.0" HBox.hgrow="ALWAYS">
+                    <VBox fx:id="analyticsPanel"
+                          styleClass="card manager-grid-panel manager-analytics-panel"
+                          spacing="10.0"
+                          GridPane.columnIndex="1"
+                          GridPane.rowIndex="1"
+                          GridPane.hgrow="ALWAYS"
+                          GridPane.vgrow="ALWAYS">
                         <children>
-                            <Label text="All Hotels" styleClass="section-title" />
-                            <ListView fx:id="hotelListView" VBox.vgrow="ALWAYS" />
+                            <Label text="Analytics and Graphs" styleClass="section-title" />
+                            <Label text="Reservations over time, occupancy, and revenue trends." styleClass="header-subtitle" />
+
+                            <HBox spacing="10.0">
+                                <children>
+                                    <VBox styleClass="analytics-metric-card" spacing="4.0" HBox.hgrow="ALWAYS">
+                                        <children>
+                                            <Label text="Total Revenue" styleClass="analytics-metric-label" />
+                                            <Label fx:id="totalRevenueValueLabel" text="0.00 USD" styleClass="analytics-metric-value" />
+                                        </children>
+                                    </VBox>
+                                    <VBox styleClass="analytics-metric-card" spacing="4.0" HBox.hgrow="ALWAYS">
+                                        <children>
+                                            <Label text="Total Reservations" styleClass="analytics-metric-label" />
+                                            <Label fx:id="totalReservationsValueLabel" text="0" styleClass="analytics-metric-value" />
+                                        </children>
+                                    </VBox>
+                                    <VBox styleClass="analytics-metric-card" spacing="4.0" HBox.hgrow="ALWAYS">
+                                        <children>
+                                            <Label text="Most Booked Hotel" styleClass="analytics-metric-label" />
+                                            <Label fx:id="mostBookedHotelValueLabel" text="N/A" styleClass="analytics-metric-value" wrapText="true" />
+                                        </children>
+                                    </VBox>
+                                    <VBox styleClass="analytics-metric-card" spacing="4.0" HBox.hgrow="ALWAYS">
+                                        <children>
+                                            <Label text="Avg Occupancy" styleClass="analytics-metric-label" />
+                                            <Label fx:id="averageOccupancyValueLabel" text="0.0%" styleClass="analytics-metric-value" />
+                                        </children>
+                                    </VBox>
+                                </children>
+                            </HBox>
+
+                            <LineChart fx:id="monthlyReservationTrendChart"
+                                       title="Reservations Over Time"
+                                       legendVisible="false"
+                                       minHeight="165.0"
+                                       styleClass="analytics-line-chart"
+                                       VBox.vgrow="ALWAYS">
+                                <xAxis>
+                                    <CategoryAxis label="Month" />
+                                </xAxis>
+                                <yAxis>
+                                    <NumberAxis label="Reservations" />
+                                </yAxis>
+                            </LineChart>
+
+                            <HBox spacing="10.0" VBox.vgrow="ALWAYS">
+                                <children>
+                                    <BarChart fx:id="monthlyRevenueTrendChart"
+                                              title="Revenue Trend"
+                                              legendVisible="false"
+                                              minHeight="170.0"
+                                              styleClass="analytics-bar-chart"
+                                              HBox.hgrow="ALWAYS">
+                                        <xAxis>
+                                            <CategoryAxis label="Month" />
+                                        </xAxis>
+                                        <yAxis>
+                                            <NumberAxis label="Revenue" />
+                                        </yAxis>
+                                    </BarChart>
+
+                                    <VBox styleClass="analytics-occupancy-panel" spacing="6.0" HBox.hgrow="ALWAYS">
+                                        <children>
+                                            <Label text="Occupancy Rate" styleClass="analytics-metric-label" />
+                                            <PieChart fx:id="occupancyRatePieChart" minHeight="170.0" HBox.hgrow="ALWAYS" />
+                                            <Label fx:id="occupancySummaryLabel" styleClass="header-subtitle" />
+                                        </children>
+                                    </VBox>
+                                </children>
+                            </HBox>
                         </children>
                     </VBox>
                 </children>
-            </HBox>
-
-            <VBox styleClass="card reservation-view-card" spacing="8.0" VBox.vgrow="ALWAYS">
-                <children>
-                    <Label text="All Reservations" styleClass="section-title" />
-                    <Label text="Only PENDING reservations can be approved or declined." styleClass="header-subtitle" />
-                    <TableView fx:id="reservationTable" VBox.vgrow="ALWAYS">
-                        <columns>
-                            <TableColumn fx:id="reservationIdColumn" text="ID" prefWidth="60.0" />
-                            <TableColumn fx:id="reservationClientIdColumn" text="Client ID" prefWidth="90.0" />
-                            <TableColumn fx:id="reservationAnimalIdColumn" text="Animal ID" prefWidth="90.0" />
-                            <TableColumn fx:id="reservationHotelIdColumn" text="Hotel ID" prefWidth="90.0" />
-                            <TableColumn fx:id="reservationStartDateColumn" text="Start Date" prefWidth="120.0" />
-                            <TableColumn fx:id="reservationEndDateColumn" text="End Date" prefWidth="120.0" />
-                            <TableColumn fx:id="reservationStatusColumn" text="Status" prefWidth="110.0" />
-                            <TableColumn fx:id="reservationApproveColumn" text="Approve" prefWidth="120.0" />
-                            <TableColumn fx:id="reservationDeclineColumn" text="Decline" prefWidth="120.0" />
-                        </columns>
-                        <columnResizePolicy>
-                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                        </columnResizePolicy>
-                    </TableView>
-                </children>
-            </VBox>
+            </GridPane>
         </VBox>
     </children>
 </AnchorPane>

@@ -74,7 +74,9 @@
                     <VBox styleClass="card reservation-side-panel" spacing="8.0">
                         <children>
                             <Label text="My Reservations" styleClass="section-title" />
-                            <Label text="Statuses update automatically after manager approval/decline." styleClass="header-subtitle" wrapText="true" />
+                            <Label text="Modify pending bookings, cancel eligible reservations, and track approval status in real time."
+                                   styleClass="header-subtitle"
+                                   wrapText="true" />
                             <ListView fx:id="myReservationListView" VBox.vgrow="ALWAYS" />
                         </children>
                     </VBox>

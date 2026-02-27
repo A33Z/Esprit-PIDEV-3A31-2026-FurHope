@@ -5,8 +5,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -94,14 +96,57 @@ public class RoleSelectionController {
 
     private void navigateTo(String fxmlPath, String title) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent root = loader.load();
             Stage stage = (Stage) rootPane.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle(title);
             stage.show();
-        } catch (IOException e) {
-            showError("Unable to open dashboard.");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            String msg = t.getClass().getSimpleName() + ": " + extractRootMessage(t);
+            if (msg.trim().isEmpty()) {
+                msg = "Unable to open dashboard due to an unknown error.";
+            }
+            showError(msg);
+
+            // Show detailed alert with stacktrace so developer can paste the error
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error loading dashboard");
+            alert.setHeaderText(msg);
+            StringBuilder sb = new StringBuilder();
+            Throwable cursor = t;
+            while (cursor != null) {
+                sb.append(cursor.toString()).append('\n');
+                for (StackTraceElement el : cursor.getStackTrace()) {
+                    sb.append("    at ").append(el.toString()).append('\n');
+                }
+                cursor = cursor.getCause();
+                if (cursor != null) sb.append("Caused by:\n");
+            }
+            TextArea area = new TextArea(sb.toString());
+            area.setEditable(false);
+            area.setWrapText(false);
+            area.setPrefRowCount(18);
+            area.setPrefColumnCount(80);
+            alert.getDialogPane().setExpandableContent(area);
+            alert.showAndWait();
         }
+    }
+
+    private String extractRootMessage(Throwable throwable) {
+        if (throwable == null) {
+            return "";
+        }
+        Throwable cursor = throwable;
+        while (cursor.getCause() != null) {
+            cursor = cursor.getCause();
+        }
+        String message = cursor.getMessage();
+        if (message == null || message.trim().isEmpty()) {
+            return "";
+        }
+        return message.trim();
     }
 
     private void showError(String message) {

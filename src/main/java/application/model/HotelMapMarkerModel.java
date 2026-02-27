@@ -4,7 +4,7 @@ public record HotelMapMarkerModel(
         int hotelId,
         String name,
         double rating,
-        String preview,
+        String pricePerNight,
         double latitude,
         double longitude
 ) {

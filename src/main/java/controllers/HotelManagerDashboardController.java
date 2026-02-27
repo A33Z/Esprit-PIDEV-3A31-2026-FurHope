@@ -1,410 +1,1070 @@
 package controllers;
 
 import application.AppContext;
+import application.model.ManagerAnalyticsModel;
+import application.model.ManagerHotelInfoModel;
+import application.model.ManagerReservationTicketModel;
 import application.service.ManagerDashboardService;
+import application.ui.HotelInfoCard;
+import application.ui.ReservationTicketCard;
 import entities.Hotel;
-import entities.Reservation;
 import entities.ReservationStatus;
-import entities.User;
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.Node;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
-import services.AuthorizationException;
-import services.SessionContext;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import javafx.util.Pair;
+import services.AuthorizationException;
+import services.ReservationDecisionCode;
+import services.ReservationDecisionResult;
+import services.SessionContext;
+import services.UserReservationActionCode;
+import services.UserReservationActionResult;
+import utils.DBConnection;
 
-import java.io.IOException;
-import java.sql.Date;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 public class HotelManagerDashboardController {
+
+    private static final String ALL_LOCATIONS = "All locations";
+    private static final String ALL_RATINGS = "All ratings";
+    private static final String ALL_AVAILABILITY = "All availability";
+
+    private static final NumberFormat CURRENCY_FORMAT = NumberFormat.getCurrencyInstance(Locale.US);
+    private static final DateTimeFormatter CREATED_AT_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.US);
 
     @FXML
     private AnchorPane rootPane;
     @FXML
+    private GridPane dashboardGrid;
+
+    @FXML
+    private VBox allHotelsPanel;
+    @FXML
+    private VBox reservationPanel;
+    @FXML
+    private VBox resourcePanel;
+    @FXML
+    private VBox analyticsPanel;
+
+    @FXML
     private Label sessionLabel;
-    @FXML
-    private Label hotelErrorLabel;
-    @FXML
-    private TextField idField;
-    @FXML
-    private TextField nameField;
-    @FXML
-    private TextField addressField;
-    @FXML
-    private TextField managerIdField;
-    @FXML
-    private TextField capacityField;
 
+    // All hotels
     @FXML
-    private ListView<Hotel> hotelListView;
+    private TextField hotelSearchField;
+    @FXML
+    private ComboBox<String> locationFilterCombo;
+    @FXML
+    private ComboBox<String> ratingFilterCombo;
+    @FXML
+    private ComboBox<String> availabilityFilterCombo;
+    @FXML
+    private Label hotelResultsLabel;
+    @FXML
+    private ScrollPane hotelCardsScrollPane;
+    @FXML
+    private VBox hotelCardContainer;
 
+    // Reservations
     @FXML
-    private TableView<Reservation> reservationTable;
+    private ListView<ManagerReservationTicketModel> reservationTicketListView;
     @FXML
-    private TableColumn<Reservation, Integer> reservationIdColumn;
-    @FXML
-    private TableColumn<Reservation, Integer> reservationClientIdColumn;
-    @FXML
-    private TableColumn<Reservation, Integer> reservationAnimalIdColumn;
-    @FXML
-    private TableColumn<Reservation, Integer> reservationHotelIdColumn;
-    @FXML
-    private TableColumn<Reservation, Date> reservationStartDateColumn;
-    @FXML
-    private TableColumn<Reservation, Date> reservationEndDateColumn;
-    @FXML
-    private TableColumn<Reservation, ReservationStatus> reservationStatusColumn;
-    @FXML
-    private TableColumn<Reservation, Reservation> reservationApproveColumn;
-    @FXML
-    private TableColumn<Reservation, Reservation> reservationDeclineColumn;
+    private Label reservationSummaryLabel;
 
-    private final ObservableList<Hotel> hotels = FXCollections.observableArrayList();
-    private final ObservableList<Reservation> reservations = FXCollections.observableArrayList();
+    // Hotel management form
+    @FXML
+    private TextField hotelIdField;
+    @FXML
+    private TextField hotelNameField;
+    @FXML
+    private TextField hotelAddressField;
+    @FXML
+    private TextField hotelManagerIdField;
+    @FXML
+    private TextField hotelCapacityField;
+    @FXML
+    private TextField hotelCreatedAtField;
+    @FXML
+    private Label resourceErrorLabel;
+    @FXML
+    private Label resourceSuccessLabel;
+
+    // Analytics
+    @FXML
+    private Label totalRevenueValueLabel;
+    @FXML
+    private Label totalReservationsValueLabel;
+    @FXML
+    private Label mostBookedHotelValueLabel;
+    @FXML
+    private Label averageOccupancyValueLabel;
+    @FXML
+    private LineChart<String, Number> monthlyReservationTrendChart;
+    @FXML
+    private BarChart<String, Number> monthlyRevenueTrendChart;
+    @FXML
+    private PieChart occupancyRatePieChart;
+    @FXML
+    private Label occupancySummaryLabel;
 
     private ManagerDashboardService managerDashboardService;
+
+    private final Map<Integer, Hotel> hotelsById = new HashMap<>();
+
+    private List<ManagerHotelInfoModel> allHotels = List.of();
+
     private Timeline autoRefreshTimeline;
+    private boolean compactLayoutEnabled;
 
     @FXML
     public void initialize() {
-        User manager;
         try {
-            manager = SessionContext.requireManager();
+            SessionContext.requireManager();
         } catch (AuthorizationException e) {
-            Platform.runLater(() -> redirectToRoleSelection());
+            Platform.runLater(this::redirectToRoleSelection);
             return;
         }
-
-        String managerIdentifier = manager.getPrincipalId() == null ? manager.getDisplayName() : manager.getPrincipalId();
-        sessionLabel.setText("Role: HOTEL_MANAGER | " + managerIdentifier);
 
         try {
             managerDashboardService = AppContext.getInstance().managerDashboardService();
         } catch (RuntimeException e) {
-            showError("Service initialization failed.");
+            managerDashboardService = null;
+        }
+
+        try {
+            var manager = SessionContext.requireManager();
+            sessionLabel.setText("Logged in as: " + manager.getDisplayName());
+        } catch (RuntimeException ignored) {
+            sessionLabel.setText("Manager session");
+        }
+
+        configureReservationListView();
+        configureHotelFilters();
+        configureResourceForm();
+        configureCharts();
+        configureResponsiveLayout();
+
+        refreshAll();
+        startAutoRefresh();
+    }
+
+    private void configureReservationListView() {
+        reservationTicketListView.setCellFactory(list -> new ListCell<>() {
+            @Override
+            protected void updateItem(ManagerReservationTicketModel ticket, boolean empty) {
+                super.updateItem(ticket, empty);
+                if (empty || ticket == null) {
+                    setGraphic(null);
+                    setText(null);
+                    return;
+                }
+                setGraphic(new ReservationTicketCard(
+                        ticket,
+                        () -> handleModifyReservation(ticket),
+                        () -> handleCancelReservation(ticket),
+                        () -> handleApproveReservation(ticket),
+                        () -> handleDeclineReservation(ticket)
+                ));
+                setText(null);
+            }
+        });
+    }
+
+    private void configureHotelFilters() {
+        locationFilterCombo.getItems().setAll(ALL_LOCATIONS);
+        locationFilterCombo.setValue(ALL_LOCATIONS);
+
+        ratingFilterCombo.getItems().setAll(
+                ALL_RATINGS,
+                "5.0",
+                "4.5+",
+                "4.0+",
+                "3.5+"
+        );
+        ratingFilterCombo.setValue(ALL_RATINGS);
+
+        availabilityFilterCombo.getItems().setAll(
+                ALL_AVAILABILITY,
+                "Open",
+                "Available",
+                "Limited",
+                "Nearly Full",
+                "Unknown"
+        );
+        availabilityFilterCombo.setValue(ALL_AVAILABILITY);
+
+        hotelSearchField.textProperty().addListener((obs, oldValue, newValue) -> renderHotelCards());
+        locationFilterCombo.valueProperty().addListener((obs, oldValue, newValue) -> renderHotelCards());
+        ratingFilterCombo.valueProperty().addListener((obs, oldValue, newValue) -> renderHotelCards());
+        availabilityFilterCombo.valueProperty().addListener((obs, oldValue, newValue) -> renderHotelCards());
+    }
+
+    private void configureResourceForm() {
+        hotelIdField.setEditable(false);
+        hotelCreatedAtField.setEditable(false);
+
+        hotelCapacityField.setTextFormatter(new TextFormatter<>(change ->
+                change.getControlNewText().matches("\\d{0,6}") ? change : null
+        ));
+
+        hotelManagerIdField.setTextFormatter(new TextFormatter<>(change ->
+                change.getControlNewText().matches("\\d{0,10}") ? change : null
+        ));
+    }
+
+    private void configureCharts() {
+        monthlyReservationTrendChart.setAnimated(false);
+        monthlyRevenueTrendChart.setAnimated(false);
+        occupancyRatePieChart.setLabelsVisible(true);
+    }
+
+    private void configureResponsiveLayout() {
+        if (rootPane == null) {
+            return;
+        }
+        rootPane.widthProperty().addListener((obs, oldWidth, newWidth) -> applyResponsiveLayout(newWidth.doubleValue()));
+        Platform.runLater(() -> applyResponsiveLayout(rootPane.getWidth()));
+    }
+
+    private void applyResponsiveLayout(double width) {
+        if (dashboardGrid == null) {
             return;
         }
 
-        configureHotelList();
-        configureReservationTable();
-        configureReservationActionColumns();
-        configureHotelSelection();
-
-        try {
-            refreshData();
-            startAutoRefresh();
-        } catch (RuntimeException e) {
-            showError("Database connection failed.");
+        boolean compact = width < 1240;
+        if (compact == compactLayoutEnabled) {
+            return;
         }
-    }
+        compactLayoutEnabled = compact;
 
-    private void configureHotelList() {
-        hotelListView.setItems(hotels);
-        hotelListView.setCellFactory(list -> new ListCell<>() {
-            @Override
-            protected void updateItem(Hotel hotel, boolean empty) {
-                super.updateItem(hotel, empty);
-                if (empty || hotel == null) {
-                    setText(null);
-                    return;
-                }
-                setText("ID: " + hotel.getId()
-                        + " | " + hotel.getName()
-                        + " | Address: " + hotel.getAddress()
-                        + " | Manager ID: " + hotel.getManagerId()
-                        + " | Capacity: " + hotel.getCapacity());
-            }
-        });
-    }
+        dashboardGrid.getColumnConstraints().clear();
+        dashboardGrid.getRowConstraints().clear();
 
-    private void configureReservationTable() {
-        reservationIdColumn.setCellValueFactory(cell -> new SimpleIntegerProperty(cell.getValue().getId()).asObject());
-        reservationClientIdColumn.setCellValueFactory(cell -> new SimpleIntegerProperty(cell.getValue().getClientId()).asObject());
-        reservationAnimalIdColumn.setCellValueFactory(cell -> new SimpleIntegerProperty(cell.getValue().getAnimalId()).asObject());
-        reservationHotelIdColumn.setCellValueFactory(cell -> new SimpleIntegerProperty(cell.getValue().getHotelId()).asObject());
-        reservationStartDateColumn.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getStartDate()));
-        reservationEndDateColumn.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getEndDate()));
-        reservationStatusColumn.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getStatus()));
-        reservationStatusColumn.setCellFactory(column -> new TableCell<>() {
-            @Override
-            protected void updateItem(ReservationStatus item, boolean empty) {
-                super.updateItem(item, empty);
-                getStyleClass().removeAll("status-pending", "status-approved", "status-declined");
-                if (empty || item == null) {
-                    setText(null);
-                    return;
-                }
-                setText(item.name());
-                switch (item) {
-                    case APPROVED -> getStyleClass().add("status-approved");
-                    case DECLINED -> getStyleClass().add("status-declined");
-                    default -> getStyleClass().add("status-pending");
-                }
-            }
-        });
-        reservationTable.setItems(reservations);
-    }
-
-    private void configureReservationActionColumns() {
-        reservationApproveColumn.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue()));
-        reservationDeclineColumn.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue()));
-        reservationApproveColumn.setCellFactory(column -> buildActionCell("Approve", true));
-        reservationDeclineColumn.setCellFactory(column -> buildActionCell("Decline", false));
-    }
-
-    private TableCell<Reservation, Reservation> buildActionCell(String buttonLabel, boolean approve) {
-        return new TableCell<>() {
-            private final Button actionButton = createActionButton(buttonLabel, approve);
-
-            {
-                actionButton.setOnAction(event -> handleReservationDecision(approve));
-            }
-
-            @Override
-            protected void updateItem(Reservation reservation, boolean empty) {
-                super.updateItem(reservation, empty);
-                if (empty || reservation == null) {
-                    setGraphic(null);
-                    return;
-                }
-                actionButton.setDisable(reservation.getStatus() != ReservationStatus.PENDING);
-                setGraphic(actionButton);
-            }
-
-            private void handleReservationDecision(boolean approveAction) {
-                Reservation selected = getTableView().getItems().get(getIndex());
-                if (selected == null) {
-                    return;
-                }
-                boolean success;
-                try {
-                    success = approveAction
-                            ? managerDashboardService.approveReservation(selected.getId())
-                            : managerDashboardService.declineReservation(selected.getId());
-                } catch (AuthorizationException e) {
-                    showError(e.getMessage());
-                    return;
-                }
-
-                if (!success) {
-                    showError("Action rejected. Reservation may already be processed.");
-                } else {
-                    clearError();
-                }
-                refreshReservations();
-            }
-        };
-    }
-
-    private Button createActionButton(String buttonLabel, boolean approve) {
-        Button button = new Button(buttonLabel);
-        button.getStyleClass().add("button");
-        button.getStyleClass().add(approve ? "primary-button" : "danger-button");
-        return button;
-    }
-
-    private void configureHotelSelection() {
-        hotelListView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, selected) -> {
-            if (selected == null) {
-                return;
-            }
-            idField.setText(String.valueOf(selected.getId()));
-            nameField.setText(selected.getName());
-            addressField.setText(selected.getAddress());
-            managerIdField.setText(String.valueOf(selected.getManagerId()));
-            capacityField.setText(String.valueOf(selected.getCapacity()));
-            clearError();
-        });
-    }
-
-    @FXML
-    private void handleAddHotel() {
-        try {
-            Hotel hotel = new Hotel(
-                    requireText(nameField.getText(), "Name"),
-                    requireText(addressField.getText(), "Address"),
-                    parseNonNegativeInt(managerIdField.getText(), "Manager ID"),
-                    parseNonNegativeInt(capacityField.getText(), "Capacity")
+        if (compact) {
+            dashboardGrid.getColumnConstraints().add(growColumn(100.0));
+            dashboardGrid.getRowConstraints().addAll(
+                    growRow(25.0),
+                    growRow(25.0),
+                    growRow(25.0),
+                    growRow(25.0)
             );
 
-            if (!managerDashboardService.addHotel(hotel)) {
-                showError("Add hotel failed.");
-                return;
-            }
-            handleClearHotelForm();
-            refreshHotels();
-        } catch (IllegalArgumentException | AuthorizationException e) {
-            showError(e.getMessage());
+            placePanel(allHotelsPanel, 0, 0);
+            placePanel(reservationPanel, 0, 1);
+            placePanel(resourcePanel, 0, 2);
+            placePanel(analyticsPanel, 0, 3);
+            return;
         }
+
+        dashboardGrid.getColumnConstraints().addAll(growColumn(50.0), growColumn(50.0));
+        dashboardGrid.getRowConstraints().addAll(growRow(46.0), growRow(54.0));
+
+        placePanel(allHotelsPanel, 0, 0);
+        placePanel(resourcePanel, 1, 0);
+        placePanel(reservationPanel, 0, 1);
+        placePanel(analyticsPanel, 1, 1);
     }
 
-    @FXML
-    private void handleUpdateHotel() {
-        try {
-            Hotel hotel = new Hotel(
-                    parsePositiveInt(idField.getText(), "Hotel ID"),
-                    requireText(nameField.getText(), "Name"),
-                    requireText(addressField.getText(), "Address"),
-                    parseNonNegativeInt(managerIdField.getText(), "Manager ID"),
-                    parseNonNegativeInt(capacityField.getText(), "Capacity")
-            );
-
-            if (!managerDashboardService.updateHotel(hotel)) {
-                showError("Update hotel failed. Check ID.");
-                return;
-            }
-            refreshHotels();
-            clearError();
-        } catch (IllegalArgumentException | AuthorizationException e) {
-            showError(e.getMessage());
-        }
+    private ColumnConstraints growColumn(double percentWidth) {
+        ColumnConstraints constraints = new ColumnConstraints();
+        constraints.setHgrow(Priority.ALWAYS);
+        constraints.setPercentWidth(percentWidth);
+        return constraints;
     }
 
-    @FXML
-    private void handleDeleteHotel() {
-        try {
-            int id = parsePositiveInt(idField.getText(), "Hotel ID");
-            if (!managerDashboardService.deleteHotel(id)) {
-                showError("Delete hotel failed. Check ID.");
-                return;
-            }
-            handleClearHotelForm();
-            refreshHotels();
-        } catch (IllegalArgumentException | AuthorizationException e) {
-            showError(e.getMessage());
-        }
+    private RowConstraints growRow(double percentHeight) {
+        RowConstraints constraints = new RowConstraints();
+        constraints.setVgrow(Priority.ALWAYS);
+        constraints.setPercentHeight(percentHeight);
+        return constraints;
     }
 
-    @FXML
-    private void handleClearHotelForm() {
-        idField.clear();
-        nameField.clear();
-        addressField.clear();
-        managerIdField.clear();
-        capacityField.clear();
-        hotelListView.getSelectionModel().clearSelection();
-        clearError();
+    private void placePanel(Node panel, int column, int row) {
+        if (panel == null) {
+            return;
+        }
+        GridPane.setColumnIndex(panel, column);
+        GridPane.setRowIndex(panel, row);
+        GridPane.setHgrow(panel, Priority.ALWAYS);
+        GridPane.setVgrow(panel, Priority.ALWAYS);
     }
 
     @FXML
     private void handleRefreshData() {
-        refreshData();
+        refreshAll();
     }
 
     @FXML
     private void handleLogout() {
-        stopAutoRefresh();
+        if (autoRefreshTimeline != null) {
+            autoRefreshTimeline.stop();
+        }
         SessionContext.logout();
         redirectToRoleSelection();
     }
 
-    private void refreshData() {
+    private void refreshAll() {
         refreshHotels();
         refreshReservations();
+        refreshResources();
+        refreshAnalytics();
     }
 
     private void refreshHotels() {
-        hotels.setAll(managerDashboardService.getHotels());
+        if (managerDashboardService == null) {
+            allHotels = List.of();
+            hotelsById.clear();
+            hotelCardContainer.getChildren().setAll(emptyStateLabel("Hotel data is currently unavailable."));
+            hotelResultsLabel.setText("Showing 0 of 0 hotels");
+            return;
+        }
+
+        try {
+            List<Hotel> hotels = managerDashboardService.getHotels();
+            updateHotelLookup(hotels);
+            allHotels = managerDashboardService.getHotelInfoModelsForManager();
+            updateLocationFilterItems();
+            renderHotelCards();
+            refreshResources();
+        } catch (RuntimeException e) {
+            allHotels = List.of();
+            hotelsById.clear();
+            hotelCardContainer.getChildren().setAll(emptyStateLabel("Could not load hotels."));
+            hotelResultsLabel.setText("Showing 0 of 0 hotels");
+        }
+    }
+
+    private void updateLocationFilterItems() {
+        String currentSelection = locationFilterCombo.getValue();
+
+        List<String> locations = allHotels.stream()
+                .map(ManagerHotelInfoModel::location)
+                .filter(value -> value != null && !value.isBlank())
+                .distinct()
+                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .toList();
+
+        List<String> options = new ArrayList<>();
+        options.add(ALL_LOCATIONS);
+        options.addAll(locations);
+        locationFilterCombo.getItems().setAll(options);
+
+        if (currentSelection != null && options.contains(currentSelection)) {
+            locationFilterCombo.setValue(currentSelection);
+        } else {
+            locationFilterCombo.setValue(ALL_LOCATIONS);
+        }
+    }
+
+    private void updateHotelLookup(List<Hotel> hotels) {
+        hotelsById.clear();
+        if (hotels == null || hotels.isEmpty()) {
+            return;
+        }
+        for (Hotel hotel : hotels) {
+            if (hotel != null && hotel.getId() > 0) {
+                hotelsById.put(hotel.getId(), hotel);
+            }
+        }
+    }
+
+    private void renderHotelCards() {
+        if (hotelCardContainer == null) {
+            return;
+        }
+
+        List<ManagerHotelInfoModel> filteredHotels = allHotels.stream()
+                .filter(this::matchesHotelFilters)
+                .toList();
+
+        hotelCardContainer.getChildren().clear();
+
+        if (filteredHotels.isEmpty()) {
+            hotelCardContainer.getChildren().add(emptyStateLabel("No hotels match the current filters."));
+        } else {
+            for (ManagerHotelInfoModel hotel : filteredHotels) {
+                HotelInfoCard card = new HotelInfoCard(hotel, () -> focusResourcePanelForHotel(hotel.hotelId()));
+                card.setMaxWidth(Double.MAX_VALUE);
+                hotelCardContainer.getChildren().add(card);
+            }
+        }
+
+        hotelResultsLabel.setText(String.format(
+                Locale.US,
+                "Showing %d of %d hotels",
+                filteredHotels.size(),
+                allHotels.size()
+        ));
+    }
+
+    private boolean matchesHotelFilters(ManagerHotelInfoModel hotel) {
+        if (hotel == null) {
+            return false;
+        }
+
+        String query = normalize(hotelSearchField.getText()).toLowerCase(Locale.US);
+        if (!query.isBlank()) {
+            String hotelName = normalize(hotel.hotelName()).toLowerCase(Locale.US);
+            String location = normalize(hotel.location()).toLowerCase(Locale.US);
+            if (!hotelName.contains(query) && !location.contains(query)) {
+                return false;
+            }
+        }
+
+        String selectedLocation = locationFilterCombo.getValue();
+        if (selectedLocation != null
+                && !ALL_LOCATIONS.equalsIgnoreCase(selectedLocation)
+                && !selectedLocation.equalsIgnoreCase(hotel.location())) {
+            return false;
+        }
+
+        String selectedAvailability = availabilityFilterCombo.getValue();
+        if (selectedAvailability != null
+                && !ALL_AVAILABILITY.equalsIgnoreCase(selectedAvailability)
+                && !selectedAvailability.equalsIgnoreCase(hotel.availabilityStatus())) {
+            return false;
+        }
+
+        return matchesRatingFilter(hotel.starRating(), ratingFilterCombo.getValue());
+    }
+
+    private boolean matchesRatingFilter(double rating, String ratingFilter) {
+        if (ratingFilter == null || ratingFilter.isBlank() || ALL_RATINGS.equalsIgnoreCase(ratingFilter)) {
+            return true;
+        }
+        return switch (ratingFilter) {
+            case "5.0" -> rating >= 5.0;
+            case "4.5+" -> rating >= 4.5;
+            case "4.0+" -> rating >= 4.0;
+            case "3.5+" -> rating >= 3.5;
+            default -> true;
+        };
+    }
+
+    @FXML
+    private void handleClearHotelFilters() {
+        hotelSearchField.clear();
+        locationFilterCombo.setValue(ALL_LOCATIONS);
+        ratingFilterCombo.setValue(ALL_RATINGS);
+        availabilityFilterCombo.setValue(ALL_AVAILABILITY);
+        renderHotelCards();
+    }
+
+    private void focusResourcePanelForHotel(int hotelId) {
+        Hotel hotel = hotelsById.get(hotelId);
+        if (hotel == null) {
+            return;
+        }
+        populateHotelForm(hotel);
+        showResourceSuccess("Form prefilled for " + safeDisplay(hotel.getName(), "selected hotel") + ".");
     }
 
     private void refreshReservations() {
-        reservations.setAll(managerDashboardService.getReservationsForManager());
+        if (managerDashboardService == null) {
+            reservationTicketListView.getItems().clear();
+            reservationSummaryLabel.setText("Active reservations: 0");
+            return;
+        }
+
+        try {
+            List<ManagerReservationTicketModel> activeTickets = managerDashboardService.getActiveReservationTicketsForManager();
+            reservationTicketListView.getItems().setAll(activeTickets);
+            reservationSummaryLabel.setText("Active reservations: " + activeTickets.size());
+        } catch (RuntimeException e) {
+            reservationTicketListView.getItems().clear();
+            reservationSummaryLabel.setText("Active reservations: 0");
+        }
     }
 
-    private int parsePositiveInt(String rawValue, String fieldName) {
+    private void refreshResources() {
+        Integer selectedHotelId = parsePositiveInteger(hotelIdField.getText());
+        if (selectedHotelId == null) {
+            return;
+        }
+        Hotel hotel = hotelsById.get(selectedHotelId);
+        if (hotel != null) {
+            populateHotelForm(hotel);
+        }
+    }
+
+    private void populateHotelForm(Hotel hotel) {
+        if (hotel == null) {
+            return;
+        }
+
+        hotelIdField.setText(String.valueOf(hotel.getId()));
+        hotelNameField.setText(safeDisplay(hotel.getName(), ""));
+        hotelAddressField.setText(safeDisplay(hotel.getAddress(), ""));
+        hotelManagerIdField.setText(hotel.getManagerId() > 0 ? String.valueOf(hotel.getManagerId()) : "");
+        hotelCapacityField.setText(String.valueOf(Math.max(0, hotel.getCapacity())));
+        hotelCreatedAtField.setText(resolveHotelCreatedAt(hotel.getId()));
+        clearResourceFeedback();
+    }
+
+    private String resolveHotelCreatedAt(int hotelId) {
+        if (hotelId <= 0) {
+            return "";
+        }
+
+        String sql = "SELECT created_at FROM hotel WHERE id = ?";
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, hotelId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    Timestamp createdAt = resultSet.getTimestamp("created_at");
+                    if (createdAt != null) {
+                        return createdAt.toLocalDateTime().format(CREATED_AT_FORMAT);
+                    }
+                }
+            }
+        } catch (SQLException ignored) {
+            // Legacy schemas may not include created_at; keep the field visible with a safe fallback.
+        }
+        return "Auto-generated by database";
+    }
+
+    @FXML
+    private void handleAddResource() {
+        clearResourceFeedback();
+        if (managerDashboardService == null) {
+            showResourceError("Service unavailable.");
+            return;
+        }
+
+        HotelPayload payload = validateHotelPayload();
+        if (payload == null) {
+            return;
+        }
+
+        try {
+            boolean added = managerDashboardService.addHotel(
+                    new Hotel(
+                            payload.name(),
+                            payload.address(),
+                            payload.managerId(),
+                            payload.capacity()
+                    )
+            );
+            if (!added) {
+                showResourceError("Hotel could not be added.");
+                return;
+            }
+            refreshHotels();
+            refreshAnalytics();
+            handleClearResourceForm();
+            showResourceSuccess("Hotel added successfully.");
+        } catch (IllegalArgumentException e) {
+            showResourceError(safeDisplay(e.getMessage(), "Invalid hotel input."));
+        } catch (RuntimeException e) {
+            showResourceError("Could not add hotel right now.");
+        }
+    }
+
+    @FXML
+    private void handleUpdateResource() {
+        clearResourceFeedback();
+        if (managerDashboardService == null) {
+            showResourceError("Service unavailable.");
+            return;
+        }
+
+        Integer hotelId = parsePositiveInteger(hotelIdField.getText());
+        if (hotelId == null) {
+            showResourceError("ID is required to update a hotel.");
+            return;
+        }
+
+        HotelPayload payload = validateHotelPayload();
+        if (payload == null) {
+            return;
+        }
+
+        try {
+            boolean updated = managerDashboardService.updateHotel(
+                    new Hotel(
+                            hotelId,
+                            payload.name(),
+                            payload.address(),
+                            payload.managerId(),
+                            payload.capacity()
+                    )
+            );
+            if (!updated) {
+                showResourceError("Hotel could not be updated.");
+                return;
+            }
+            refreshHotels();
+            refreshAnalytics();
+            focusResourcePanelForHotel(hotelId);
+            showResourceSuccess("Hotel updated successfully.");
+        } catch (IllegalArgumentException e) {
+            showResourceError(safeDisplay(e.getMessage(), "Invalid hotel input."));
+        } catch (RuntimeException e) {
+            showResourceError("Could not update hotel right now.");
+        }
+    }
+
+    @FXML
+    private void handleDeleteResource() {
+        clearResourceFeedback();
+        if (managerDashboardService == null) {
+            showResourceError("Service unavailable.");
+            return;
+        }
+
+        Integer hotelId = parsePositiveInteger(hotelIdField.getText());
+        if (hotelId == null) {
+            showResourceError("ID is required to delete a hotel.");
+            return;
+        }
+
+        String hotelName = safeDisplay(hotelNameField.getText(), "selected hotel");
+
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.setTitle("Delete Hotel");
+        confirmation.setHeaderText("Delete hotel?");
+        confirmation.setContentText("This will permanently remove \"" + hotelName + "\".");
+
+        Optional<ButtonType> decision = confirmation.showAndWait();
+        if (decision.isEmpty() || decision.get() != ButtonType.OK) {
+            return;
+        }
+
+        try {
+            boolean deleted = managerDashboardService.deleteHotel(hotelId);
+            if (!deleted) {
+                showResourceError("Hotel could not be deleted.");
+                return;
+            }
+            refreshHotels();
+            refreshReservations();
+            refreshAnalytics();
+            handleClearResourceForm();
+            showResourceSuccess("Hotel deleted successfully.");
+        } catch (RuntimeException e) {
+            showResourceError("Could not delete hotel right now.");
+        }
+    }
+
+    @FXML
+    private void handleClearResourceForm() {
+        hotelIdField.clear();
+        hotelNameField.clear();
+        hotelAddressField.clear();
+        hotelManagerIdField.clear();
+        hotelCapacityField.clear();
+        hotelCreatedAtField.clear();
+        clearResourceFeedback();
+    }
+
+    private HotelPayload validateHotelPayload() {
+        String name = normalize(hotelNameField.getText());
+        if (name.isBlank()) {
+            showResourceError("Name is required.");
+            return null;
+        }
+
+        String address = normalize(hotelAddressField.getText());
+        if (address.isBlank()) {
+            showResourceError("Address is required.");
+            return null;
+        }
+
+        String managerIdRaw = normalize(hotelManagerIdField.getText());
+        Integer managerId = managerIdRaw.isBlank() ? 0 : parseNonNegativeInteger(managerIdRaw);
+        if (managerId == null) {
+            showResourceError("Manager ID must be numeric.");
+            return null;
+        }
+
+        Integer capacity = parsePositiveInteger(hotelCapacityField.getText());
+        if (capacity == null || capacity <= 0) {
+            showResourceError("Capacity must be a number greater than 0.");
+            return null;
+        }
+
+        return new HotelPayload(
+                name,
+                address,
+                managerId,
+                capacity
+        );
+    }
+
+    private Integer parsePositiveInteger(String rawValue) {
         if (rawValue == null || rawValue.trim().isEmpty()) {
-            throw new IllegalArgumentException(fieldName + " is required.");
+            return null;
         }
         try {
-            int value = Integer.parseInt(rawValue.trim());
-            if (value <= 0) {
-                throw new IllegalArgumentException(fieldName + " must be > 0.");
-            }
-            return value;
+            int parsed = Integer.parseInt(rawValue.trim());
+            return parsed > 0 ? parsed : null;
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(fieldName + " must be numeric.");
+            return null;
         }
     }
 
-    private int parseNonNegativeInt(String rawValue, String fieldName) {
+    private Integer parseNonNegativeInteger(String rawValue) {
         if (rawValue == null || rawValue.trim().isEmpty()) {
-            throw new IllegalArgumentException(fieldName + " is required.");
+            return null;
         }
         try {
-            int value = Integer.parseInt(rawValue.trim());
-            if (value < 0) {
-                throw new IllegalArgumentException(fieldName + " must be >= 0.");
-            }
-            return value;
+            int parsed = Integer.parseInt(rawValue.trim());
+            return parsed >= 0 ? parsed : null;
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(fieldName + " must be numeric.");
+            return null;
         }
     }
 
-    private String requireText(String rawValue, String fieldName) {
-        if (rawValue == null || rawValue.trim().isEmpty()) {
-            throw new IllegalArgumentException(fieldName + " is required.");
+    private void showResourceError(String message) {
+        resourceErrorLabel.setText(safeDisplay(message, "Invalid input."));
+        resourceSuccessLabel.setText("");
+    }
+
+    private void showResourceSuccess(String message) {
+        resourceSuccessLabel.setText(safeDisplay(message, ""));
+        resourceErrorLabel.setText("");
+    }
+
+    private void clearResourceFeedback() {
+        resourceErrorLabel.setText("");
+        resourceSuccessLabel.setText("");
+    }
+
+    private void refreshAnalytics() {
+        if (managerDashboardService == null) {
+            applyAnalyticsFallback();
+            return;
         }
-        return rawValue.trim();
+
+        try {
+            ManagerAnalyticsModel analytics = managerDashboardService.getAnalyticsForManager();
+            totalRevenueValueLabel.setText(formatCurrency(analytics.totalRevenue()));
+            totalReservationsValueLabel.setText(String.valueOf(Math.max(0, analytics.totalReservations())));
+            mostBookedHotelValueLabel.setText(safeDisplay(analytics.mostBookedHotel(), "N/A"));
+            averageOccupancyValueLabel.setText(String.format(Locale.US, "%.1f%%", Math.max(0.0, analytics.averageOccupancyRate())));
+
+            renderReservationTrendChart(analytics);
+            renderRevenueTrendChart(analytics);
+            renderOccupancyChart();
+        } catch (RuntimeException e) {
+            applyAnalyticsFallback();
+        }
+    }
+
+    private void applyAnalyticsFallback() {
+        totalRevenueValueLabel.setText("$0.00");
+        totalReservationsValueLabel.setText("0");
+        mostBookedHotelValueLabel.setText("N/A");
+        averageOccupancyValueLabel.setText("0.0%");
+        monthlyReservationTrendChart.getData().clear();
+        monthlyRevenueTrendChart.getData().clear();
+        occupancyRatePieChart.getData().clear();
+        occupancySummaryLabel.setText("Occupancy data unavailable.");
+    }
+
+    private void renderReservationTrendChart(ManagerAnalyticsModel analytics) {
+        monthlyReservationTrendChart.getData().clear();
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        if (analytics.monthlyTrend() != null) {
+            analytics.monthlyTrend().forEach(point ->
+                    series.getData().add(new XYChart.Data<>(safeDisplay(point.monthLabel(), "N/A"), Math.max(0, point.reservationCount())))
+            );
+        }
+
+        monthlyReservationTrendChart.getData().add(series);
+
+        Platform.runLater(() -> series.getData().forEach(data -> {
+            if (data.getNode() == null) {
+                return;
+            }
+            Tooltip.install(data.getNode(), new Tooltip(data.getXValue() + ": " + data.getYValue().intValue() + " reservations"));
+        }));
+    }
+
+    private void renderRevenueTrendChart(ManagerAnalyticsModel analytics) {
+        monthlyRevenueTrendChart.getData().clear();
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        if (analytics.revenueTrend() != null) {
+            analytics.revenueTrend().forEach(point -> {
+                BigDecimal totalRevenue = point.totalRevenue() == null ? BigDecimal.ZERO : point.totalRevenue();
+                series.getData().add(new XYChart.Data<>(safeDisplay(point.monthLabel(), "N/A"), totalRevenue));
+            });
+        }
+
+        monthlyRevenueTrendChart.getData().add(series);
+
+        Platform.runLater(() -> series.getData().forEach(data -> {
+            if (data.getNode() == null) {
+                return;
+            }
+            BigDecimal revenue = new BigDecimal(data.getYValue().toString());
+            Tooltip.install(data.getNode(), new Tooltip(data.getXValue() + ": " + formatCurrency(revenue)));
+        }));
+    }
+
+    private void renderOccupancyChart() {
+        int totalRooms = allHotels.stream().mapToInt(hotel -> Math.max(0, hotel.totalRooms())).sum();
+        int availableRooms = allHotels.stream()
+                .mapToInt(hotel -> Math.max(0, Math.min(hotel.totalRooms(), hotel.availableRooms())))
+                .sum();
+        int occupiedRooms = Math.max(0, totalRooms - availableRooms);
+
+        if (totalRooms <= 0) {
+            occupancyRatePieChart.setData(FXCollections.observableArrayList(
+                    new PieChart.Data("No occupancy data", 1)
+            ));
+            occupancySummaryLabel.setText("Occupied 0 of 0 rooms (0.0%).");
+            installPieChartTooltips();
+            return;
+        }
+
+        occupancyRatePieChart.setData(FXCollections.observableArrayList(
+                new PieChart.Data("Occupied", occupiedRooms),
+                new PieChart.Data("Available", availableRooms)
+        ));
+
+        double occupancyPercent = Math.min(100.0, Math.max(0.0, (occupiedRooms * 100.0) / totalRooms));
+        occupancySummaryLabel.setText(String.format(
+                Locale.US,
+                "Occupied %d of %d rooms (%.1f%%).",
+                occupiedRooms,
+                totalRooms,
+                occupancyPercent
+        ));
+
+        installPieChartTooltips();
+    }
+
+    private void installPieChartTooltips() {
+        Platform.runLater(() -> occupancyRatePieChart.getData().forEach(data -> {
+            if (data.getNode() == null) {
+                return;
+            }
+            String valueLabel = Math.round(data.getPieValue()) + " rooms";
+            Tooltip.install(data.getNode(), new Tooltip(data.getName() + ": " + valueLabel));
+        }));
+    }
+
+    private String formatCurrency(BigDecimal amount) {
+        BigDecimal normalized = amount == null ? BigDecimal.ZERO : amount;
+        return CURRENCY_FORMAT.format(normalized);
     }
 
     private void startAutoRefresh() {
-        stopAutoRefresh();
-        autoRefreshTimeline = new Timeline(new KeyFrame(Duration.seconds(20), event -> refreshReservations()));
-        autoRefreshTimeline.setCycleCount(Timeline.INDEFINITE);
+        if (autoRefreshTimeline != null) {
+            autoRefreshTimeline.stop();
+        }
+
+        autoRefreshTimeline = new Timeline(new KeyFrame(Duration.seconds(30), event -> refreshAll()));
+        autoRefreshTimeline.setCycleCount(Animation.INDEFINITE);
         autoRefreshTimeline.play();
     }
 
-    private void stopAutoRefresh() {
-        if (autoRefreshTimeline != null) {
-            autoRefreshTimeline.stop();
-            autoRefreshTimeline = null;
+    private void redirectToRoleSelection() {
+        if (rootPane != null && rootPane.getScene() != null && rootPane.getScene().getWindow() != null) {
+            rootPane.getScene().getWindow().hide();
         }
     }
 
-    private void showError(String message) {
-        hotelErrorLabel.setText(message);
-    }
-
-    private void clearError() {
-        hotelErrorLabel.setText("");
-    }
-
-    private void redirectToRoleSelection() {
-        if (rootPane.getScene() == null) {
-            rootPane.sceneProperty().addListener((obs, oldScene, newScene) -> {
-                if (newScene != null) {
-                    redirectToRoleSelection();
-                }
-            });
+    private void handleModifyReservation(ManagerReservationTicketModel ticket) {
+        if (ticket == null) {
             return;
         }
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/RoleSelection.fxml"));
-            Stage stage = (Stage) rootPane.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("FurHope - Access Portal");
-            stage.show();
-        } catch (IOException e) {
-            showError("Unable to return to access portal.");
+
+        if (ticket.status() != ReservationStatus.PENDING && ticket.status() != ReservationStatus.APPROVED) {
+            showAlert(Alert.AlertType.INFORMATION, "Only pending or approved reservations can be modified.");
+            return;
         }
+
+        Dialog<Pair<LocalDate, LocalDate>> dialog = new Dialog<>();
+        dialog.setTitle("Modify Reservation");
+
+        DatePicker checkInPicker = new DatePicker(ticket.checkInDate());
+        DatePicker checkOutPicker = new DatePicker(ticket.checkOutDate());
+        VBox content = new VBox(8,
+                new Label("Check-in date"),
+                checkInPicker,
+                new Label("Check-out date"),
+                checkOutPicker
+        );
+        dialog.getDialogPane().setContent(content);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        dialog.setResultConverter(button -> button == ButtonType.OK
+                ? new Pair<>(checkInPicker.getValue(), checkOutPicker.getValue())
+                : null);
+
+        Optional<Pair<LocalDate, LocalDate>> response = dialog.showAndWait();
+        if (response.isEmpty()) {
+            return;
+        }
+
+        LocalDate checkIn = response.get().getKey();
+        LocalDate checkOut = response.get().getValue();
+
+        if (checkIn == null || checkOut == null || !checkOut.isAfter(checkIn)) {
+            showAlert(Alert.AlertType.ERROR, "Invalid date range.");
+            return;
+        }
+
+        UserReservationActionResult result = managerDashboardService.modifyReservationByManager(ticket.reservationId(), checkIn, checkOut);
+        if (!result.isSuccess()) {
+            showAlert(Alert.AlertType.ERROR, reservationActionMessage(result.code()));
+            return;
+        }
+
+        refreshReservations();
+        refreshHotels();
+        refreshAnalytics();
+    }
+
+    private void handleCancelReservation(ManagerReservationTicketModel ticket) {
+        if (ticket == null) {
+            return;
+        }
+
+        UserReservationActionResult result = managerDashboardService.cancelReservationByManager(ticket.reservationId());
+        if (!result.isSuccess()) {
+            showAlert(Alert.AlertType.ERROR, reservationActionMessage(result.code()));
+            return;
+        }
+
+        refreshReservations();
+        refreshHotels();
+        refreshAnalytics();
+    }
+
+    private void handleApproveReservation(ManagerReservationTicketModel ticket) {
+        if (ticket == null) {
+            return;
+        }
+
+        ReservationDecisionResult result = managerDashboardService.decideReservationStatus(ticket.reservationId(), ReservationStatus.APPROVED);
+        if (!result.isUpdated()) {
+            showAlert(Alert.AlertType.ERROR, reservationDecisionMessage(result, "approve"));
+            return;
+        }
+
+        refreshReservations();
+        refreshHotels();
+        refreshAnalytics();
+    }
+
+    private void handleDeclineReservation(ManagerReservationTicketModel ticket) {
+        if (ticket == null) {
+            return;
+        }
+
+        ReservationDecisionResult result = managerDashboardService.decideReservationStatus(ticket.reservationId(), ReservationStatus.DECLINED);
+        if (!result.isUpdated()) {
+            showAlert(Alert.AlertType.ERROR, reservationDecisionMessage(result, "decline"));
+            return;
+        }
+
+        refreshReservations();
+        refreshHotels();
+        refreshAnalytics();
+    }
+
+    private String reservationActionMessage(UserReservationActionCode code) {
+        if (code == null) {
+            return "Reservation operation failed.";
+        }
+        return switch (code) {
+            case NOT_FOUND -> "Reservation was not found.";
+            case FORBIDDEN -> "You are not authorized for this reservation.";
+            case INVALID_DATES -> "Provided dates are invalid.";
+            case CONFLICT -> "Reservation conflicts with existing bookings.";
+            case INVALID_STATUS -> "Reservation status does not allow this action.";
+            case FAILED -> "Reservation operation failed.";
+            case UPDATED, CANCELLED -> "";
+        };
+    }
+
+    private String reservationDecisionMessage(ReservationDecisionResult result, String action) {
+        ReservationDecisionCode code = result == null ? null : result.code();
+        if (code == null) {
+            return "Could not " + action + " reservation.";
+        }
+        return switch (code) {
+            case NOT_FOUND -> "Reservation was not found.";
+            case ALREADY_PROCESSED -> "Reservation is no longer pending.";
+            case INVALID_TARGET_STATUS -> "Invalid status transition requested.";
+            case FAILED -> "Could not " + action + " reservation.";
+            case UPDATED -> "";
+        };
+    }
+
+    private void showAlert(Alert.AlertType type, String message) {
+        Alert alert = new Alert(type);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private Label emptyStateLabel(String text) {
+        Label label = new Label(text);
+        label.getStyleClass().add("header-subtitle");
+        label.setWrapText(true);
+        return label;
+    }
+
+    private String normalize(String value) {
+        return value == null ? "" : value.trim();
+    }
+
+    private String safeDisplay(String value, String fallback) {
+        String normalized = normalize(value);
+        return normalized.isBlank() ? fallback : normalized;
+    }
+
+    private record HotelPayload(
+            String name,
+            String address,
+            int managerId,
+            int capacity
+    ) {
     }
 }

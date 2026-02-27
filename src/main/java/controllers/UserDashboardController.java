@@ -2,11 +2,12 @@ package controllers;
 
 import application.AppContext;
 import application.model.HotelCardModel;
+import application.model.UserReservationActionModel;
+import application.model.UserReservationTicketModel;
 import application.service.HotelExplorationService;
 import application.service.UserReservationService;
+import application.ui.UserReservationTicketCard;
 import config.AppConfig;
-import entities.Reservation;
-import entities.ReservationStatus;
 import entities.User;
 import integrations.content.RealHotelImageCatalog;
 import javafx.animation.KeyFrame;
@@ -15,15 +16,22 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.DateCell;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -40,12 +48,14 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import services.AuthorizationException;
 import services.SessionContext;
+import services.UserReservationActionCode;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class UserDashboardController {
@@ -67,9 +77,9 @@ public class UserDashboardController {
     @FXML
     private TilePane hotelCardContainer;
     @FXML
-    private ListView<Reservation> myReservationListView;
+    private ListView<UserReservationTicketModel> myReservationListView;
 
-    private final ObservableList<Reservation> myReservations = FXCollections.observableArrayList();
+    private final ObservableList<UserReservationTicketModel> myReservations = FXCollections.observableArrayList();
 
     private HotelExplorationService hotelExplorationService;
     private UserReservationService userReservationService;
@@ -87,7 +97,7 @@ public class UserDashboardController {
             return;
         }
 
-        sessionLabel.setText("Logged in as: " + user.getDisplayName() + " (ID " + user.getId() + ")");
+        sessionLabel.setText("Logged in as: " + user.getDisplayName());
 
         try {
             hotelExplorationService = AppContext.getInstance().hotelExplorationService();
@@ -153,76 +163,209 @@ public class UserDashboardController {
         myReservationListView.setItems(myReservations);
         myReservationListView.setCellFactory(list -> new ListCell<>() {
             @Override
-            protected void updateItem(Reservation reservation, boolean empty) {
-                super.updateItem(reservation, empty);
+            protected void updateItem(UserReservationTicketModel ticket, boolean empty) {
+                super.updateItem(ticket, empty);
                 if (!getStyleClass().contains("reservation-ticket-cell")) {
                     getStyleClass().add("reservation-ticket-cell");
                 }
-                if (empty || reservation == null) {
+                if (empty || ticket == null) {
                     setText(null);
                     setGraphic(null);
                     return;
                 }
-
                 setText(null);
-                setGraphic(buildReservationTicket(reservation));
+                setGraphic(new UserReservationTicketCard(
+                        ticket,
+                        () -> handleModifyReservation(ticket),
+                        UserDashboardController.this::handleCancelReservation
+                ));
                 setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
             }
         });
     }
 
-    private VBox buildReservationTicket(Reservation reservation) {
-        String hotelName = hotelExplorationService.resolveHotelName(reservation.getHotelId());
-        String start = formatDate(reservation.getStartDate() == null ? null : reservation.getStartDate().toLocalDate());
-        String end = formatDate(reservation.getEndDate() == null ? null : reservation.getEndDate().toLocalDate());
+    private void handleModifyReservation(UserReservationTicketModel ticket) {
+        if (ticket == null || !ticket.canModify()) {
+            showMessage("Only pending reservations can be modified.", true);
+            return;
+        }
 
-        Label titleLabel = new Label(hotelName);
-        titleLabel.getStyleClass().add("ticket-title");
+        ModifyInput input = openModifyDialog(ticket);
+        if (input == null) {
+            return;
+        }
 
-        Label reservationCodeLabel = new Label("Ticket #" + reservation.getId());
-        reservationCodeLabel.getStyleClass().add("ticket-code");
-
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
-        Label statusBadge = new Label(reservation.getStatus().name());
-        statusBadge.getStyleClass().addAll("ticket-status-badge", statusStyleClass(reservation.getStatus()));
-
-        HBox header = new HBox(8, titleLabel, spacer, statusBadge);
-        header.setAlignment(Pos.CENTER_LEFT);
-        header.getStyleClass().add("ticket-header");
-
-        Label dateLine = new Label(start + " -> " + end);
-        dateLine.getStyleClass().add("ticket-meta");
-
-        Label infoLine = new Label("Animal ID: " + reservation.getAnimalId() + " | Hotel ID: " + reservation.getHotelId());
-        infoLine.getStyleClass().add("ticket-meta");
-
-        Region divider = new Region();
-        divider.getStyleClass().add("ticket-divider");
-        divider.setPrefHeight(1.5);
-
-        VBox card = new VBox(7, header, reservationCodeLabel, divider, dateLine, infoLine);
-        card.getStyleClass().add("reservation-ticket");
-        card.setPadding(new Insets(12, 14, 12, 14));
-        return card;
+        Task<UserReservationActionModel> task = new Task<>() {
+            @Override
+            protected UserReservationActionModel call() {
+                return userReservationService.modifyReservationDates(
+                        ticket.reservationId(),
+                        input.checkInDate(),
+                        input.checkOutDate()
+                );
+            }
+        };
+        task.setOnSucceeded(event -> handleReservationActionResult(task.getValue(), "Reservation updated and reset to PENDING."));
+        task.setOnFailed(event -> showMessage("Could not modify reservation.", true));
+        runTask(task, "reservation-modify-thread");
     }
 
-    private String statusStyleClass(ReservationStatus status) {
-        if (status == ReservationStatus.APPROVED) {
-            return "ticket-status-approved";
+    private void handleCancelReservation(UserReservationTicketModel ticket) {
+        if (ticket == null || !ticket.canCancel()) {
+            showMessage("This reservation cannot be cancelled.", true);
+            return;
         }
-        if (status == ReservationStatus.DECLINED) {
-            return "ticket-status-declined";
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Cancel Reservation");
+        confirm.setHeaderText("Cancel this reservation?");
+        confirm.setContentText(
+                "Hotel: " + ticket.hotelName()
+                        + "\nCheck-in: " + formatDate(ticket.checkInDate())
+                        + "\nCheck-out: " + formatDate(ticket.checkOutDate())
+        );
+        Optional<ButtonType> answer = confirm.showAndWait();
+        if (answer.isEmpty() || answer.get() != ButtonType.OK) {
+            return;
         }
-        return "ticket-status-pending";
+
+        Task<UserReservationActionModel> task = new Task<>() {
+            @Override
+            protected UserReservationActionModel call() {
+                return userReservationService.cancelReservation(ticket.reservationId());
+            }
+        };
+        task.setOnSucceeded(event -> handleReservationActionResult(task.getValue(), "Reservation cancelled."));
+        task.setOnFailed(event -> showMessage("Could not cancel reservation.", true));
+        runTask(task, "reservation-cancel-thread");
     }
 
-    private String formatDate(LocalDate date) {
-        if (date == null) {
-            return "-";
+    private ModifyInput openModifyDialog(UserReservationTicketModel ticket) {
+        Dialog<ModifyInput> dialog = new Dialog<>();
+        dialog.setTitle("Modify Reservation");
+        dialog.setHeaderText("Update check-in and check-out dates");
+
+        DatePicker checkInPicker = new DatePicker(ticket.checkInDate());
+        DatePicker checkOutPicker = new DatePicker(ticket.checkOutDate());
+        Label validationLabel = new Label();
+        validationLabel.getStyleClass().add("form-error");
+
+        checkInPicker.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                if (empty || date == null) {
+                    setDisable(false);
+                    return;
+                }
+                setDisable(date.isBefore(LocalDate.now()));
+            }
+        });
+
+        checkOutPicker.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                if (empty || date == null) {
+                    setDisable(false);
+                    return;
+                }
+                LocalDate checkIn = checkInPicker.getValue();
+                if (checkIn == null) {
+                    setDisable(date.isBefore(LocalDate.now().plusDays(1)));
+                } else {
+                    setDisable(!date.isAfter(checkIn));
+                }
+            }
+        });
+
+        VBox content = new VBox(8,
+                new Label("Check-in Date"),
+                checkInPicker,
+                new Label("Check-out Date"),
+                checkOutPicker,
+                validationLabel
+        );
+        content.setPadding(new Insets(6, 0, 0, 0));
+
+        dialog.getDialogPane().setContent(content);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        Node okButton = dialog.getDialogPane().lookupButton(ButtonType.OK);
+        okButton.addEventFilter(ActionEvent.ACTION, event -> {
+            LocalDate checkIn = checkInPicker.getValue();
+            LocalDate checkOut = checkOutPicker.getValue();
+            if (checkIn == null || checkOut == null) {
+                validationLabel.setText("Both dates are required.");
+                event.consume();
+                return;
+            }
+            if (!checkOut.isAfter(checkIn)) {
+                validationLabel.setText("Check-out must be after check-in.");
+                event.consume();
+            }
+        });
+
+        dialog.setResultConverter(buttonType -> {
+            if (buttonType == ButtonType.OK) {
+                return new ModifyInput(checkInPicker.getValue(), checkOutPicker.getValue());
+            }
+            return null;
+        });
+
+        Optional<ModifyInput> result = dialog.showAndWait();
+        return result.orElse(null);
+    }
+
+    private void handleReservationActionResult(UserReservationActionModel result, String successMessage) {
+        if (result == null) {
+            showMessage("Reservation action failed.", true);
+            refreshReservations();
+            return;
         }
-        return DATE_FORMATTER.format(date);
+
+        if (result.isSuccess() && result.ticket() != null) {
+            upsertTicket(result.ticket());
+            showMessage(successMessage, false);
+            return;
+        }
+
+        if (result.code() == UserReservationActionCode.INVALID_DATES) {
+            showMessage("Invalid date range.", true);
+            return;
+        }
+        if (result.code() == UserReservationActionCode.CONFLICT) {
+            showMessage("Reservation dates conflict with an existing booking.", true);
+            refreshReservations();
+            return;
+        }
+        if (result.code() == UserReservationActionCode.INVALID_STATUS) {
+            showMessage("Reservation state does not allow this action.", true);
+            refreshReservations();
+            return;
+        }
+        if (result.code() == UserReservationActionCode.FORBIDDEN) {
+            showMessage("Access denied for this reservation.", true);
+            refreshReservations();
+            return;
+        }
+        if (result.code() == UserReservationActionCode.NOT_FOUND) {
+            showMessage("Reservation not found.", true);
+            refreshReservations();
+            return;
+        }
+        showMessage("Reservation action failed.", true);
+        refreshReservations();
+    }
+
+    private void upsertTicket(UserReservationTicketModel updatedTicket) {
+        for (int i = 0; i < myReservations.size(); i++) {
+            if (myReservations.get(i).reservationId() == updatedTicket.reservationId()) {
+                myReservations.set(i, updatedTicket);
+                return;
+            }
+        }
+        myReservations.add(0, updatedTicket);
     }
 
     private void refreshReservations() {
@@ -230,11 +373,11 @@ public class UserDashboardController {
             showMessage("Reservation service unavailable.", true);
             return;
         }
-        Task<List<Reservation>> task = new Task<>() {
+        Task<List<UserReservationTicketModel>> task = new Task<>() {
             @Override
-            protected List<Reservation> call() {
+            protected List<UserReservationTicketModel> call() {
                 try {
-                    return userReservationService.getCurrentUserReservations();
+                    return userReservationService.getCurrentUserReservationTickets();
                 } catch (RuntimeException e) {
                     return List.of();
                 }
@@ -471,6 +614,13 @@ public class UserDashboardController {
         return city.trim();
     }
 
+    private String formatDate(LocalDate date) {
+        if (date == null) {
+            return "-";
+        }
+        return DATE_FORMATTER.format(date);
+    }
+
     private void showMessage(String message, boolean error) {
         dashboardMessageLabel.setText(message);
         dashboardMessageLabel.getStyleClass().removeAll("form-error", "header-subtitle");
@@ -495,5 +645,8 @@ public class UserDashboardController {
         } catch (IOException e) {
             showMessage("Unable to return to access portal.", true);
         }
+    }
+
+    private record ModifyInput(LocalDate checkInDate, LocalDate checkOutDate) {
     }
 }

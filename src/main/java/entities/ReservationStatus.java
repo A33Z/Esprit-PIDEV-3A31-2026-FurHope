@@ -3,7 +3,8 @@ package entities;
 public enum ReservationStatus {
     PENDING,
     APPROVED,
-    DECLINED;
+    DECLINED,
+    CANCELLED;
 
     public static ReservationStatus fromDatabase(String rawStatus) {
         if (rawStatus == null) {
@@ -13,7 +14,8 @@ public enum ReservationStatus {
         String normalized = rawStatus.trim().toUpperCase();
         return switch (normalized) {
             case "APPROVED", "CONFIRMED" -> APPROVED;
-            case "DECLINED", "CANCELLED" -> DECLINED;
+            case "DECLINED" -> DECLINED;
+            case "CANCELLED" -> CANCELLED;
             default -> PENDING;
         };
     }

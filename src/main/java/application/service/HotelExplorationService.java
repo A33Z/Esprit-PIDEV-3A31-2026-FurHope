@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class HotelExplorationService {
 
@@ -113,7 +115,7 @@ public class HotelExplorationService {
                         card.hotelId(),
                         card.name(),
                         card.rating(),
-                        card.shortDescription(),
+                        card.priceLabel(),
                         card.latitude(),
                         card.longitude()
                 ))
@@ -127,6 +129,25 @@ public class HotelExplorationService {
         }
         Hotel hotel = hotelService.getHotelById(hotelId);
         return hotel == null ? "Hotel #" + hotelId : hotel.getName();
+    }
+
+    public BigDecimal resolveNightlyRate(int hotelId) {
+        HotelDetailsModel details = detailsCache.get(hotelId);
+        if (details == null) {
+            details = buildFallbackDetails(hotelId);
+            if (details != null) {
+                detailsCache.put(hotelId, details);
+            }
+        }
+        if (details == null) {
+            return new BigDecimal("85.00");
+        }
+
+        BigDecimal parsed = parseRate(details.priceLabel());
+        if (parsed == null || parsed.compareTo(BigDecimal.ZERO) <= 0) {
+            return new BigDecimal("85.00");
+        }
+        return parsed.setScale(2, RoundingMode.HALF_UP);
     }
 
     private HotelCardModel buildCard(ExternalHotelCandidate candidate, String city) {
@@ -352,5 +373,42 @@ public class HotelExplorationService {
 
     private String fallbackImage(int hotelId) {
         return RealHotelImageCatalog.bySeed(Math.max(1, hotelId));
+    }
+
+    private BigDecimal parseRate(String priceLabel) {
+        if (priceLabel == null || priceLabel.isBlank()) {
+            return null;
+        }
+        String firstNumber = extractFirstNumber(priceLabel);
+        if (firstNumber == null) {
+            return null;
+        }
+        try {
+            return new BigDecimal(firstNumber);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private String extractFirstNumber(String value) {
+        StringBuilder builder = new StringBuilder();
+        boolean started = false;
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            if (Character.isDigit(c)) {
+                builder.append(c);
+                started = true;
+                continue;
+            }
+            if (started && c == '.' && builder.indexOf(".") < 0) {
+                builder.append(c);
+                continue;
+            }
+            if (started) {
+                break;
+            }
+        }
+        String extracted = builder.toString();
+        return extracted.isBlank() ? null : extracted;
     }
 }

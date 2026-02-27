@@ -4,6 +4,7 @@ import entities.Reservation;
 import entities.ReservationStatus;
 
 import java.util.List;
+import java.util.Map;
 
 public class ReservationAccessService {
 
@@ -18,14 +19,49 @@ public class ReservationAccessService {
         return reservationService.getAllReservations();
     }
 
+    public List<ManagerReservationSnapshot> viewReservationPageForManager(int page, int pageSize) {
+        requireManager();
+        return reservationService.getManagerReservationPage(page, pageSize);
+    }
+
+    public int countReservationsForManager() {
+        requireManager();
+        return reservationService.countAllReservations();
+    }
+
+    public ManagerAnalyticsSnapshot viewManagerAnalytics() {
+        requireManager();
+        return reservationService.getManagerAnalyticsSnapshot();
+    }
+
+    public ReservationDecisionResult decideReservationStatus(int reservationId, ReservationStatus targetStatus) {
+        requireManager();
+        return reservationService.decideReservationStatusByManager(reservationId, targetStatus);
+    }
+
+    public UserReservationActionResult modifyReservationDatesByManager(int reservationId, java.sql.Date checkInDate, java.sql.Date checkOutDate) {
+        requireManager();
+        return reservationService.modifyReservationDatesByManager(reservationId, checkInDate, checkOutDate);
+    }
+
+    public UserReservationActionResult cancelReservationByManager(int reservationId) {
+        requireManager();
+        return reservationService.cancelReservationByManager(reservationId);
+    }
+
+    public Map<Integer, HotelAvailabilitySnapshot> viewHotelAvailabilityForManager() {
+        requireManager();
+        return reservationService.getHotelAvailabilitySummary();
+    }
+
     public boolean approveReservation(int reservationId) {
         requireManager();
-        return reservationService.updateReservationStatusByManager(reservationId, ReservationStatus.APPROVED);
+        return reservationService.decideReservationStatusByManager(reservationId, ReservationStatus.APPROVED).isUpdated();
     }
 
     public boolean declineReservation(int reservationId) {
         requireManager();
-        return reservationService.updateReservationStatusByManager(reservationId, ReservationStatus.DECLINED);
+        return reservationService.decideReservationStatusByManager(reservationId, ReservationStatus.DECLINED).isUpdated();
     }
 
     public List<Reservation> viewCurrentUserReservations() {
@@ -49,6 +85,16 @@ public class ReservationAccessService {
     public boolean deleteReservationForCurrentUser(int reservationId) {
         int userId = requireUserId();
         return reservationService.deleteReservationOwnedByClient(reservationId, userId);
+    }
+
+    public UserReservationActionResult modifyReservationDatesForCurrentUser(int reservationId, java.sql.Date checkInDate, java.sql.Date checkOutDate) {
+        int userId = requireUserId();
+        return reservationService.modifyReservationDatesOwnedByClient(reservationId, userId, checkInDate, checkOutDate);
+    }
+
+    public UserReservationActionResult cancelReservationForCurrentUser(int reservationId) {
+        int userId = requireUserId();
+        return reservationService.cancelReservationOwnedByClient(reservationId, userId);
     }
 
     private int requireUserId() {

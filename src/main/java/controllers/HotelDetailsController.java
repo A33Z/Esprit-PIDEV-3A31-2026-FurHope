@@ -53,6 +53,8 @@ public class HotelDetailsController {
     @FXML
     private TextField animalIdField;
     @FXML
+    private TextField guestCountField;
+    @FXML
     private DatePicker checkInDatePicker;
     @FXML
     private DatePicker checkOutDatePicker;
@@ -80,6 +82,7 @@ public class HotelDetailsController {
         fullDescriptionArea.setWrapText(true);
         heroImageView.setPreserveRatio(false);
         heroImageView.setSmooth(true);
+        guestCountField.setText("1");
         configureBookingDatePickers();
     }
 
@@ -134,6 +137,14 @@ public class HotelDetailsController {
             return;
         }
 
+        int guestCount;
+        try {
+            guestCount = parsePositiveIntOrDefault(guestCountField.getText(), "Number of Guests", 1);
+        } catch (IllegalArgumentException e) {
+            showMessage(e.getMessage(), true);
+            return;
+        }
+
         LocalDate checkIn = checkInDatePicker.getValue();
         LocalDate checkOut = checkOutDatePicker.getValue();
 
@@ -143,6 +154,7 @@ public class HotelDetailsController {
                 return userReservationService.bookHotel(
                         currentHotel.hotelId(),
                         animalId,
+                        guestCount,
                         checkIn,
                         checkOut
                 );
@@ -161,7 +173,7 @@ public class HotelDetailsController {
         task.setOnFailed(event -> {
             bookNowButton.setDisable(false);
             Throwable exception = task.getException();
-            String message = exception == null ? "Booking failed." : exception.getMessage();
+            String message = exception == null ? "Booking failed." : resolveRootMessage(exception, "Booking failed.");
             showMessage(message, true);
         });
         runTask(task, "reservation-create-thread");
@@ -351,10 +363,35 @@ public class HotelDetailsController {
         }
     }
 
+    private int parsePositiveIntOrDefault(String rawValue, String fieldName, int defaultValue) {
+        if (rawValue == null || rawValue.trim().isEmpty()) {
+            return defaultValue;
+        }
+        return parsePositiveInt(rawValue, fieldName);
+    }
+
     private void showMessage(String message, boolean error) {
         detailsMessageLabel.setText(message);
         detailsMessageLabel.getStyleClass().removeAll("form-error", "header-subtitle");
         detailsMessageLabel.getStyleClass().add(error ? "form-error" : "header-subtitle");
+    }
+
+    private String resolveRootMessage(Throwable throwable, String fallback) {
+        if (throwable == null) {
+            return fallback;
+        }
+        Throwable cursor = throwable;
+        while (cursor.getCause() != null) {
+            cursor = cursor.getCause();
+        }
+        String message = cursor.getMessage();
+        if (message == null || message.isBlank()) {
+            message = throwable.getMessage();
+        }
+        if (message == null || message.isBlank()) {
+            return fallback;
+        }
+        return message.trim();
     }
 
     private void runTask(Task<?> task, String threadName) {

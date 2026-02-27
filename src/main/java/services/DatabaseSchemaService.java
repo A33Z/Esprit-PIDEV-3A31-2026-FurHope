@@ -19,6 +19,7 @@ public final class DatabaseSchemaService {
         }
         ensureHotelTable(connection);
         ensureReservationTable(connection);
+        ensureReservationMetadata(connection);
         ensureManagerAccountTable(connection);
         ensureReservationStatusIntegrity(connection);
         initialized = true;
@@ -46,6 +47,10 @@ public final class DatabaseSchemaService {
                     client_id INT NOT NULL,
                     animal_id INT NOT NULL,
                     hotel_id BIGINT NOT NULL,
+                    reservation_date DATE NOT NULL,
+                    guest_count INT NOT NULL DEFAULT 1,
+                    nightly_rate DECIMAL(10,2) NOT NULL DEFAULT 85.00,
+                    total_price DECIMAL(10,2) NOT NULL DEFAULT 85.00,
                     start_date DATE NOT NULL,
                     end_date DATE NOT NULL,
                     status VARCHAR(16) NOT NULL DEFAULT 'PENDING',
@@ -56,6 +61,58 @@ public final class DatabaseSchemaService {
                 """;
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(sql);
+        }
+    }
+
+    private static void ensureReservationMetadata(Connection connection) throws SQLException {
+        try (Statement statement = connection.createStatement()) {
+            if (!columnExists(connection, "reservation", "reservation_date")) {
+                statement.executeUpdate("ALTER TABLE reservation ADD COLUMN reservation_date DATE NULL");
+            }
+            statement.executeUpdate(
+                    """
+                    UPDATE reservation
+                    SET reservation_date = COALESCE(reservation_date, start_date, CURRENT_DATE)
+                    WHERE reservation_date IS NULL
+                    """
+            );
+            statement.executeUpdate("ALTER TABLE reservation MODIFY COLUMN reservation_date DATE NOT NULL");
+
+            if (!columnExists(connection, "reservation", "guest_count")) {
+                statement.executeUpdate("ALTER TABLE reservation ADD COLUMN guest_count INT NULL DEFAULT 1");
+            }
+            statement.executeUpdate(
+                    """
+                    UPDATE reservation
+                    SET guest_count = 1
+                    WHERE guest_count IS NULL OR guest_count <= 0
+                    """
+            );
+            statement.executeUpdate("ALTER TABLE reservation MODIFY COLUMN guest_count INT NOT NULL DEFAULT 1");
+
+            if (!columnExists(connection, "reservation", "nightly_rate")) {
+                statement.executeUpdate("ALTER TABLE reservation ADD COLUMN nightly_rate DECIMAL(10,2) NULL DEFAULT 85.00");
+            }
+            statement.executeUpdate(
+                    """
+                    UPDATE reservation
+                    SET nightly_rate = 85.00
+                    WHERE nightly_rate IS NULL OR nightly_rate <= 0
+                    """
+            );
+            statement.executeUpdate("ALTER TABLE reservation MODIFY COLUMN nightly_rate DECIMAL(10,2) NOT NULL DEFAULT 85.00");
+
+            if (!columnExists(connection, "reservation", "total_price")) {
+                statement.executeUpdate("ALTER TABLE reservation ADD COLUMN total_price DECIMAL(10,2) NULL DEFAULT 85.00");
+            }
+            statement.executeUpdate(
+                    """
+                    UPDATE reservation
+                    SET total_price = ROUND(GREATEST(DATEDIFF(end_date, start_date), 1) * nightly_rate, 2)
+                    WHERE total_price IS NULL OR total_price < 0
+                    """
+            );
+            statement.executeUpdate("ALTER TABLE reservation MODIFY COLUMN total_price DECIMAL(10,2) NOT NULL DEFAULT 85.00");
         }
     }
 
@@ -95,8 +152,7 @@ public final class DatabaseSchemaService {
                     SET status = CASE
                         WHEN status IS NULL OR TRIM(status) = '' THEN 'PENDING'
                         WHEN UPPER(status) = 'CONFIRMED' THEN 'APPROVED'
-                        WHEN UPPER(status) = 'CANCELLED' THEN 'DECLINED'
-                        WHEN UPPER(status) IN ('PENDING', 'APPROVED', 'DECLINED') THEN UPPER(status)
+                        WHEN UPPER(status) IN ('PENDING', 'APPROVED', 'DECLINED', 'CANCELLED') THEN UPPER(status)
                         ELSE 'PENDING'
                     END
                     """
