@@ -14,7 +14,7 @@
       fillWidth="true"
       xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.esprit.controllers.UserAdminController"
+      fx:controller="controllers.UserAdminController"
       stylesheets="@styles.css"
       styleClass="page">
 
@@ -41,3 +41,4 @@
     </FlowPane>
 
 </VBox>
+

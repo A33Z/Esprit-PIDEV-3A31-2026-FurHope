@@ -1,6 +1,7 @@
-package com.esprit.controllers;
+package controllers;
 
 import entities.User;
+import com.esprit.services.auth.FaceAuthService;
 import com.esprit.services.userservices;
 import com.esprit.utils.AuthValidation;
 import com.esprit.utils.ThemeManager;
@@ -38,6 +39,7 @@ public class SignInController {
     private Button themeToggleButton;
 
     private userservices service;
+    private final FaceAuthService faceAuthService = new FaceAuthService();
 
     @FXML
     private void initialize() {
@@ -91,6 +93,87 @@ public class SignInController {
         } catch (Exception e) {
             e.printStackTrace();
             setFormError("System error. Please try again.");
+        }
+    }
+
+    @FXML
+    private void loginWithGoogle(ActionEvent event) {
+        setFormError("Google sign-in is not configured in this build.");
+    }
+
+    @FXML
+    private void loginWithFace(ActionEvent event) {
+        clearErrors();
+
+        String email = emailField.getText() == null ? "" : emailField.getText().trim();
+        if (email.isEmpty()) {
+            setFieldError(emailField, emailErrorLabel, "Email is required for face login.");
+            return;
+        }
+        if (!AuthValidation.isValidEmail(email)) {
+            setFieldError(emailField, emailErrorLabel, "Invalid email format.");
+            return;
+        }
+        if (service == null) {
+            setFormError("Login service unavailable. Verify database connection.");
+            return;
+        }
+
+        try {
+            User user = service.findByEmail(email);
+            if (user == null) {
+                setFieldError(emailField, emailErrorLabel, "Email not found.");
+                return;
+            }
+            if (!faceAuthService.hasEnrollment(email)) {
+                setFormError("No face enrolled for this email. Use Enroll Face first.");
+                return;
+            }
+            if (!faceAuthService.verify(email)) {
+                setFormError("Face verification failed. Try again.");
+                return;
+            }
+            if (!user.isActive() && !"VETERINAIRE".equalsIgnoreCase(user.getRole())) {
+                setFormError("Account awaiting approval.");
+                return;
+            }
+
+            SessionContext.setCurrentUser(user);
+            loadAccueil(event);
+        } catch (Exception e) {
+            e.printStackTrace();
+            setFormError("Face login failed: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void enrollFace(ActionEvent event) {
+        clearErrors();
+
+        String email = emailField.getText() == null ? "" : emailField.getText().trim();
+        if (email.isEmpty()) {
+            setFieldError(emailField, emailErrorLabel, "Email is required to enroll face.");
+            return;
+        }
+        if (!AuthValidation.isValidEmail(email)) {
+            setFieldError(emailField, emailErrorLabel, "Invalid email format.");
+            return;
+        }
+        if (service == null) {
+            setFormError("Login service unavailable. Verify database connection.");
+            return;
+        }
+
+        try {
+            if (!service.existsByEmail(email)) {
+                setFieldError(emailField, emailErrorLabel, "Email not found.");
+                return;
+            }
+            faceAuthService.enroll(email);
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Face enrolled successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            setFormError("Face enrollment failed: " + e.getMessage());
         }
     }
 
@@ -273,3 +356,4 @@ public class SignInController {
         }
     }
 }
+

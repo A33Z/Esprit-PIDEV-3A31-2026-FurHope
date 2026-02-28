@@ -1,4 +1,4 @@
-package com.esprit.controllers;
+package controllers;
 
 import entities.User;
 import com.esprit.services.userservices;
@@ -48,7 +48,7 @@ public class ProfileController {
 
     @FXML
     private void initialize() {
-        currentUser = SessionContext.getCurrentUser();
+        currentUser = controllers.SessionContext.getCurrentUser();
         if (currentUser == null) {
             showAlert(Alert.AlertType.WARNING, "Login Required", "Please sign in to edit your profile.");
             return;
@@ -98,7 +98,7 @@ public class ProfileController {
 
         try {
             service.modifier(updated);
-            SessionContext.setCurrentUser(updated);
+            controllers.SessionContext.setCurrentUser(updated);
             currentUser = updated;
             clearPasswordFields();
             showAlert(Alert.AlertType.INFORMATION, "Saved", "Your profile has been updated.");
@@ -194,3 +194,4 @@ public class ProfileController {
         alert.show();
     }
 }
+

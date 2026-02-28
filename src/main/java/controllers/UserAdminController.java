@@ -1,5 +1,6 @@
-package com.esprit.controllers;
+package controllers;
 
+import controllers.SessionContext;
 import entities.User;
 import com.esprit.services.userservices;
 import javafx.collections.FXCollections;
@@ -217,3 +218,4 @@ public class UserAdminController {
         return value == null ? "" : value.toLowerCase(Locale.ROOT);
     }
 }
+

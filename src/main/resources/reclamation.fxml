@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox alignment="TOP_CENTER" spacing="14" fillWidth="true" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.esprit.controllers.ReclamationController"
+      fx:controller="controllers.ReclamationController"
       stylesheets="@styles.css" styleClass="page">
 
     <padding>
@@ -44,3 +44,4 @@
     <ListView fx:id="reclamationTable" prefHeight="390" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS"/>
 
 </VBox>
+

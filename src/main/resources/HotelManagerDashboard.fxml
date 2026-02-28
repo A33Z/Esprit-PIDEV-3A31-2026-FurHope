@@ -41,6 +41,7 @@
                     <Label fx:id="sessionLabel" styleClass="session-chip manager-chip" />
                     <Button text="Analytics" styleClass="button secondary-button" onAction="#handleOpenAnalytics" />
                     <Button text="Refresh" styleClass="button secondary-button" onAction="#handleRefreshData" />
+                    <Button text="Back" styleClass="button ghost-button" onAction="#gotoacceuil" />
                     <Button text="Logout" styleClass="button ghost-button" onAction="#gotowelcome" />
                 </children>
             </HBox>

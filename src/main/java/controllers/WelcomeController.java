@@ -1,5 +1,6 @@
-package com.esprit.controllers;
+package controllers;
 
+import controllers.SessionContext;
 import com.esprit.utils.ThemeManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -43,3 +44,4 @@ public class WelcomeController {
         }
     }
 }
+

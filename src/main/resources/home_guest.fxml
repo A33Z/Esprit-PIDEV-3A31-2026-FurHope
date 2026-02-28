@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox alignment="TOP_CENTER" spacing="18" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.esprit.controllers.HomeGuestController"
+      fx:controller="controllers.HomeGuestController"
       stylesheets="@styles.css" styleClass="page">
 
     <padding>
@@ -36,3 +36,4 @@
     </VBox>
 
 </VBox>
+

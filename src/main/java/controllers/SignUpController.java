@@ -1,6 +1,7 @@
-package com.esprit.controllers;
+package controllers;
 
 import entities.User;
+import com.esprit.services.auth.FaceAuthService;
 import com.esprit.services.userservices;
 import com.esprit.utils.AuthValidation;
 import com.esprit.utils.ThemeManager;
@@ -51,6 +52,7 @@ public class SignUpController {
     private Button themeToggleButton;
 
     private final userservices service = new userservices();
+    private final FaceAuthService faceAuthService = new FaceAuthService();
 
     @FXML
     private void initialize() {
@@ -61,6 +63,36 @@ public class SignUpController {
 
     @FXML
     private void signUp(ActionEvent event) {
+        performSignUp(event, false);
+    }
+
+    @FXML
+    private void signUpWithFaceId(ActionEvent event) {
+        performSignUp(event, true);
+    }
+
+    @FXML
+    private void goBack(ActionEvent event) {
+        switchScene(event, "/Welcome.fxml");
+    }
+
+    @FXML
+    private void goToSignIn(ActionEvent event) {
+        switchToSignIn(event);
+    }
+
+    @FXML
+    private void toggleDarkMode(ActionEvent event) {
+        Scene scene = ((javafx.scene.Node) event.getSource()).getScene();
+        ThemeManager.toggle(scene);
+        syncThemeToggleIcon();
+    }
+
+    private void switchToSignIn(ActionEvent event) {
+        switchScene(event, "/signin.fxml");
+    }
+
+    private void performSignUp(ActionEvent event, boolean enrollFaceId) {
         if (!validateInputs()) {
             return;
         }
@@ -83,37 +115,31 @@ public class SignUpController {
 
         try {
             service.ajouter(user);
-            if ("VETERINAIRE".equals(role)) {
-                showAlert(Alert.AlertType.INFORMATION, "Success", "Account created. Awaiting approval.");
+            String baseSuccessMessage = "VETERINAIRE".equals(role)
+                    ? "Account created. Awaiting approval."
+                    : "Account created.";
+
+            if (enrollFaceId) {
+                try {
+                    faceAuthService.enroll(user.getEmail());
+                    showAlert(Alert.AlertType.INFORMATION, "Success", baseSuccessMessage + " Face ID enrolled.");
+                } catch (Exception faceError) {
+                    faceError.printStackTrace();
+                    showAlert(
+                            Alert.AlertType.WARNING,
+                            "Account Created",
+                            baseSuccessMessage + " Face ID enrollment failed: " + faceError.getMessage()
+                    );
+                }
             } else {
-                showAlert(Alert.AlertType.INFORMATION, "Success", "Account created.");
+                showAlert(Alert.AlertType.INFORMATION, "Success", baseSuccessMessage);
             }
+
             switchToSignIn(event);
         } catch (Exception e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Sign Up Failed", "Could not create account.");
         }
-    }
-
-    @FXML
-    private void goBack(ActionEvent event) {
-        switchScene(event, "/Welcome.fxml");
-    }
-
-    @FXML
-    private void goToSignIn(ActionEvent event) {
-        switchToSignIn(event);
-    }
-
-    @FXML
-    private void toggleDarkMode(ActionEvent event) {
-        Scene scene = ((javafx.scene.Node) event.getSource()).getScene();
-        ThemeManager.toggle(scene);
-        syncThemeToggleIcon();
-    }
-
-    private void switchToSignIn(ActionEvent event) {
-        switchScene(event, "/signin.fxml");
     }
 
     private void switchScene(ActionEvent event, String fxmlFile) {
@@ -264,3 +290,4 @@ public class SignUpController {
         }
     }
 }
+

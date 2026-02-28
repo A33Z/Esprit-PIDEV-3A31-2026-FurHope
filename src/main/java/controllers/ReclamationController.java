@@ -1,4 +1,4 @@
-package com.esprit.controllers;
+package controllers;
 
 import com.esprit.entities.Reclamation;
 import entities.User;
@@ -45,7 +45,7 @@ public class ReclamationController {
 
     @FXML
     private void initialize() {
-        if (!SessionContext.isLoggedIn()) {
+        if (!controllers.SessionContext.isLoggedIn()) {
             showAlert(Alert.AlertType.WARNING, "Login Required", "Please login first.");
             return;
         }
@@ -67,14 +67,14 @@ public class ReclamationController {
         searchField.textProperty().addListener((obs, oldText, newText) -> applyFilters());
         refreshTable();
 
-        if (!SessionContext.isAdmin()) {
+        if (!controllers.SessionContext.isAdmin()) {
             statusCombo.setDisable(true);
         }
     }
 
     @FXML
     private void addReclamation() {
-        User user = SessionContext.getCurrentUser();
+        User user = controllers.SessionContext.getCurrentUser();
         if (user == null) {
             showAlert(Alert.AlertType.WARNING, "Login Required", "Please login first.");
             return;
@@ -116,7 +116,7 @@ public class ReclamationController {
         try {
             selected.setSujet(sujetField.getText().trim());
             selected.setDescription(descriptionArea.getText().trim());
-            if (SessionContext.isAdmin()) {
+            if (controllers.SessionContext.isAdmin()) {
                 selected.setStatus(statusCombo.getValue());
             }
             service.modifier(selected);
@@ -157,9 +157,9 @@ public class ReclamationController {
             showAlert(Alert.AlertType.WARNING, "No Selection", "Select a reclamation first.");
             return;
         }
-        SessionContext.setSelectedReclamationId(selected.getId());
+        controllers.SessionContext.setSelectedReclamationId(selected.getId());
 
-        if (!SessionContext.isAdmin()) {
+        if (!controllers.SessionContext.isAdmin()) {
             showAlert(Alert.AlertType.INFORMATION, "Admin Only", "Only admin can create responses.");
             return;
         }
@@ -170,10 +170,10 @@ public class ReclamationController {
     @FXML
     private void refreshTable() {
         try {
-            if (SessionContext.isAdmin()) {
+            if (controllers.SessionContext.isAdmin()) {
                 sourceData.setAll(service.afficher());
             } else {
-                sourceData.setAll(service.afficherParClient(SessionContext.getCurrentUser().getId()));
+                sourceData.setAll(service.afficherParClient(controllers.SessionContext.getCurrentUser().getId()));
             }
             applyFilters();
         } catch (Exception e) {
@@ -201,7 +201,7 @@ public class ReclamationController {
     }
 
     private boolean canModify(Reclamation reclamation) {
-        return SessionContext.isAdmin() || SessionContext.getCurrentUser().getId() == reclamation.getClientId();
+        return controllers.SessionContext.isAdmin() || controllers.SessionContext.getCurrentUser().getId() == reclamation.getClientId();
     }
 
     private void fillForm(Reclamation reclamation) {
@@ -286,3 +286,4 @@ public class ReclamationController {
         return value == null ? "" : value.toLowerCase(Locale.ROOT);
     }
 }
+

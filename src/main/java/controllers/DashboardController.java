@@ -1,5 +1,6 @@
-package com.esprit.controllers;
+package controllers;
 
+import controllers.SessionContext;
 import entities.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -193,3 +194,4 @@ public class DashboardController {
         alert.show();
     }
 }
+

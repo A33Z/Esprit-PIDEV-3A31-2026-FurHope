@@ -6,6 +6,7 @@ import com.esprit.utils.MyDataBase;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalInt;
 
 public class userservices implements ICrud<User> {
 
@@ -226,6 +227,17 @@ public class userservices implements ICrud<User> {
             ps.setString(1, newPassword);
             ps.setInt(2, userId);
             ps.executeUpdate();
+        }
+    }
+
+    public OptionalInt findFirstActiveAdminId() throws SQLException {
+        String sql = "SELECT id FROM user WHERE UPPER(role) = 'ADMIN' AND active = 1 ORDER BY id ASC LIMIT 1";
+        try (PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return OptionalInt.of(rs.getInt("id"));
+            }
+            return OptionalInt.empty();
         }
     }
 

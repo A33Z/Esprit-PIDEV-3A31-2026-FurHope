@@ -16,6 +16,9 @@
         <jackson.version>2.17.2</jackson.version>
         <twilio.version>9.13.1</twilio.version>
         <mysql.version>8.4.0</mysql.version>
+        <jjwt.version>0.12.6</jjwt.version>
+        <opencv.version>4.9.0-0</opencv.version>
+        <webcam.version>0.3.12</webcam.version>
     </properties>
 
     <dependencies>
@@ -48,6 +51,33 @@
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <version>${mysql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jjwt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jjwt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${jjwt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openpnp</groupId>
+            <artifactId>opencv</artifactId>
+            <version>${opencv.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.sarxos</groupId>
+            <artifactId>webcam-capture</artifactId>
+            <version>${webcam.version}</version>
         </dependency>
     </dependencies>
 

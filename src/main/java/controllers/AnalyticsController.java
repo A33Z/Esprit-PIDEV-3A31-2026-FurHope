@@ -323,3 +323,4 @@ public class AnalyticsController {
         return normalized.isBlank() ? fallback : normalized;
     }
 }
+

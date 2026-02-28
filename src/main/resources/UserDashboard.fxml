@@ -48,6 +48,7 @@
                     <Button text="Open Map" styleClass="button secondary-button" onAction="#handleOpenMapView" />
                     <Button text="Refresh Reservations" styleClass="button secondary-button" onAction="#handleRefreshReservations" />
                     <Button text="AI Support" styleClass="button secondary-button" onAction="#handleOpenSupportCenter" />
+                    <Button text="Back" styleClass="button ghost-button" onAction="#gotoacceuil" />
                     <Button text="Logout" styleClass="button ghost-button" onAction="#gotowelcome" />
                 </children>
             </HBox>

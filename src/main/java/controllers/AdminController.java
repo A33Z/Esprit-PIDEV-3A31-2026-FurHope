@@ -1,4 +1,4 @@
-package com.esprit.controllers;
+package controllers;
 
 import entities.User;
 import com.esprit.services.userservices;
@@ -97,3 +97,4 @@ public class AdminController {
         alert.show();
     }
 }
+

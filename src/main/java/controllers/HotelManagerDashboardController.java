@@ -338,7 +338,7 @@ public class HotelManagerDashboardController {
             autoRefreshTimeline.stop();
         }
         SessionContext.logout();
-        com.esprit.controllers.SessionContext.clear();
+        controllers.SessionContext.clear();
 
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/Welcome.fxml"));
@@ -973,6 +973,35 @@ public class HotelManagerDashboardController {
         return normalized.isBlank() ? fallback : normalized;
     }
 
+    @FXML
+    public void gotoacceuil(ActionEvent actionEvent) {
+        if (autoRefreshTimeline != null) {
+            autoRefreshTimeline.stop();
+        }
+
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/accueil.fxml"));
+            Stage stage;
+            if (actionEvent != null
+                    && actionEvent.getSource() instanceof Node node
+                    && node.getScene() != null) {
+                stage = (Stage) node.getScene().getWindow();
+            } else if (rootPane != null && rootPane.getScene() != null) {
+                stage = (Stage) rootPane.getScene().getWindow();
+            } else {
+                return;
+            }
+
+            Scene scene = new Scene(root);
+            ThemeManager.applyToScene(scene);
+            stage.setScene(scene);
+            stage.setTitle("FurHope - Home");
+            stage.show();
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR, "Unable to open accueil page.");
+        }
+    }
+
     private record HotelPayload(
             String name,
             String address,
@@ -981,4 +1010,3 @@ public class HotelManagerDashboardController {
     ) {
     }
 }
-

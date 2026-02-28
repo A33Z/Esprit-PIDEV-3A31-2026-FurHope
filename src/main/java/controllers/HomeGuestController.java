@@ -1,4 +1,4 @@
-package com.esprit.controllers;
+package controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -39,3 +39,4 @@ public class HomeGuestController {
         }
     }
 }
+

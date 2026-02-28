@@ -1,4 +1,4 @@
-package com.esprit.controllers;
+package controllers;
 
 import entities.User;
 import com.esprit.services.auth.PasswordResetService;
@@ -152,3 +152,4 @@ public class ForgotPasswordController {
         return phone.substring(0, 4) + "****" + phone.substring(phone.length() - 2);
     }
 }
+

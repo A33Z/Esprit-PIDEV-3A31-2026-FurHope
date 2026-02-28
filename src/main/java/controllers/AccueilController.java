@@ -1,5 +1,6 @@
-package com.esprit.controllers;
+package controllers;
 
+import controllers.SessionContext;
 import entities.ManagerAccount;
 import entities.User;
 import java.awt.Desktop;
@@ -254,3 +255,4 @@ public class AccueilController {
         alert.show();
     }
 }
+

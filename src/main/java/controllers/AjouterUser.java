@@ -1,4 +1,5 @@
-package com.esprit.controllers;
+package controllers;
 
 public class AjouterUser {
 }
+

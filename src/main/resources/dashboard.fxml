@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane styleClass="page" stylesheets="@styles.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.esprit.controllers.DashboardController">
+<BorderPane styleClass="page" stylesheets="@styles.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.DashboardController">
 
     <left>
         <VBox spacing="12" fillWidth="true" styleClass="sidebar">
@@ -72,3 +72,4 @@
     </center>
 
 </BorderPane>
+

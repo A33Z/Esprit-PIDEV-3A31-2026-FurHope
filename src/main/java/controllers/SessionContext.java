@@ -1,4 +1,4 @@
-package com.esprit.controllers;
+package controllers;
 
 import entities.User;
 
@@ -39,3 +39,4 @@ public final class SessionContext {
         return selectedReclamationId;
     }
 }
+

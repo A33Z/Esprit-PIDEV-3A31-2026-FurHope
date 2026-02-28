@@ -186,7 +186,7 @@ public class UserDashboardController {
     public void gotowelcome(ActionEvent actionEvent) {
         stopAutoRefresh();
         SessionContext.logout();
-        com.esprit.controllers.SessionContext.clear();
+        controllers.SessionContext.clear();
 
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/Welcome.fxml"));
@@ -208,6 +208,33 @@ public class UserDashboardController {
             stage.show();
         } catch (IOException e) {
             showMessage("Unable to open welcome page.", true);
+        }
+    }
+
+    @FXML
+    public void gotoacceuil(ActionEvent actionEvent) {
+        stopAutoRefresh();
+
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/accueil.fxml"));
+            Stage stage;
+            if (actionEvent != null
+                    && actionEvent.getSource() instanceof Node node
+                    && node.getScene() != null) {
+                stage = (Stage) node.getScene().getWindow();
+            } else if (rootPane != null && rootPane.getScene() != null) {
+                stage = (Stage) rootPane.getScene().getWindow();
+            } else {
+                return;
+            }
+
+            Scene scene = new Scene(root);
+            ThemeManager.applyToScene(scene);
+            stage.setScene(scene);
+            stage.setTitle("FurHope - Home");
+            stage.show();
+        } catch (IOException e) {
+            showMessage("Unable to open accueil page.", true);
         }
     }
 
@@ -724,4 +751,5 @@ public class UserDashboardController {
     private record ModifyInput(LocalDate checkInDate, LocalDate checkOutDate) {
     }
 }
+
 

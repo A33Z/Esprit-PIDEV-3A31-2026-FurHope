@@ -400,3 +400,4 @@ public class HotelDetailsController {
         thread.start();
     }
 }
+

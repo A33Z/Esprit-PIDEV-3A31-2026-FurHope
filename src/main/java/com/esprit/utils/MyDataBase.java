@@ -1,52 +1,42 @@
 package com.esprit.utils;
 
-import services.DatabaseSchemaService;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public final class MyDataBase {
+public class MyDataBase {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/FurHope2";
-    private static final String USER = "root";
-    private static final String PASSWORD = "";
+    private final String URL = "jdbc:mysql://localhost:3306/FurHope2";
+    private final String USER = "root";
+    private final String PASSWORD = "";
 
-    private static MyDataBase instance;
-    private Connection connection;
+    private final Connection connection;
+    private static volatile MyDataBase instance;
 
     private MyDataBase() {
-        this.connection = openConnection();
+        Connection tempConnection = null;
+        try {
+            tempConnection = DriverManager.getConnection(URL, USER, PASSWORD);
+            System.out.println("Connected to database successfully");
+        } catch (SQLException e) {
+            System.err.println("Database connection failed:");
+            e.printStackTrace();
+        }
+        connection = tempConnection;
     }
 
-    public static synchronized MyDataBase getInstance() {
+    public static MyDataBase getInstance() {
         if (instance == null) {
-            instance = new MyDataBase();
+            synchronized (MyDataBase.class) {
+                if (instance == null) {
+                    instance = new MyDataBase();
+                }
+            }
         }
         return instance;
     }
 
-    public synchronized Connection getConnection() {
-        try {
-            if (connection == null || connection.isClosed()) {
-                connection = openConnection();
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("Unable to verify database connection state.", e);
-        }
+    public Connection getConnection() {
         return connection;
-    }
-
-    private Connection openConnection() {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection opened = DriverManager.getConnection(URL, USER, PASSWORD);
-            DatabaseSchemaService.ensureSecuritySchema(opened);
-            return opened;
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("MySQL JDBC driver is not available on the classpath.", e);
-        } catch (SQLException e) {
-            throw new IllegalStateException("Unable to connect to database.", e);
-        }
     }
 }
