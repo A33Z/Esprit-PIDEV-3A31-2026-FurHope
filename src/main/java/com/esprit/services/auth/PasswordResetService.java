@@ -15,7 +15,7 @@ public class PasswordResetService {
 
     private final OtpService otpService = new OtpService();
 
-    public void sendOtp(String email, String normalizedPhone) {
+    public void sendOtpBySms(String email, String normalizedPhone) {
         String key = normalizeEmail(email);
         OtpEntry existing = OTP_BY_EMAIL.get(key);
         if (existing != null && Duration.between(existing.sentAt, Instant.now()).compareTo(RESEND_COOLDOWN) < 0) {
@@ -26,12 +26,22 @@ public class PasswordResetService {
         String message = "FurHope reset code: " + code + ". It expires in 10 minutes.";
         TwilioSmsSender.sendSms(normalizedPhone, message);
 
-        OtpEntry entry = new OtpEntry();
-        entry.code = code;
-        entry.expiresAt = Instant.now().plus(OTP_VALIDITY);
-        entry.sentAt = Instant.now();
-        entry.failedAttempts = 0;
-        OTP_BY_EMAIL.put(key, entry);
+        storeEntry(key, code);
+    }
+
+    public void sendOtpByEmail(String email) {
+        String key = normalizeEmail(email);
+        OtpEntry existing = OTP_BY_EMAIL.get(key);
+        if (existing != null && Duration.between(existing.sentAt, Instant.now()).compareTo(RESEND_COOLDOWN) < 0) {
+            throw new IllegalStateException("Please wait before requesting a new code.");
+        }
+
+        String code = otpService.generateOtpCode();
+        String subject = "Your FurHope reset code";
+        String body = "FurHope reset code: " + code + ". It expires in 10 minutes.";
+        SendGridEmailSender.sendEmail(email, subject, body);
+
+        storeEntry(key, code);
     }
 
     public boolean verifyOtp(String email, String code) {
@@ -60,6 +70,15 @@ public class PasswordResetService {
 
     private String normalizeEmail(String email) {
         return email == null ? "" : email.trim().toLowerCase();
+    }
+
+    private void storeEntry(String key, String code) {
+        OtpEntry entry = new OtpEntry();
+        entry.code = code;
+        entry.expiresAt = Instant.now().plus(OTP_VALIDITY);
+        entry.sentAt = Instant.now();
+        entry.failedAttempts = 0;
+        OTP_BY_EMAIL.put(key, entry);
     }
 
     private static final class OtpEntry {

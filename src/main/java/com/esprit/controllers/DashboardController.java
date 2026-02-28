@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class DashboardController {
@@ -27,6 +28,8 @@ public class DashboardController {
 
     @FXML
     private Button profileButton;
+    @FXML
+    private VBox adminDeskCard;
 
     private User currentUser;
 
@@ -53,6 +56,10 @@ public class DashboardController {
             welcomeLabel.setText("Welcome, Guest");
             adminButton.setVisible(false);
             adminButton.setManaged(false);
+            if (adminDeskCard != null) {
+                adminDeskCard.setVisible(false);
+                adminDeskCard.setManaged(false);
+            }
             if (usersButton != null) {
                 usersButton.setVisible(false);
                 usersButton.setManaged(false);
@@ -69,6 +76,10 @@ public class DashboardController {
         boolean isAdmin = SessionContext.isAdmin();
         adminButton.setVisible(isAdmin);
         adminButton.setManaged(isAdmin);
+        if (adminDeskCard != null) {
+            adminDeskCard.setVisible(isAdmin);
+            adminDeskCard.setManaged(isAdmin);
+        }
         if (usersButton != null) {
             usersButton.setVisible(isAdmin);
             usersButton.setManaged(isAdmin);

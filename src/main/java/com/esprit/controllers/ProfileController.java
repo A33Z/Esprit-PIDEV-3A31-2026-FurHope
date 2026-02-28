@@ -6,13 +6,23 @@ import com.esprit.utils.AuthValidation;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import java.io.File;
+import java.util.prefs.Preferences;
 
 public class ProfileController {
 
@@ -41,10 +51,18 @@ public class ProfileController {
     private PasswordField confirmPasswordField;
 
     @FXML
-    private Label statusLabel;
+    private Label displayNameLabel;
+
+    @FXML
+    private Circle avatarCircle;
+
+    @FXML
+    private VBox editFieldsContainer;
 
     private final userservices service = new userservices();
     private User currentUser;
+    private boolean editModeEnabled = false;
+    private final Preferences preferences = Preferences.userNodeForPackage(ProfileController.class);
 
     @FXML
     private void initialize() {
@@ -54,6 +72,7 @@ public class ProfileController {
             return;
         }
         fillForm(currentUser);
+        setEditMode(false);
     }
 
     private void fillForm(User user) {
@@ -63,9 +82,8 @@ public class ProfileController {
         phoneField.setText(user.getPhone());
         addressField.setText(user.getAddress());
         cityField.setText(user.getCity());
-        if (statusLabel != null) {
-            statusLabel.setText("Role: " + user.getRole() + " | Active: " + (user.isActive() ? "Yes" : "No"));
-        }
+        refreshDisplayName();
+        loadProfilePhoto();
     }
 
     @FXML
@@ -100,6 +118,8 @@ public class ProfileController {
             service.modifier(updated);
             SessionContext.setCurrentUser(updated);
             currentUser = updated;
+            refreshDisplayName();
+            setEditMode(false);
             clearPasswordFields();
             showAlert(Alert.AlertType.INFORMATION, "Saved", "Your profile has been updated.");
         } catch (Exception e) {
@@ -111,6 +131,38 @@ public class ProfileController {
     @FXML
     private void goBack(ActionEvent event) {
         switchScene(event, "/dashboard.fxml");
+    }
+
+    @FXML
+    private void toggleNameEdit(ActionEvent event) {
+        setEditMode(!editModeEnabled);
+    }
+
+    @FXML
+    private void changeProfilePhoto(ActionEvent event) {
+        if (currentUser == null) {
+            return;
+        }
+
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Select Profile Photo");
+        chooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif")
+        );
+
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        File file = chooser.showOpenDialog(stage);
+        if (file == null) {
+            return;
+        }
+
+        try {
+            Image image = new Image(file.toURI().toString(), false);
+            avatarCircle.setFill(new ImagePattern(image));
+            preferences.put(profilePhotoKey(), file.getAbsolutePath());
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Photo Error", "Unable to load selected image.");
+        }
     }
 
     private boolean validateInputs() {
@@ -172,6 +224,56 @@ public class ProfileController {
     private void clearPasswordFields() {
         passwordField.clear();
         confirmPasswordField.clear();
+    }
+
+    private void refreshDisplayName() {
+        if (displayNameLabel != null) {
+            String firstName = firstNameField.getText() == null ? "" : firstNameField.getText().trim();
+            String lastName = lastNameField.getText() == null ? "" : lastNameField.getText().trim();
+            String fullName = (firstName + " " + lastName).trim();
+            displayNameLabel.setText(fullName.isEmpty() ? "Your Name" : fullName);
+        }
+    }
+
+    private void setEditMode(boolean enabled) {
+        editModeEnabled = enabled;
+        if (editFieldsContainer != null) {
+            editFieldsContainer.setVisible(enabled);
+            editFieldsContainer.setManaged(enabled);
+        }
+        if (!enabled) {
+            clearPasswordFields();
+        }
+    }
+
+    private void loadProfilePhoto() {
+        if (avatarCircle == null || currentUser == null) {
+            return;
+        }
+
+        String savedPath = preferences.get(profilePhotoKey(), "");
+        if (savedPath == null || savedPath.isBlank()) {
+            avatarCircle.setFill(Color.web("#ffd9c9"));
+            return;
+        }
+
+        File file = new File(savedPath);
+        if (!file.isFile()) {
+            avatarCircle.setFill(Color.web("#ffd9c9"));
+            return;
+        }
+
+        try {
+            Image image = new Image(file.toURI().toString(), false);
+            avatarCircle.setFill(new ImagePattern(image));
+        } catch (Exception e) {
+            avatarCircle.setFill(Color.web("#ffd9c9"));
+        }
+    }
+
+    private String profilePhotoKey() {
+        int userId = currentUser == null ? 0 : currentUser.getId();
+        return "profile.photo.path." + userId;
     }
 
     private void switchScene(ActionEvent event, String fxmlFile) {

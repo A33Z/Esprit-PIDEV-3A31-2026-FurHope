@@ -3,6 +3,8 @@ package com.esprit.controllers;
 import com.esprit.entities.Reclamation;
 import com.esprit.entities.User;
 import com.esprit.services.ReclamationService;
+import com.esprit.services.ai.ReclamationAutoReplyCoordinator;
+import com.esprit.services.ai.ReclamationAutoReplyResult;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,10 +14,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.time.LocalDateTime;
@@ -41,6 +45,7 @@ public class ReclamationController {
     private ComboBox<String> sortCombo;
 
     private final ReclamationService service = new ReclamationService();
+    private final ReclamationAutoReplyCoordinator autoReplyCoordinator = ReclamationAutoReplyCoordinator.withDefaults();
     private final ObservableList<Reclamation> sourceData = FXCollections.observableArrayList();
 
     @FXML
@@ -54,7 +59,13 @@ public class ReclamationController {
             @Override
             protected void updateItem(Reclamation reclamation, boolean empty) {
                 super.updateItem(reclamation, empty);
-                setText(empty || reclamation == null ? null : formatReclamation(reclamation));
+                if (empty || reclamation == null) {
+                    setText(null);
+                    setGraphic(null);
+                    return;
+                }
+                setText(null);
+                setGraphic(createReclamationCard(reclamation));
             }
         });
 
@@ -92,6 +103,7 @@ public class ReclamationController {
             reclamation.setDescription(descriptionArea.getText().trim());
             reclamation.setStatus("OPEN");
             service.ajouter(reclamation);
+            handleAutoReply(reclamation);
             clearForm();
             refreshTable();
         } catch (Exception e) {
@@ -157,13 +169,12 @@ public class ReclamationController {
             showAlert(Alert.AlertType.WARNING, "No Selection", "Select a reclamation first.");
             return;
         }
-        SessionContext.setSelectedReclamationId(selected.getId());
-
-        if (!SessionContext.isAdmin()) {
-            showAlert(Alert.AlertType.INFORMATION, "Admin Only", "Only admin can create responses.");
+        if (!canModify(selected) && !SessionContext.isAdmin()) {
+            showAlert(Alert.AlertType.WARNING, "Access Denied", "You can only access your own reclamations.");
             return;
         }
 
+        SessionContext.setSelectedReclamationId(selected.getId());
         switchScene(event, "/reponse.fxml");
     }
 
@@ -232,14 +243,10 @@ public class ReclamationController {
     }
 
     private String formatReclamation(Reclamation reclamation) {
-        return String.format(
-                "ID: %d | Client: %d | Sujet: %s | Status: %s | Created: %s",
-                reclamation.getId(),
-                reclamation.getClientId(),
-                reclamation.getSujet(),
-                reclamation.getStatus(),
-                reclamation.getCreatedAt()
-        );
+        String sujet = safeText(reclamation.getSujet(), "Untitled");
+        String description = safeText(reclamation.getDescription(), "No description.");
+        String created = reclamation.getCreatedAt() == null ? "Unknown date" : reclamation.getCreatedAt().toString();
+        return sujet + "\n" + description + "\nCreated: " + created;
     }
 
     private void showAlert(Alert.AlertType type, String title, String message) {
@@ -284,5 +291,54 @@ public class ReclamationController {
 
     private String safeString(String value) {
         return value == null ? "" : value.toLowerCase(Locale.ROOT);
+    }
+
+    private void handleAutoReply(Reclamation reclamation) {
+        try {
+            ReclamationAutoReplyResult result = autoReplyCoordinator.process(reclamation);
+            if (!result.isEnabled()) {
+                return;
+            }
+            String title = result.isAutoSent() ? "Automatic Response Sent" : "Automatic Response Draft";
+            String message = result.getSummary();
+            if (result.hasDraftMessage()) {
+                message = message + "\n\n" + result.getDraftMessage();
+            }
+            showAlert(Alert.AlertType.INFORMATION, title, message);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(
+                    Alert.AlertType.WARNING,
+                    "Automatic Response",
+                    "Reclamation was created but AI auto-reply could not be processed."
+            );
+        }
+    }
+
+    private VBox createReclamationCard(Reclamation reclamation) {
+        Label sujet = new Label(safeText(reclamation.getSujet(), "Untitled reclamation"));
+        sujet.getStyleClass().add("reclamation-item-title");
+        sujet.setWrapText(true);
+
+        Label description = new Label(safeText(reclamation.getDescription(), "No description provided."));
+        description.getStyleClass().add("reclamation-item-description");
+        description.setWrapText(true);
+
+        String created = reclamation.getCreatedAt() == null
+                ? "Created: unknown"
+                : "Created: " + reclamation.getCreatedAt();
+        Label meta = new Label(created);
+        meta.getStyleClass().add("reclamation-item-meta");
+
+        VBox box = new VBox(6, sujet, description, meta);
+        box.getStyleClass().add("reclamation-item-card");
+        return box;
+    }
+
+    private String safeText(String value, String fallback) {
+        if (value == null || value.trim().isEmpty()) {
+            return fallback;
+        }
+        return value.trim();
     }
 }

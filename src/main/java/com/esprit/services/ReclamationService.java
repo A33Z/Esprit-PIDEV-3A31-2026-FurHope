@@ -23,12 +23,17 @@ public class ReclamationService implements ICrud<Reclamation> {
     @Override
     public void ajouter(Reclamation reclamation) throws SQLException {
         String sql = "INSERT INTO reclamation (client_id, sujet, description, status) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, reclamation.getClientId());
             ps.setString(2, reclamation.getSujet());
             ps.setString(3, reclamation.getDescription());
             ps.setString(4, reclamation.getStatus());
             ps.executeUpdate();
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    reclamation.setId(generatedKeys.getInt(1));
+                }
+            }
         }
     }
 
@@ -65,6 +70,19 @@ public class ReclamationService implements ICrud<Reclamation> {
             }
         }
         return reclamations;
+    }
+
+    public Reclamation findById(int id) throws SQLException {
+        String sql = "SELECT * FROM reclamation WHERE id = ? LIMIT 1";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    return null;
+                }
+                return mapReclamation(rs);
+            }
+        }
     }
 
     @Override

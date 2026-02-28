@@ -6,6 +6,8 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -27,7 +29,7 @@
                     <VBox spacing="16" alignment="CENTER" styleClass="auth-frame">
                         <Label text="Welcome Back" styleClass="subtitle" />
 
-                        <VBox spacing="16" alignment="CENTER" styleClass="card form-card">
+                        <VBox spacing="14" alignment="CENTER" styleClass="card form-card">
                             <Label text="Sign In" styleClass="title" />
 
                             <Label fx:id="formErrorLabel" styleClass="form-error" managed="false" visible="false" wrapText="true"/>
@@ -44,8 +46,22 @@
                                 <Label fx:id="passwordErrorLabel" styleClass="field-error" managed="false" visible="false" wrapText="true"/>
                             </VBox>
 
-                            <Button text="Login" styleClass="primary-button login-cta action-button" onAction="#login" prefWidth="190"/>
+                            <Button text="Login" styleClass="cheerful-primary-button login-cta action-button" onAction="#login" prefWidth="210"/>
+
                             <Button text="Forgot password?" styleClass="ghost-button action-button" onAction="#goToForgotPassword"/>
+
+                            <Button fx:id="googleButton" styleClass="google-icon-button" onAction="#loginWithGoogle" prefWidth="52" prefHeight="52" minWidth="52" minHeight="52">
+                                <graphic>
+                                    <ImageView fitWidth="26" fitHeight="26" preserveRatio="true">
+                                        <image>
+                                            <Image url="@images/google-g.png"/>
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+
+                            <Button text="Login with Face" styleClass="cheerful-secondary-button action-button" onAction="#loginWithFace" prefWidth="210"/>
+                            <Button text="Enroll Face" styleClass="secondary-button action-button" onAction="#enrollFace" prefWidth="210"/>
 
                             <HBox spacing="8" alignment="CENTER" styleClass="inline-link-row">
                                 <Label text="Don't have an account?" styleClass="field-label"/>
@@ -53,7 +69,7 @@
                             </HBox>
 
                             <HBox spacing="10" alignment="CENTER" styleClass="form-actions">
-                                <Button text="Back" styleClass="secondary-button action-button" onAction="#goBack"/>
+                                <Button text="Back" styleClass="cheerful-secondary-button action-button" onAction="#goBack"/>
                             </HBox>
                         </VBox>
                     </VBox>

@@ -7,13 +7,18 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.Comparator;
@@ -22,7 +27,7 @@ import java.util.Locale;
 public class UserAdminController {
 
     @FXML
-    private ListView<User> userTable;
+    private FlowPane userCardsContainer;
 
     @FXML
     private TextField searchField;
@@ -40,13 +45,6 @@ public class UserAdminController {
             return;
         }
 
-        userTable.setCellFactory(list -> new ListCell<>() {
-            @Override
-            protected void updateItem(User user, boolean empty) {
-                super.updateItem(user, empty);
-                setText(empty || user == null ? null : formatUser(user));
-            }
-        });
         sortCombo.setItems(FXCollections.observableArrayList("Newest ID", "Oldest ID", "Name A-Z", "Role A-Z"));
         sortCombo.getSelectionModel().selectFirst();
         searchField.textProperty().addListener((obs, oldText, newText) -> applyFilters());
@@ -76,36 +74,70 @@ public class UserAdminController {
                 sourceData.filtered(user -> matchesSearch(user, query))
         );
         FXCollections.sort(filtered, buildComparator(sortCombo == null ? null : sortCombo.getValue()));
-        userTable.setItems(filtered);
+        renderCards(filtered);
     }
 
-    @FXML
-    private void activateSelected(ActionEvent event) {
-        updateActive(true);
+    private void renderCards(ObservableList<User> users) {
+        userCardsContainer.getChildren().clear();
+        for (User user : users) {
+            userCardsContainer.getChildren().add(createUserCard(user));
+        }
     }
 
-    @FXML
-    private void blockSelected(ActionEvent event) {
-        updateActive(false);
+    private VBox createUserCard(User user) {
+        Label nameLabel = new Label(buildDisplayName(user));
+        Label emailLabel = new Label("Email: " + safe(user.getEmail()));
+        Label phoneLabel = new Label("Phone: " + safe(user.getPhone()));
+        Label locationLabel = new Label("Address: " + safe(user.getAddress()) + ", " + safe(user.getCity()));
+        Label statusLabel = new Label("Account status: " + (user.isActive() ? "Active" : "Blocked"));
+
+        nameLabel.getStyleClass().add("card-title");
+        emailLabel.getStyleClass().add("card-subtitle");
+        phoneLabel.getStyleClass().add("card-subtitle");
+        locationLabel.getStyleClass().add("card-subtitle");
+        statusLabel.getStyleClass().add("card-subtitle");
+
+        Button activateButton = new Button("Activate");
+        Button blockButton = new Button("Block");
+        Button deleteButton = new Button("Delete");
+
+        activateButton.getStyleClass().addAll("primary-button", "action-button");
+        blockButton.getStyleClass().addAll("secondary-button", "action-button");
+        deleteButton.getStyleClass().addAll("ghost-button", "action-button");
+
+        activateButton.setDisable(user.isActive());
+        blockButton.setDisable(!user.isActive());
+
+        activateButton.setOnAction(e -> updateActive(user, true));
+        blockButton.setOnAction(e -> updateActive(user, false));
+        deleteButton.setOnAction(e -> deleteUser(user));
+
+        HBox actions = new HBox(10, activateButton, blockButton, deleteButton);
+        actions.setAlignment(Pos.CENTER_LEFT);
+
+        VBox card = new VBox(10, nameLabel, emailLabel, phoneLabel, locationLabel, statusLabel, actions);
+        card.getStyleClass().add("card");
+        card.setPadding(new Insets(16));
+        card.setPrefWidth(320);
+        card.setMaxWidth(320);
+        return card;
     }
 
-    private void updateActive(boolean active) {
-        User selected = userTable.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            showAlert(Alert.AlertType.WARNING, "No Selection", "Select a user to update.");
+    private void updateActive(User user, boolean active) {
+        if (user == null) {
             return;
         }
-        if (isAdminUser(selected)) {
+        if (isAdminUser(user)) {
             showAlert(Alert.AlertType.WARNING, "Action Blocked", "Admin users cannot be modified.");
             return;
         }
-        if (SessionContext.getCurrentUser() != null && selected.getId() == SessionContext.getCurrentUser().getId()) {
+        if (SessionContext.getCurrentUser() != null && user.getId() == SessionContext.getCurrentUser().getId()) {
             showAlert(Alert.AlertType.WARNING, "Action Blocked", "You cannot modify your own active status.");
             return;
         }
 
         try {
-            service.setActive(selected.getId(), active);
+            service.setActive(user.getId(), active);
             refreshTable();
             showAlert(Alert.AlertType.INFORMATION, "Updated", "User status updated.");
         } catch (Exception e) {
@@ -114,24 +146,21 @@ public class UserAdminController {
         }
     }
 
-    @FXML
-    private void deleteSelected(ActionEvent event) {
-        User selected = userTable.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            showAlert(Alert.AlertType.WARNING, "No Selection", "Select a user to delete.");
+    private void deleteUser(User user) {
+        if (user == null) {
             return;
         }
-        if (isAdminUser(selected)) {
+        if (isAdminUser(user)) {
             showAlert(Alert.AlertType.WARNING, "Action Blocked", "Admin users cannot be deleted.");
             return;
         }
-        if (SessionContext.getCurrentUser() != null && selected.getId() == SessionContext.getCurrentUser().getId()) {
+        if (SessionContext.getCurrentUser() != null && user.getId() == SessionContext.getCurrentUser().getId()) {
             showAlert(Alert.AlertType.WARNING, "Action Blocked", "You cannot delete your own account.");
             return;
         }
 
         try {
-            service.supprimer(selected.getId());
+            service.supprimer(user.getId());
             refreshTable();
             showAlert(Alert.AlertType.INFORMATION, "Deleted", "User deleted.");
         } catch (Exception e) {
@@ -158,18 +187,6 @@ public class UserAdminController {
         }
     }
 
-    private String formatUser(User user) {
-        return String.format(
-                "ID: %d | %s %s | %s | Role: %s | Active: %s",
-                user.getId(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getRole(),
-                user.isActive() ? "Yes" : "No"
-        );
-    }
-
     private boolean isAdminUser(User user) {
         return user != null && user.getRole() != null && "ADMIN".equalsIgnoreCase(user.getRole().trim());
     }
@@ -188,7 +205,8 @@ public class UserAdminController {
         return containsIgnoreCase(user.getFirstName(), query)
                 || containsIgnoreCase(user.getLastName(), query)
                 || containsIgnoreCase(user.getEmail(), query)
-                || containsIgnoreCase(user.getRole(), query)
+                || containsIgnoreCase(user.getPhone(), query)
+                || containsIgnoreCase(user.getCity(), query)
                 || String.valueOf(user.getId()).contains(query);
     }
 
@@ -215,5 +233,24 @@ public class UserAdminController {
 
     private String safeString(String value) {
         return value == null ? "" : value.toLowerCase(Locale.ROOT);
+    }
+
+    private String safe(String value) {
+        return value == null || value.trim().isEmpty() ? "-" : value.trim();
+    }
+
+    private String buildDisplayName(User user) {
+        String first = safe(user.getFirstName());
+        String last = safe(user.getLastName());
+        if ("-".equals(first) && "-".equals(last)) {
+            return "Unnamed User";
+        }
+        if ("-".equals(first)) {
+            return last;
+        }
+        if ("-".equals(last)) {
+            return first;
+        }
+        return first + " " + last;
     }
 }

@@ -6,6 +6,7 @@ import com.esprit.utils.MyDataBase;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalInt;
 
 public class userservices implements ICrud<User> {
 
@@ -147,9 +148,9 @@ public class userservices implements ICrud<User> {
         }
 
         // Correct login:
-        // pending vets can still access regular user pages until approval.
+        // any inactive account must be blocked from authentication.
         User user = mapUser(rs);
-        if (!user.isActive() && !"VETERINAIRE".equalsIgnoreCase(user.getRole())) {
+        if (!user.isActive()) {
             throw new RuntimeException("ACCOUNT_INACTIVE");
         }
 
@@ -157,10 +158,11 @@ public class userservices implements ICrud<User> {
     }
 
     public List<User> getPendingVets() throws SQLException {
-        String sql = "SELECT * FROM user WHERE role = ? AND active = ?";
+        String sql = "SELECT * FROM user WHERE role IN (?, ?) AND active = ?";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setString(1, "VETERINAIRE");
-        ps.setBoolean(2, false);
+        ps.setString(2, "HOTEL_MANAGER");
+        ps.setBoolean(3, false);
 
         ResultSet rs = ps.executeQuery();
         List<User> users = new ArrayList<>();
@@ -226,6 +228,20 @@ public class userservices implements ICrud<User> {
             ps.setString(1, newPassword);
             ps.setInt(2, userId);
             ps.executeUpdate();
+        }
+    }
+
+    public OptionalInt findFirstActiveAdminId() throws SQLException {
+        String sql = "SELECT id FROM user WHERE role = ? AND active = ? ORDER BY id ASC LIMIT 1";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, "ADMIN");
+            ps.setBoolean(2, true);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return OptionalInt.of(rs.getInt("id"));
+                }
+                return OptionalInt.empty();
+            }
         }
     }
 

@@ -20,7 +20,7 @@
             <Separator />
 
             <Button fx:id="reclamationButton" maxWidth="1.7976931348623157E308" onAction="#openReclamation" styleClass="sidebar-button" text="Client Reclamation" />
-            <Button fx:id="adminButton" maxWidth="1.7976931348623157E308" onAction="#goToAdmin" styleClass="sidebar-button" text="Vet Approvals" />
+            <Button fx:id="adminButton" maxWidth="1.7976931348623157E308" onAction="#goToAdmin" styleClass="sidebar-button" text="Role Approvals" />
             <Button fx:id="usersButton" maxWidth="1.7976931348623157E308" onAction="#goToUserAdmin" styleClass="sidebar-button" text="User Management" />
             <Button fx:id="profileButton" maxWidth="1.7976931348623157E308" onAction="#goToProfile" styleClass="sidebar-button" text="My Profile" />
 
@@ -60,7 +60,7 @@
                             <Button onAction="#openReclamation" styleClass="primary-button" text="Open" />
                         </VBox>
 
-                        <VBox spacing="8" styleClass="dashboard-card">
+                        <VBox fx:id="adminDeskCard" spacing="8" styleClass="dashboard-card">
                             <Label styleClass="card-title" text="Admin Desk" />
                             <Label styleClass="card-subtitle" text="Approve vets and manage user access." wrapText="true" />
                             <Button onAction="#goToAdmin" styleClass="secondary-button" text="Open" />

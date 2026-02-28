@@ -34,3 +34,4 @@ build/
 
 # Local secrets (do not commit)
 twilio.secrets.properties
+mail.secrets.properties

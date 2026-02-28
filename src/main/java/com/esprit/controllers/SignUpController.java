@@ -54,7 +54,7 @@ public class SignUpController {
 
     @FXML
     private void initialize() {
-        roleCombo.setItems(FXCollections.observableArrayList("CLIENT", "VETERINAIRE"));
+        roleCombo.setItems(FXCollections.observableArrayList("CLIENT", "VETERINAIRE", "HOTEL_MANAGER"));
         roleCombo.getSelectionModel().selectFirst();
         Platform.runLater(this::syncThemeToggleIcon);
     }
@@ -77,14 +77,14 @@ public class SignUpController {
                 role
         );
 
-        if ("VETERINAIRE".equals(role)) {
+        if (requiresAdminApproval(role)) {
             user.setActive(false);
         }
 
         try {
             service.ajouter(user);
-            if ("VETERINAIRE".equals(role)) {
-                showAlert(Alert.AlertType.INFORMATION, "Success", "Account created. Awaiting approval.");
+            if (requiresAdminApproval(role)) {
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Account created. Awaiting admin approval.");
             } else {
                 showAlert(Alert.AlertType.INFORMATION, "Success", "Account created.");
             }
@@ -262,5 +262,9 @@ public class SignUpController {
         if (themeToggleButton != null) {
             themeToggleButton.setText(ThemeManager.isDarkModeEnabled() ? "\uD83C\uDF19" : "\u2600");
         }
+    }
+
+    private boolean requiresAdminApproval(String role) {
+        return "VETERINAIRE".equalsIgnoreCase(role) || "HOTEL_MANAGER".equalsIgnoreCase(role);
     }
 }
