@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane fx:id="rootPane"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.SupportCenterController"
+            styleClass="user-page"
+            stylesheets="@AppTheme.css"
+            prefHeight="820.0" prefWidth="1160.0">
+
+    <children>
+        <VBox styleClass="page-content" spacing="14.0"
+              AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <children>
+                    <VBox spacing="2.0">
+                        <children>
+                            <Label text="AI Support Assistant" styleClass="header-title" />
+                            <Label text="Ask questions about bookings, hotels, and reservations" styleClass="header-subtitle" />
+                        </children>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Label fx:id="sessionLabel" styleClass="session-chip user-chip" />
+                    <Button text="Close" styleClass="button ghost-button" onAction="#handleCloseSupportCenter" />
+                </children>
+            </HBox>
+
+            <Label fx:id="supportStatusLabel" text="" styleClass="header-subtitle" />
+
+            <VBox styleClass="card support-chat-shell" spacing="10.0" VBox.vgrow="ALWAYS">
+                <children>
+                    <ScrollPane fx:id="chatScrollPane" fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="support-chat-scroll">
+                        <content>
+                            <VBox fx:id="chatMessagesContainer" spacing="10.0" styleClass="support-chat-flow" />
+                        </content>
+                    </ScrollPane>
+
+                    <HBox spacing="8.0" alignment="CENTER_LEFT" styleClass="support-chat-input-row">
+                        <children>
+                            <TextField fx:id="chatInputField"
+                                       HBox.hgrow="ALWAYS"
+                                       promptText="Ask about reservation status, booking changes, cancellations, or hotel info"
+                                       onAction="#handleSendMessage" />
+                            <Button fx:id="sendButton"
+                                    text="Send"
+                                    styleClass="button primary-button"
+                                    onAction="#handleSendMessage" />
+                        </children>
+                    </HBox>
+                </children>
+            </VBox>
+        </VBox>
+    </children>
+</AnchorPane>

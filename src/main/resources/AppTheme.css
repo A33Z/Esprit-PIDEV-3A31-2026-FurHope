@@ -1,0 +1,1191 @@
+/* Shared palette from reference: warm beige -> soft mint + coral actions */
+.landing-page,
+.page,
+.manager-page,
+.user-page {
+    -fx-font-family: "Segoe UI";
+    -fx-accent: #ff6c4f;
+    -fx-focus-color: #ff6c4f;
+    -fx-faint-focus-color: rgba(255, 108, 79, 0.18);
+    -fx-background-color:
+        linear-gradient(to right, #f5f1e7, #e8f2ee);
+}
+
+.landing-container {
+    -fx-padding: 42 26 42 26;
+    -fx-spacing: 14;
+}
+
+.login-card {
+    -fx-min-width: 620;
+    -fx-max-width: 620;
+    -fx-padding: 16;
+    -fx-background-color: rgba(255, 255, 255, 0.82);
+}
+
+.logo-title {
+    -fx-font-family: "Segoe Script";
+    -fx-font-size: 56px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #19352c;
+}
+
+.logo-subtitle {
+    -fx-font-size: 27px;
+    -fx-text-fill: rgba(25, 53, 44, 0.75);
+    -fx-padding: 0 0 10 0;
+}
+
+.pill-input {
+    -fx-min-width: 560;
+    -fx-max-width: 560;
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-border-color: rgba(28, 45, 37, 0.18);
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-padding: 12 18 12 18;
+}
+
+.button {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-padding: 10 18 10 18;
+}
+
+.primary-pill-button,
+.primary-button {
+    -fx-background-color: linear-gradient(to bottom, #ff7f61, #ff6446);
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(79, 32, 22, 0.20), 18, 0.2, 0, 7);
+}
+
+.primary-pill-button:hover,
+.primary-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #ff8b6f, #ff6f52);
+}
+
+.secondary-pill-button,
+.secondary-button {
+    -fx-background-color: rgba(255, 255, 255, 0.92);
+    -fx-text-fill: #223d34;
+    -fx-border-color: rgba(34, 61, 52, 0.20);
+    -fx-border-width: 1;
+}
+
+.secondary-pill-button:hover,
+.secondary-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 1.0);
+}
+
+.danger-button {
+    -fx-background-color: linear-gradient(to bottom, #e75b63, #d2434b);
+    -fx-text-fill: white;
+}
+
+.danger-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #ee6770, #db4e56);
+}
+
+.ghost-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(25, 53, 44, 0.9);
+    -fx-border-color: rgba(25, 53, 44, 0.25);
+    -fx-border-width: 1;
+}
+
+.primary-pill-button,
+.secondary-pill-button {
+    -fx-min-width: 560;
+    -fx-max-width: 560;
+    -fx-padding: 12 20 12 20;
+    -fx-font-size: 22px;
+}
+
+.form-error {
+    -fx-font-size: 12px;
+    -fx-text-fill: #a92c34;
+}
+
+.page-content {
+    -fx-padding: 18;
+}
+
+.header-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #17352d;
+}
+
+.header-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: rgba(23, 53, 45, 0.70);
+}
+
+.session-chip {
+    -fx-padding: 6 12 6 12;
+    -fx-background-radius: 999;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
+
+.manager-chip {
+    -fx-background-color: rgba(60, 92, 80, 0.16);
+    -fx-text-fill: #29493d;
+}
+
+.user-chip {
+    -fx-background-color: rgba(255, 108, 79, 0.18);
+    -fx-text-fill: #7a2e1f;
+}
+
+.card {
+    -fx-background-color: rgba(255, 255, 255, 0.78);
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: rgba(29, 54, 46, 0.12);
+    -fx-border-width: 1;
+    -fx-padding: 14;
+}
+
+.admin-card {
+    -fx-background-color: rgba(255, 255, 255, 0.84);
+}
+
+.reservation-view-card {
+    -fx-background-color: rgba(252, 255, 254, 0.88);
+}
+
+.reservation-edit-card {
+    -fx-background-color: rgba(255, 255, 255, 0.90);
+}
+
+.section-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #18372e;
+}
+
+.field-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(24, 55, 46, 0.80);
+}
+
+.text-field,
+.date-picker,
+.combo-box {
+    -fx-background-color: rgba(255, 255, 255, 0.96);
+    -fx-border-color: rgba(24, 55, 46, 0.18);
+    -fx-border-radius: 11;
+    -fx-background-radius: 11;
+    -fx-padding: 10 12 10 12;
+}
+
+.text-field:focused,
+.date-picker:focused,
+.combo-box:focused {
+    -fx-border-color: rgba(255, 108, 79, 0.58);
+    -fx-effect: dropshadow(gaussian, rgba(255, 108, 79, 0.18), 13, 0.2, 0, 4);
+}
+
+.text-area {
+    -fx-background-color: rgba(255, 255, 255, 0.96);
+    -fx-border-color: rgba(24, 55, 46, 0.18);
+    -fx-border-radius: 11;
+    -fx-background-radius: 11;
+}
+
+.text-area .content {
+    -fx-background-color: rgba(255, 255, 255, 0.96);
+    -fx-background-radius: 11;
+}
+
+.table-view {
+    -fx-background-color: rgba(255, 255, 255, 0.92);
+    -fx-border-color: rgba(24, 55, 46, 0.14);
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 5;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: rgba(255, 255, 255, 0.96);
+    -fx-background-radius: 12 12 0 0;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header .label {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(24, 55, 46, 0.82);
+}
+
+.table-row-cell:odd {
+    -fx-background-color: rgba(247, 252, 250, 0.88);
+}
+
+.table-row-cell:selected {
+    -fx-background-color: rgba(255, 108, 79, 0.15);
+}
+
+.list-view {
+    -fx-background-color: rgba(255, 255, 255, 0.92);
+    -fx-border-color: rgba(24, 55, 46, 0.14);
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 5;
+}
+
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(24, 55, 46, 0.85);
+    -fx-padding: 8 10 8 10;
+}
+
+.list-cell:filled:selected {
+    -fx-background-color: rgba(255, 108, 79, 0.15);
+}
+
+.status-pending {
+    -fx-text-fill: #8d6600;
+    -fx-font-weight: 700;
+}
+
+.status-approved {
+    -fx-text-fill: #1b6b3a;
+    -fx-font-weight: 700;
+}
+
+.status-declined {
+    -fx-text-fill: #b22e35;
+    -fx-font-weight: 700;
+}
+
+.hotel-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.hotel-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.hotel-card-list {
+    -fx-padding: 6 6 6 6;
+    -fx-alignment: top-left;
+}
+
+.hotel-card {
+    -fx-background-color: rgba(255, 255, 255, 0.96);
+    -fx-border-color: rgba(24, 55, 46, 0.12);
+    -fx-border-radius: 16;
+    -fx-background-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(17, 41, 34, 0.10), 16, 0.15, 0, 4);
+}
+
+.hotel-card-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #18352d;
+}
+
+.hotel-card-rating {
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #1f5f4a;
+}
+
+.hotel-card-location {
+    -fx-font-size: 12px;
+    -fx-text-fill: rgba(23, 53, 45, 0.8);
+}
+
+.hotel-card-description {
+    -fx-font-size: 13px;
+    -fx-text-fill: rgba(23, 53, 45, 0.82);
+}
+
+.hotel-card-price {
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #7a2e1f;
+}
+
+.hotel-card-image {
+    -fx-effect: dropshadow(gaussian, rgba(23, 53, 45, 0.18), 14, 0.20, 0, 4);
+    -fx-background-radius: 12;
+    -fx-cursor: hand;
+}
+
+.reservation-side-panel {
+    -fx-pref-width: 400;
+    -fx-min-width: 340;
+    -fx-max-width: 460;
+}
+
+.reservation-ticket-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 7 6 7 6;
+}
+
+.reservation-ticket-cell:filled:selected {
+    -fx-background-color: transparent;
+}
+
+.reservation-ticket {
+    -fx-background-color: linear-gradient(to right, rgba(255, 255, 255, 0.97), rgba(243, 251, 248, 0.97));
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: rgba(24, 55, 46, 0.16);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(19, 45, 38, 0.10), 12, 0.16, 0, 2);
+}
+
+.ticket-header {
+    -fx-alignment: center-left;
+}
+
+.ticket-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #16342c;
+}
+
+.ticket-code {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(22, 52, 44, 0.74);
+}
+
+.ticket-meta {
+    -fx-font-size: 12px;
+    -fx-text-fill: rgba(22, 52, 44, 0.84);
+}
+
+.ticket-divider {
+    -fx-background-color: rgba(22, 52, 44, 0.16);
+}
+
+.ticket-status-badge {
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-padding: 4 10 4 10;
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+}
+
+.ticket-status-pending {
+    -fx-text-fill: #815d00;
+    -fx-background-color: rgba(255, 196, 77, 0.28);
+    -fx-border-color: rgba(129, 93, 0, 0.24);
+}
+
+.ticket-status-approved {
+    -fx-text-fill: #0e6f44;
+    -fx-background-color: rgba(66, 196, 132, 0.25);
+    -fx-border-color: rgba(14, 111, 68, 0.24);
+}
+
+.ticket-status-declined {
+    -fx-text-fill: #a22533;
+    -fx-background-color: rgba(233, 95, 119, 0.24);
+    -fx-border-color: rgba(162, 37, 51, 0.24);
+}
+
+.ticket-status-cancelled {
+    -fx-text-fill: #5b6470;
+    -fx-background-color: rgba(126, 136, 150, 0.20);
+    -fx-border-color: rgba(91, 100, 112, 0.22);
+}
+
+.user-reservation-ticket {
+    -fx-background-color: linear-gradient(to right, rgba(255, 255, 255, 0.98), rgba(241, 249, 247, 0.95));
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: rgba(24, 55, 46, 0.15);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(19, 45, 38, 0.10), 12, 0.16, 0, 2);
+}
+
+.user-reservation-ticket:hover {
+    -fx-effect: dropshadow(gaussian, rgba(19, 45, 38, 0.14), 16, 0.20, 0, 4);
+}
+
+.user-ticket-cancelled {
+    -fx-background-color: linear-gradient(to right, rgba(246, 248, 250, 0.98), rgba(240, 243, 247, 0.95));
+    -fx-border-color: rgba(97, 106, 118, 0.24);
+}
+
+.user-ticket-declined {
+    -fx-background-color: linear-gradient(to right, rgba(255, 249, 250, 0.98), rgba(252, 242, 244, 0.95));
+}
+
+.user-ticket-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #16342c;
+}
+
+.user-ticket-grid {
+    -fx-padding: 2 0 2 0;
+}
+
+.user-ticket-block {
+    -fx-background-color: rgba(249, 252, 251, 0.95);
+    -fx-background-radius: 11;
+    -fx-border-radius: 11;
+    -fx-border-color: rgba(22, 52, 44, 0.12);
+    -fx-padding: 7 10 7 10;
+}
+
+.user-ticket-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(22, 52, 44, 0.70);
+}
+
+.user-ticket-value {
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(22, 52, 44, 0.92);
+}
+
+.manager-reservation-panel {
+    -fx-padding: 12;
+}
+
+.manager-hotel-form-card {
+    -fx-pref-width: 310;
+    -fx-min-width: 290;
+}
+
+.manager-analytics-panel {
+    -fx-background-color: linear-gradient(to right, rgba(255, 255, 255, 0.96), rgba(250, 244, 248, 0.95));
+}
+
+.manager-analytics-page-content {
+    -fx-padding: 2 2 10 2;
+    -fx-spacing: 14;
+}
+
+.analytics-metric-card {
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: rgba(94, 36, 63, 0.12);
+    -fx-border-width: 1;
+    -fx-padding: 8 10 8 10;
+    -fx-min-height: 64;
+}
+
+.analytics-metric-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(97, 39, 67, 0.72);
+}
+
+.analytics-metric-value {
+    -fx-font-size: 18px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #642846;
+}
+
+.analytics-line-chart {
+    -fx-background-color: rgba(255, 255, 255, 0.96);
+    -fx-border-color: rgba(94, 36, 63, 0.10);
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 8 10 6 10;
+}
+
+.analytics-line-chart .chart-series-line {
+    -fx-stroke: #f05f9f;
+    -fx-stroke-width: 2px;
+}
+
+.analytics-line-chart .chart-line-symbol {
+    -fx-background-color: #f05f9f, white;
+    -fx-background-radius: 6px;
+    -fx-padding: 5px;
+}
+
+.analytics-line-chart .axis-label {
+    -fx-text-fill: rgba(84, 34, 58, 0.78);
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+}
+
+.manager-hotels-panel {
+    -fx-background-color: rgba(255, 255, 255, 0.90);
+}
+
+.manager-reservation-list {
+    -fx-background-color: rgba(255, 255, 255, 0.72);
+    -fx-border-color: rgba(24, 55, 46, 0.14);
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 9;
+}
+
+.manager-reservation-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 2 0 2 0;
+}
+
+.manager-reservation-list .list-cell:filled:selected,
+.manager-reservation-list .list-cell:filled:hover {
+    -fx-background-color: transparent;
+}
+
+.manager-reservation-ticket {
+    -fx-background-color: linear-gradient(to right, rgba(255, 255, 255, 0.99), rgba(238, 249, 246, 0.96));
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-width: 1 1 1 6;
+    -fx-border-color: rgba(24, 55, 46, 0.16);
+    -fx-effect: dropshadow(gaussian, rgba(16, 41, 34, 0.12), 18, 0.16, 0, 4);
+}
+
+.manager-reservation-ticket:hover {
+    -fx-effect: dropshadow(gaussian, rgba(16, 41, 34, 0.16), 22, 0.20, 0, 6);
+}
+
+.manager-ticket-pending {
+    -fx-border-color: rgba(24, 55, 46, 0.16) rgba(24, 55, 46, 0.16) rgba(24, 55, 46, 0.16) #c98716;
+}
+
+.manager-ticket-approved {
+    -fx-border-color: rgba(24, 55, 46, 0.16) rgba(24, 55, 46, 0.16) rgba(24, 55, 46, 0.16) #1f9b5f;
+}
+
+.manager-ticket-declined {
+    -fx-border-color: rgba(24, 55, 46, 0.16) rgba(24, 55, 46, 0.16) rgba(24, 55, 46, 0.16) #cb4050;
+}
+
+.manager-ticket-cancelled {
+    -fx-border-color: rgba(24, 55, 46, 0.16) rgba(24, 55, 46, 0.16) rgba(24, 55, 46, 0.16) #7f8a99;
+}
+
+.manager-ticket-header {
+    -fx-padding: 2 0 0 0;
+}
+
+.manager-ticket-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #17362d;
+}
+
+.manager-ticket-blocks {
+    -fx-padding: 1 0 1 0;
+}
+
+.manager-ticket-block {
+    -fx-background-color: rgba(248, 252, 251, 0.94);
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: rgba(23, 54, 45, 0.12);
+    -fx-border-width: 1;
+    -fx-padding: 8 10 8 10;
+}
+
+.manager-ticket-block-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(23, 54, 45, 0.70);
+}
+
+.manager-ticket-block-value {
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(23, 54, 45, 0.95);
+}
+
+.manager-ticket-actions {
+    -fx-padding: 2 0 0 0;
+}
+
+.manager-ticket-action-button {
+    -fx-min-width: 118;
+}
+
+.manager-hotel-scroll {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.manager-hotel-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.manager-hotel-card-grid {
+    -fx-padding: 6 6 6 6;
+}
+
+.manager-hotel-card {
+    -fx-background-color: linear-gradient(to right, rgba(255, 255, 255, 0.98), rgba(244, 250, 248, 0.96));
+    -fx-border-color: rgba(24, 55, 46, 0.14);
+    -fx-border-width: 1;
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-effect: dropshadow(gaussian, rgba(17, 41, 34, 0.10), 14, 0.15, 0, 3);
+}
+
+.manager-hotel-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(17, 41, 34, 0.14), 18, 0.18, 0, 5);
+}
+
+.manager-hotel-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #16362d;
+}
+
+.manager-hotel-capacity-chip {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-padding: 4 8 4 8;
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-background-color: rgba(24, 55, 46, 0.10);
+    -fx-text-fill: rgba(23, 54, 45, 0.84);
+}
+
+.manager-hotel-thumbnail {
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(23, 53, 45, 0.16), 10, 0.2, 0, 2);
+}
+
+.manager-hotel-details {
+    -fx-padding: 2 0 0 0;
+}
+
+.manager-hotel-meta {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(24, 55, 46, 0.84);
+}
+
+.manager-hotel-edit-button {
+    -fx-min-width: 126;
+}
+
+.details-main-panel {
+    -fx-min-width: 760;
+}
+
+.booking-panel {
+    -fx-pref-width: 280;
+    -fx-min-width: 250;
+    -fx-max-width: 320;
+}
+
+.gallery-container {
+    -fx-padding: 6 6 6 6;
+}
+
+.gallery-image {
+    -fx-effect: dropshadow(gaussian, rgba(23, 53, 45, 0.16), 10, 0.2, 0, 2);
+    -fx-cursor: hand;
+}
+
+.hero-image-frame {
+    -fx-padding: 4;
+    -fx-background-color: rgba(255, 255, 255, 0.75);
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: rgba(24, 55, 46, 0.12);
+}
+
+.image-nav-button {
+    -fx-min-width: 48;
+    -fx-max-width: 48;
+    -fx-min-height: 48;
+    -fx-max-height: 48;
+    -fx-font-size: 24px;
+    -fx-font-weight: 700;
+    -fx-padding: 0;
+}
+
+.form-success {
+    -fx-font-size: 12px;
+    -fx-text-fill: #1d6a45;
+    -fx-font-weight: 700;
+}
+
+.manager-grid-panel {
+    -fx-padding: 12;
+    -fx-background-color: rgba(255, 255, 255, 0.90);
+}
+
+.manager-hotel-list {
+    -fx-padding: 4 2 4 2;
+}
+
+.manager-hotel-status-chip {
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-padding: 4 9 4 9;
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+}
+
+.hotel-status-open {
+    -fx-text-fill: #1a6f45;
+    -fx-background-color: rgba(66, 196, 132, 0.25);
+}
+
+.hotel-status-limited {
+    -fx-text-fill: #845f07;
+    -fx-background-color: rgba(255, 196, 77, 0.32);
+}
+
+.hotel-status-full {
+    -fx-text-fill: #a22533;
+    -fx-background-color: rgba(233, 95, 119, 0.25);
+}
+
+.hotel-status-unknown {
+    -fx-text-fill: #5f6672;
+    -fx-background-color: rgba(126, 136, 150, 0.20);
+}
+
+.analytics-bar-chart {
+    -fx-background-color: rgba(255, 255, 255, 0.96);
+    -fx-border-color: rgba(94, 36, 63, 0.10);
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 8 10 6 10;
+}
+
+.analytics-bar-chart .default-color0.chart-bar {
+    -fx-bar-fill: #ff8b4f;
+}
+
+.analytics-bar-chart .axis-label {
+    -fx-text-fill: rgba(84, 34, 58, 0.78);
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+}
+
+.analytics-occupancy-panel {
+    -fx-background-color: rgba(255, 255, 255, 0.96);
+    -fx-border-color: rgba(94, 36, 63, 0.10);
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 8 10 8 10;
+}
+
+.analytics-occupancy-panel .chart-pie-label {
+    -fx-font-size: 10px;
+    -fx-text-fill: rgba(84, 34, 58, 0.78);
+}
+
+.analytics-occupancy-panel .default-color0.chart-pie {
+    -fx-pie-color: #ff815b;
+}
+
+.analytics-occupancy-panel .default-color1.chart-pie {
+    -fx-pie-color: #40b77a;
+}
+
+#reservationPanel .manager-reservation-list,
+#allHotelsPanel .manager-hotel-scroll,
+#resourcePanel .combo-box,
+#resourcePanel .text-field {
+    -fx-background-insets: 0;
+}
+
+/* Manager dashboard hierarchy refresh */
+#reservationPanel {
+    -fx-background-color: linear-gradient(to right, rgba(255, 255, 255, 0.97), rgba(247, 253, 251, 0.95));
+}
+
+.manager-reservation-list {
+    -fx-padding: 10;
+    -fx-background-color: rgba(255, 255, 255, 0.84);
+    -fx-border-color: rgba(24, 55, 46, 0.16);
+}
+
+.manager-reservation-ticket {
+    -fx-background-color: linear-gradient(to right, rgba(255, 255, 255, 0.99), rgba(236, 249, 245, 0.96));
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-width: 1 1 1 7;
+    -fx-border-color: rgba(24, 55, 46, 0.14);
+    -fx-effect: dropshadow(gaussian, rgba(17, 41, 34, 0.16), 22, 0.22, 0, 6);
+}
+
+.manager-reservation-ticket:hover {
+    -fx-effect: dropshadow(gaussian, rgba(17, 41, 34, 0.22), 28, 0.28, 0, 8);
+}
+
+.manager-ticket-header {
+    -fx-padding: 0 0 2 0;
+}
+
+.manager-ticket-title {
+    -fx-font-size: 17px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #14352d;
+}
+
+.manager-ticket-subtitle {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(20, 53, 45, 0.72);
+}
+
+.manager-ticket-blocks {
+    -fx-padding: 1 0 1 0;
+}
+
+.manager-ticket-block {
+    -fx-background-color: rgba(248, 252, 251, 0.96);
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: rgba(22, 52, 44, 0.13);
+    -fx-padding: 9 10 9 10;
+}
+
+.manager-ticket-block-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(20, 53, 45, 0.67);
+}
+
+.manager-ticket-block-value {
+    -fx-font-size: 14px;
+    -fx-font-weight: 800;
+    -fx-text-fill: rgba(20, 53, 45, 0.95);
+}
+
+.manager-ticket-actions {
+    -fx-padding: 2 0 0 0;
+    -fx-alignment: center-left;
+}
+
+.manager-ticket-action-button {
+    -fx-min-width: 112;
+    -fx-pref-width: 112;
+}
+
+.manager-ticket-pending {
+    -fx-border-color: rgba(24, 55, 46, 0.14) rgba(24, 55, 46, 0.14) rgba(24, 55, 46, 0.14) #de901b;
+}
+
+.manager-ticket-approved {
+    -fx-border-color: rgba(24, 55, 46, 0.14) rgba(24, 55, 46, 0.14) rgba(24, 55, 46, 0.14) #23995f;
+}
+
+.manager-ticket-declined {
+    -fx-border-color: rgba(24, 55, 46, 0.14) rgba(24, 55, 46, 0.14) rgba(24, 55, 46, 0.14) #d24a5a;
+}
+
+.manager-hotel-list {
+    -fx-padding: 4 2 4 2;
+    -fx-spacing: 10;
+}
+
+.manager-hotel-card {
+    -fx-background-color: linear-gradient(to right, rgba(255, 255, 255, 0.99), rgba(243, 250, 247, 0.96));
+    -fx-border-color: rgba(23, 54, 45, 0.14);
+    -fx-border-width: 1;
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-effect: dropshadow(gaussian, rgba(17, 41, 34, 0.12), 18, 0.18, 0, 4);
+}
+
+.manager-hotel-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(17, 41, 34, 0.18), 24, 0.22, 0, 6);
+}
+
+.manager-hotel-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #16362d;
+}
+
+.manager-hotel-details {
+    -fx-padding: 1 0 0 0;
+}
+
+.manager-hotel-meta {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(24, 55, 46, 0.86);
+}
+
+.manager-hotel-metrics .manager-hotel-meta {
+    -fx-background-color: rgba(24, 55, 46, 0.08);
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-padding: 4 8 4 8;
+    -fx-font-size: 11px;
+}
+
+.manager-hotel-price {
+    -fx-font-size: 12px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #7a2e1f;
+}
+
+.manager-hotel-thumbnail-wrap {
+    -fx-background-color: linear-gradient(to bottom right, rgba(24, 55, 46, 0.14), rgba(24, 55, 46, 0.05));
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: rgba(24, 55, 46, 0.12);
+}
+
+.manager-hotel-thumbnail-fallback {
+    -fx-font-size: 18px;
+    -fx-font-weight: 800;
+    -fx-text-fill: rgba(20, 53, 45, 0.78);
+}
+
+.manager-hotel-thumbnail-image {
+    -fx-effect: dropshadow(gaussian, rgba(16, 41, 34, 0.16), 12, 0.2, 0, 2);
+}
+
+/* Visual refresh inspired by provided manager dashboard mockup */
+.manager-page {
+    -fx-background-color: linear-gradient(to bottom, #f4f4f1, #eef2ef);
+}
+
+.page-content {
+    -fx-padding: 14;
+    -fx-spacing: 12;
+}
+
+.card {
+    -fx-background-color: rgba(255, 255, 255, 0.93);
+    -fx-border-color: rgba(28, 49, 42, 0.12);
+    -fx-border-width: 1;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(22, 44, 36, 0.08), 10, 0.16, 0, 2);
+}
+
+#allHotelsPanel,
+#resourcePanel,
+#analyticsPanel,
+#reservationPanel {
+    -fx-padding: 12;
+}
+
+#allHotelsPanel > .label.section-title,
+#reservationPanel > .label.section-title,
+#resourcePanel > .label.section-title,
+#analyticsPanel > .label.section-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: 800;
+}
+
+.manager-reservation-list {
+    -fx-background-color: rgba(246, 249, 248, 0.88);
+    -fx-border-color: rgba(23, 54, 45, 0.12);
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 8;
+}
+
+.manager-reservation-ticket {
+    -fx-background-color: rgba(255, 255, 255, 0.98);
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-width: 1 1 1 4;
+    -fx-border-color: rgba(23, 54, 45, 0.14);
+    -fx-effect: dropshadow(gaussian, rgba(16, 38, 31, 0.10), 12, 0.18, 0, 2);
+}
+
+.manager-reservation-ticket:hover {
+    -fx-effect: dropshadow(gaussian, rgba(16, 38, 31, 0.14), 16, 0.2, 0, 3);
+}
+
+.manager-ticket-header {
+    -fx-padding: 0 0 1 0;
+}
+
+.manager-ticket-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #17352d;
+}
+
+.manager-ticket-subtitle {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(23, 53, 45, 0.74);
+}
+
+.manager-ticket-meta-row {
+    -fx-padding: 0;
+}
+
+.manager-ticket-meta-chip {
+    -fx-background-color: rgba(250, 252, 251, 0.98);
+    -fx-border-color: rgba(23, 53, 45, 0.14);
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 6 10 6 10;
+}
+
+.manager-ticket-chip-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(23, 53, 45, 0.62);
+}
+
+.manager-ticket-chip-value {
+    -fx-font-size: 12px;
+    -fx-font-weight: 800;
+    -fx-text-fill: rgba(23, 53, 45, 0.90);
+}
+
+.manager-ticket-actions {
+    -fx-padding: 2 0 0 0;
+}
+
+.manager-ticket-action-button {
+    -fx-min-width: 100;
+    -fx-pref-width: 100;
+    -fx-padding: 8 14 8 14;
+}
+
+.manager-ticket-pending {
+    -fx-border-color: rgba(23, 54, 45, 0.14) rgba(23, 54, 45, 0.14) rgba(23, 54, 45, 0.14) #d58f1e;
+}
+
+.manager-ticket-approved {
+    -fx-border-color: rgba(23, 54, 45, 0.14) rgba(23, 54, 45, 0.14) rgba(23, 54, 45, 0.14) #2b9b61;
+}
+
+.manager-ticket-declined {
+    -fx-border-color: rgba(23, 54, 45, 0.14) rgba(23, 54, 45, 0.14) rgba(23, 54, 45, 0.14) #cb4354;
+}
+
+.manager-hotel-list {
+    -fx-padding: 4;
+    -fx-spacing: 8;
+}
+
+.manager-hotel-card {
+    -fx-background-color: rgba(255, 255, 255, 0.98);
+    -fx-border-color: rgba(23, 54, 45, 0.14);
+    -fx-border-width: 1;
+    -fx-border-radius: 11;
+    -fx-background-radius: 11;
+    -fx-effect: dropshadow(gaussian, rgba(17, 41, 34, 0.08), 10, 0.14, 0, 2);
+}
+
+.manager-hotel-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(17, 41, 34, 0.12), 14, 0.2, 0, 3);
+}
+
+.manager-hotel-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #17362d;
+}
+
+.manager-hotel-meta {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: rgba(23, 53, 45, 0.84);
+}
+
+.manager-hotel-price {
+    -fx-text-fill: #6f2b1d;
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+}
+
+.manager-hotel-edit-button {
+    -fx-min-width: 104;
+    -fx-pref-width: 104;
+    -fx-padding: 7 12 7 12;
+}
+
+.manager-hotel-thumbnail-wrap {
+    -fx-background-color: rgba(241, 246, 243, 0.95);
+    -fx-border-color: rgba(23, 53, 45, 0.14);
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.manager-hotel-thumbnail-fallback {
+    -fx-font-size: 16px;
+    -fx-font-weight: 800;
+    -fx-text-fill: rgba(22, 52, 44, 0.78);
+}
+
+.manager-hotel-thumbnail-image {
+    -fx-effect: dropshadow(gaussian, rgba(18, 39, 32, 0.12), 8, 0.2, 0, 2);
+}
+
+.hotel-scroll-pane,
+.hotel-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.support-chat-shell {
+    -fx-padding: 12;
+    -fx-background-color: linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(243, 250, 247, 0.92));
+}
+
+.support-chat-scroll {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(24, 55, 46, 0.14);
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 0;
+}
+
+.support-chat-scroll > .viewport {
+    -fx-background-color: rgba(248, 252, 250, 0.92);
+}
+
+.support-chat-flow {
+    -fx-padding: 10 10 10 10;
+}
+
+.support-message-row {
+    -fx-padding: 1 2 1 2;
+}
+
+.support-message-bubble {
+    -fx-font-size: 13px;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-padding: 10 12 10 12;
+    -fx-effect: dropshadow(gaussian, rgba(16, 39, 33, 0.12), 10, 0.18, 0, 2);
+}
+
+.support-assistant-bubble {
+    -fx-background-color: rgba(255, 255, 255, 0.97);
+    -fx-border-color: rgba(24, 55, 46, 0.13);
+    -fx-text-fill: rgba(20, 53, 45, 0.95);
+}
+
+.support-user-bubble {
+    -fx-background-color: linear-gradient(to right, #ff7f61, #ff6446);
+    -fx-border-color: rgba(124, 47, 31, 0.24);
+    -fx-text-fill: #ffffff;
+}
+
+.support-message-time {
+    -fx-font-size: 10px;
+    -fx-text-fill: rgba(24, 55, 46, 0.60);
+}
+
+.support-chat-input-row {
+    -fx-padding: 2 0 0 0;
+}
