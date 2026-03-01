@@ -8,7 +8,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+
+import java.util.List;
 
 public class cartcontrol {
 
@@ -33,13 +36,19 @@ public class cartcontrol {
 
             // delete button column
             colDelete.setCellFactory(param -> new TableCell<>() {
-                private final Button btn = new Button("Delete");
+                private final Spinner<Integer> qtySpinner = new Spinner<>();
+                private final Button btn = new Button("Remove");
+                private final HBox container = new HBox(8, qtySpinner, btn);
 
                 {
+                    qtySpinner.setEditable(true);
+                    qtySpinner.setPrefWidth(80);
+
                     btn.setOnAction(e -> {
                         Panier p = getTableView().getItems().get(getIndex());
                         try {
-                            ps.supprimer(p.getId());
+                            int qtyToRemove = qtySpinner.getValue();
+                            ps.supprimerQuantite(p.getId(), qtyToRemove);
                             refresh();
                         } catch (Exception ex) {
                             ex.printStackTrace();
@@ -50,7 +59,17 @@ public class cartcontrol {
                 @Override
                 protected void updateItem(Void item, boolean empty) {
                     super.updateItem(item, empty);
-                    setGraphic(empty ? null : btn);
+                    if (empty) {
+                        setGraphic(null);
+                        return;
+                    }
+
+                    Panier p = getTableView().getItems().get(getIndex());
+                    int maxQty = Math.max(1, p.getQty());
+                    qtySpinner.setValueFactory(
+                            new SpinnerValueFactory.IntegerSpinnerValueFactory(1, maxQty, 1)
+                    );
+                    setGraphic(container);
                 }
             });
 
@@ -62,11 +81,10 @@ public class cartcontrol {
     }
 
     private void refresh() throws Exception {
+        List<Panier> paniers = ps.afficher();
+        cartTable.getItems().setAll(paniers);
 
-        cartTable.getItems().setAll(ps.afficher());
-
-        double total = ps.afficher()
-                .stream()
+        double total = paniers.stream()
                 .mapToDouble(Panier::getTotalP)
                 .sum();
 

@@ -19,9 +19,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+
 
 
 public class produits {
@@ -109,7 +107,7 @@ public class produits {
             front.setVisible(true);
         });
 
-// 🔥 CLICK → OPEN DETAIL
+//  CLICK → OPEN DETAIL
         card.setOnMouseClicked(e -> openDetail(p));
 
         return card;

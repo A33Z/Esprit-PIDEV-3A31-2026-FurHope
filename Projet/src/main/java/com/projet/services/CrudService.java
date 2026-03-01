@@ -1,7 +1,5 @@
 package com.projet.services;
 
-import com.projet.entities.Produit;
-
 import java.sql.SQLException;
 import java.util.List;
 

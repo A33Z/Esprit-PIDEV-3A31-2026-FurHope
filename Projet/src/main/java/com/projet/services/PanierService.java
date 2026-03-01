@@ -1,7 +1,6 @@
 package com.projet.services;
 
 import com.projet.entities.Panier;
-import com.projet.entities.Produit;
 import com.projet.utils.MyDataBase;
 
 import java.sql.*;
@@ -20,7 +19,6 @@ public class PanierService implements CrudService<Panier> {
     @Override
     public void ajouter(Panier p) throws SQLException {
 
-        int TEMP_CLIENT_ID = 1;
 
         // 1️⃣ Get product info
         String sqlProduit = "SELECT title, price, tva, stock FROM produit WHERE id=?";
@@ -99,6 +97,57 @@ public class PanierService implements CrudService<Panier> {
 
             System.out.println("Produit supprimé + stock restauré !");
         }
+    }
+
+    public void supprimerQuantite(int idPanier, int qtyToRemove) throws SQLException {
+        if (qtyToRemove <= 0) {
+            return;
+        }
+
+        String select = "SELECT idProduit, qty, totalP, totalt FROM panier WHERE id=?";
+        PreparedStatement psSelect = con.prepareStatement(select);
+        psSelect.setInt(1, idPanier);
+
+        ResultSet rs = psSelect.executeQuery();
+        if (!rs.next()) {
+            return;
+        }
+
+        int idProduit = rs.getInt("idProduit");
+        int currentQty = rs.getInt("qty");
+        double currentTotalP = rs.getDouble("totalP");
+        double currentTotalt = rs.getDouble("totalt");
+
+        int safeQtyToRemove = Math.min(qtyToRemove, currentQty);
+
+        String updateStock = "UPDATE produit SET stock = stock + ? WHERE id=?";
+        PreparedStatement psUpdateStock = con.prepareStatement(updateStock);
+        psUpdateStock.setInt(1, safeQtyToRemove);
+        psUpdateStock.setInt(2, idProduit);
+        psUpdateStock.executeUpdate();
+
+        if (safeQtyToRemove == currentQty) {
+            String delete = "DELETE FROM panier WHERE id=?";
+            PreparedStatement psDelete = con.prepareStatement(delete);
+            psDelete.setInt(1, idPanier);
+            psDelete.executeUpdate();
+            return;
+        }
+
+        double unitTotalP = currentTotalP / currentQty;
+        double unitTotalt = currentTotalt / currentQty;
+
+        int newQty = currentQty - safeQtyToRemove;
+        double newTotalP = unitTotalP * newQty;
+        double newTotalt = unitTotalt * newQty;
+
+        String updatePanier = "UPDATE panier SET qty=?, totalP=?, totalt=? WHERE id=?";
+        PreparedStatement psUpdatePanier = con.prepareStatement(updatePanier);
+        psUpdatePanier.setInt(1, newQty);
+        psUpdatePanier.setDouble(2, newTotalP);
+        psUpdatePanier.setDouble(3, newTotalt);
+        psUpdatePanier.setInt(4, idPanier);
+        psUpdatePanier.executeUpdate();
     }
 
 

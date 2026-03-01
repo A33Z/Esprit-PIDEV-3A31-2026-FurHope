@@ -51,7 +51,7 @@
                         <TableColumn text="Product" fx:id="colName" prefWidth="300"/>
                         <TableColumn text="Qty" fx:id="colQty" prefWidth="100"/>
                         <TableColumn text="Total" fx:id="colTotal" prefWidth="150"/>
-                        <TableColumn text="" fx:id="colDelete" prefWidth="120"/>
+                        <TableColumn text="Remove Qty" fx:id="colDelete" prefWidth="220"/>
                     </columns>
 
                 </TableView>
