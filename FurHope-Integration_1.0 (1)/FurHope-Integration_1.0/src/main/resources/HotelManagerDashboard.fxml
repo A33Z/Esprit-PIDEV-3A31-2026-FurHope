@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane fx:id="rootPane"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.HotelManagerDashboardController"
+            styleClass="manager-page"
+            stylesheets="@AppTheme.css"
+            prefHeight="860.0" prefWidth="1380.0">
+
+    <children>
+        <VBox styleClass="page-content" spacing="14.0"
+              AnchorPane.topAnchor="0.0"
+              AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0"
+              AnchorPane.rightAnchor="0.0">
+
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                <children>
+                    <VBox spacing="2.0">
+                        <children>
+                            <Label text="Hotel Manager Admin Dashboard" styleClass="header-title" />
+                            <Label text="Secure operations view for hotels, reservations, and resources." styleClass="header-subtitle" />
+                        </children>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Label fx:id="sessionLabel" styleClass="session-chip manager-chip" />
+                    <Button text="Analytics" styleClass="button secondary-button" onAction="#handleOpenAnalytics" />
+                    <Button text="Refresh" styleClass="button secondary-button" onAction="#handleRefreshData" />
+                    <Button text="Back" styleClass="button ghost-button" onAction="#gotoacceuil" />
+                    <Button text="Logout" styleClass="button ghost-button" onAction="#gotowelcome" />
+                </children>
+            </HBox>
+
+            <GridPane fx:id="dashboardGrid" hgap="14.0" vgap="14.0" VBox.vgrow="ALWAYS">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0" />
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0" />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints vgrow="ALWAYS" percentHeight="46.0" />
+                    <RowConstraints vgrow="ALWAYS" percentHeight="54.0" />
+                </rowConstraints>
+
+                <children>
+                    <VBox fx:id="allHotelsPanel"
+                          styleClass="card manager-grid-panel"
+                          spacing="10.0"
+                          GridPane.columnIndex="0"
+                          GridPane.rowIndex="0"
+                          GridPane.hgrow="ALWAYS"
+                          GridPane.vgrow="ALWAYS">
+                        <children>
+                            <Label text="All Hotels" styleClass="section-title" />
+                            <Label text="Operational hotel cards with thumbnail, rating, and quick pricing context." styleClass="header-subtitle" />
+
+                            <HBox spacing="8.0" alignment="CENTER_LEFT">
+                                <children>
+                                    <TextField fx:id="hotelSearchField" promptText="Search by hotel name or location" HBox.hgrow="ALWAYS" />
+                                    <ComboBox fx:id="locationFilterCombo" promptText="Location" prefWidth="140.0" />
+                                    <ComboBox fx:id="ratingFilterCombo" promptText="Rating" prefWidth="115.0" />
+                                    <ComboBox fx:id="availabilityFilterCombo" promptText="Availability" prefWidth="150.0" />
+                                    <Button text="Clear" styleClass="button ghost-button" onAction="#handleClearHotelFilters" />
+                                </children>
+                            </HBox>
+
+                            <Label fx:id="hotelResultsLabel" styleClass="header-subtitle" />
+
+                            <ScrollPane fx:id="hotelCardsScrollPane"
+                                        fitToWidth="true"
+                                        fitToHeight="true"
+                                        styleClass="hotel-scroll-pane manager-hotel-scroll"
+                                        VBox.vgrow="ALWAYS">
+                                <content>
+                                    <VBox fx:id="hotelCardContainer" spacing="10.0" styleClass="manager-hotel-list" />
+                                </content>
+                            </ScrollPane>
+                        </children>
+                    </VBox>
+
+                    <VBox fx:id="reservationPanel"
+                          styleClass="card manager-grid-panel reservation-view-card"
+                          spacing="10.0"
+                          GridPane.columnIndex="0"
+                          GridPane.rowIndex="1"
+                          GridPane.hgrow="ALWAYS"
+                          GridPane.vgrow="ALWAYS">
+                        <children>
+                            <Label text="Reservation Tickets" styleClass="section-title" />
+                            <Label text="Structured ticket cards with operational actions and clear status hierarchy." styleClass="header-subtitle" />
+                            <Label fx:id="reservationSummaryLabel" styleClass="header-subtitle" />
+                            <ListView fx:id="reservationTicketListView" styleClass="manager-reservation-list" VBox.vgrow="ALWAYS" />
+                        </children>
+                    </VBox>
+
+                    <VBox fx:id="resourcePanel"
+                          styleClass="card manager-grid-panel admin-card"
+                          spacing="10.0"
+                          GridPane.columnIndex="1"
+                          GridPane.rowIndex="0"
+                          GridPane.rowSpan="2"
+                          GridPane.hgrow="ALWAYS"
+                          GridPane.vgrow="ALWAYS">
+                        <children>
+                            <Label text="Hotel Management" styleClass="section-title" />
+                            <Label text="Create or edit hotel records." styleClass="header-subtitle" />
+
+                            <Label text="ID" styleClass="field-label" />
+                            <TextField fx:id="hotelIdField" promptText="Auto-generated" editable="false" />
+
+                            <Label text="Name" styleClass="field-label" />
+                            <TextField fx:id="hotelNameField" promptText="Hotel name" />
+
+                            <Label text="Address" styleClass="field-label" />
+                            <TextField fx:id="hotelAddressField" promptText="Hotel address" />
+
+                            <HBox spacing="10.0">
+                                <children>
+                                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                        <children>
+                                            <Label text="Manager ID" styleClass="field-label" />
+                                            <TextField fx:id="hotelManagerIdField" promptText="Optional" />
+                                        </children>
+                                    </VBox>
+                                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                        <children>
+                                            <Label text="Capacity" styleClass="field-label" />
+                                            <TextField fx:id="hotelCapacityField" promptText="Capacity" />
+                                        </children>
+                                    </VBox>
+                                </children>
+                            </HBox>
+
+                            <Label text="Created At" styleClass="field-label" />
+                            <TextField fx:id="hotelCreatedAtField" promptText="Set by database" editable="false" />
+
+                            <Label fx:id="resourceErrorLabel" styleClass="form-error" wrapText="true" />
+                            <Label fx:id="resourceSuccessLabel" styleClass="form-success" wrapText="true" />
+
+                            <HBox spacing="8.0" alignment="CENTER_RIGHT">
+                                <children>
+                                    <Button text="Add" styleClass="button primary-button" onAction="#handleAddResource" />
+                                    <Button text="Update" styleClass="button secondary-button" onAction="#handleUpdateResource" />
+                                    <Button text="Delete" styleClass="button danger-button" onAction="#handleDeleteResource" />
+                                    <Button text="Clear" styleClass="button ghost-button" onAction="#handleClearResourceForm" />
+                                </children>
+                            </HBox>
+                        </children>
+                    </VBox>
+                </children>
+            </GridPane>
+        </VBox>
+    </children>
+</AnchorPane>
