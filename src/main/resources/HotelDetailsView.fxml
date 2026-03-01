@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.HotelDetailsController"
+            styleClass="user-page"
+            stylesheets="@AppTheme.css"
+            prefHeight="760.0" prefWidth="1080.0">
+
+    <children>
+        <VBox styleClass="page-content" spacing="12.0"
+              AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <children>
+                    <Label fx:id="hotelNameLabel" text="Hotel Details" styleClass="header-title" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Button text="Close" styleClass="button ghost-button" onAction="#handleClose" />
+                </children>
+            </HBox>
+
+            <Label fx:id="detailsMessageLabel" text="" styleClass="header-subtitle" />
+
+            <HBox spacing="14.0" VBox.vgrow="ALWAYS">
+                <children>
+                    <VBox styleClass="card details-main-panel" spacing="10.0" HBox.hgrow="ALWAYS">
+                        <children>
+                            <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                <children>
+                                    <Label text="Gallery" styleClass="section-title" />
+                                    <Label fx:id="imageCounterLabel" text="1 / 1" styleClass="header-subtitle" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Button text="Open Fullscreen" styleClass="button secondary-button" onAction="#handleOpenImageFullscreen" />
+                                </children>
+                            </HBox>
+                            <HBox alignment="CENTER" spacing="8.0">
+                                <children>
+                                    <Button text="&#8249;" styleClass="button ghost-button image-nav-button" onAction="#handlePreviousImage" />
+                                    <StackPane styleClass="hero-image-frame">
+                                        <children>
+                                            <ImageView fx:id="heroImageView" fitWidth="760.0" fitHeight="410.0" />
+                                        </children>
+                                    </StackPane>
+                                    <Button text="&#8250;" styleClass="button ghost-button image-nav-button" onAction="#handleNextImage" />
+                                </children>
+                            </HBox>
+                            <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="ALWAYS" vbarPolicy="NEVER" prefHeight="104.0">
+                                <content>
+                                    <HBox fx:id="galleryContainer" spacing="8.0" styleClass="gallery-container" />
+                                </content>
+                            </ScrollPane>
+                            <Label fx:id="ratingLabel" text="Rating:" styleClass="hotel-card-rating" />
+                            <Label fx:id="locationLabel" text="Location:" styleClass="hotel-card-location" />
+                            <Label fx:id="priceLabel" text="Price:" styleClass="hotel-card-price" />
+                            <Label fx:id="weatherLabel" text="Weather:" styleClass="header-subtitle" />
+                            <TextArea fx:id="fullDescriptionArea" VBox.vgrow="ALWAYS" prefRowCount="8" />
+                        </children>
+                    </VBox>
+
+                    <VBox styleClass="card booking-panel" spacing="8.0">
+                        <children>
+                            <Label text="Book Now" styleClass="section-title" />
+                            <Label text="Animal ID" styleClass="field-label" />
+                            <TextField fx:id="animalIdField" promptText="Enter your animal ID" />
+                            <Label text="Number of Guests" styleClass="field-label" />
+                            <TextField fx:id="guestCountField" promptText="Guests (default 1)" />
+                            <Label text="Check-in" styleClass="field-label" />
+                            <DatePicker fx:id="checkInDatePicker" />
+                            <Label text="Check-out" styleClass="field-label" />
+                            <DatePicker fx:id="checkOutDatePicker" />
+                            <Button fx:id="bookNowButton" text="Book Now" styleClass="button primary-button" onAction="#handleBookNow" />
+                            <Label text="Reservation status defaults to PENDING." styleClass="header-subtitle" wrapText="true" />
+                        </children>
+                    </VBox>
+                </children>
+            </HBox>
+        </VBox>
+    </children>
+</AnchorPane>
