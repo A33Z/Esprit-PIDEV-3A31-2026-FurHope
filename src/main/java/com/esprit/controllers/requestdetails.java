@@ -1,23 +1,18 @@
 package com.esprit.controllers;
 
 import com.esprit.Services.adoptionservices;
-import com.esprit.Services.animalServices;
 import com.esprit.entities.adoptionRequest;
-import com.esprit.entities.animal;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.io.IOException;
 
     public class requestdetails {
@@ -60,60 +55,102 @@ import java.io.IOException;
 
         @FXML
         void handlemodifier(ActionEvent event) {
-
             try {
-                // 1. Fermer la fenêtre Details
+                // Vérifier que la requête sélectionnée n'est pas nulle
+                if (requestSelected == null) {
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Aucune sélection ⚠️");
+                    alert.setHeaderText("Erreur !");
+                    alert.setContentText("Aucune demande sélectionnée pour modifier.");
+                    alert.showAndWait();
+                    return;
+                }
+
+                // Fermer la fenêtre Details
                 Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 currentStage.close();
 
-
+                // Charger le formulaire de modification
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/RequestUpdate.fxml"));
                 Parent root = loader.load();
 
-
+                // Passer la demande sélectionnée et la listview au controller
                 requestupdate controller = loader.getController();
-                controller.setRequest(requestSelected);      // passer l'animal sélectionné
-                controller.setListView(listView);        // passer la table pour refresh
+                controller.setRequest(requestSelected);
+                controller.setListView(listView);
 
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root));
                 stage.setTitle("Modifier demande");
+
+                // Maximiser le stage
+                stage.setMaximized(true);
+
                 stage.show();
+
+                // Notification créative
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Modifier demande ✏️");
+                alert.setHeaderText("Ouverture réussie ✅");
+                alert.setContentText("Le formulaire de modification s'est ouvert avec succès.");
+                alert.showAndWait();
 
             } catch (IOException e) {
                 e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erreur Fichier ❌");
+                alert.setHeaderText("Impossible d'ouvrir le formulaire");
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
             }
         }
-
 
 
         @FXML
         void handlesupprimer(ActionEvent event) {
             try {
+                if (requestSelected == null) {
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Aucune sélection ⚠️");
+                    alert.setHeaderText("Erreur !");
+                    alert.setContentText("Aucune demande sélectionnée pour supprimer.");
+                    alert.showAndWait();
+                    return;
+                }
+
                 adoptionservices service = new adoptionservices();
                 service.supprimer(requestSelected.getId());
 
-                // fermer la fenêtre
+                // Notification succès
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Suppression ✅");
+                alert.setHeaderText("Demande supprimée");
+                alert.setContentText("La demande a été supprimée avec succès.");
+                alert.showAndWait();
+
+                // Fermer la fenêtre Details
                 Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 currentStage.close();
 
-
-                // 3. Ouvrir la fenêtre d'affichage des animaux
+                // Recharge la liste
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherRequest.fxml"));
                 Parent root = loader.load();
 
-                // Récupérer le controller de la liste pour mettre à jour la TableView/ListView
                 AfficherRequest controller = loader.getController();
-                controller.removeDemandeFromList(requestSelected); // méthode à créer dans le controller
+                controller.removeDemandeFromList(requestSelected);
 
                 Stage listStage = new Stage();
                 listStage.setScene(new Scene(root));
+                listStage.setMaximized(true); // maximise la fenêtre de liste
                 listStage.show();
 
             } catch (Exception e) {
                 e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erreur ❌");
+                alert.setHeaderText("Impossible de supprimer la demande");
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
             }
-
         }
-
 }

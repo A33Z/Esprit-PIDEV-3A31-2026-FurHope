@@ -5,34 +5,94 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.control.Label?>
 
-<AnchorPane prefHeight="601.0" prefWidth="918.0" styleClass="root" stylesheets="@style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.esprit.controllers.AjouterAnimal">
-   <children>
-      <TextField fx:id="name" layoutX="144.0" layoutY="99.0" prefHeight="63.0" prefWidth="256.0" promptText="name" />
-      <TextField fx:id="species" layoutX="144.0" layoutY="235.0" prefHeight="63.0" prefWidth="256.0" promptText="species" />
-      <TextField fx:id="breed" layoutX="144.0" layoutY="167.0" prefHeight="63.0" prefWidth="256.0" promptText="breed" />
-      <TextField fx:id="age" layoutX="144.0" layoutY="304.0" prefHeight="63.0" prefWidth="256.0" promptText="age" />
-       <ComboBox fx:id="gender" layoutX="144.0" layoutY="372.0" prefHeight="63.0" prefWidth="256.0" promptText="gender" styleClass="input-field" />
-       <TextField fx:id="description" layoutX="144.0" layoutY="443.0" prefHeight="63.0" prefWidth="256.0" promptText="description" />
-       <ComboBox fx:id="status" layoutX="144.0" layoutY="512.0" prefHeight="63.0" prefWidth="256.0" promptText="status" styleClass="input-field" />
-      <Button graphicTextGap="8.0" layoutX="708.0" layoutY="430.0" mnemonicParsing="false" onAction="#save" prefHeight="63.0" prefWidth="170.0" styleClass="primary-button" text="Save">
-         <font>
-            <Font size="91.0" />
-         </font>
-      </Button>
-      <Button layoutX="708.0" layoutY="502.0" mnemonicParsing="false" onAction="#afficher" prefHeight="70.0" prefWidth="170.0" styleClass="secondary-button" text="Display">
-         <font>
-            <Font size="20.0" />
-         </font>
-      </Button>
-      <Text layoutX="311.0" layoutY="58.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add Animal " textAlignment="CENTER" wrappingWidth="265.9453125">
-         <font>
-            <Font size="41.0" />
-         </font>
-      </Text>
-      <Button layoutX="601.0" layoutY="316.0" mnemonicParsing="false" onAction="#chooseimage" text="image" />
-       <ImageView fx:id="imagePreview" fitHeight="150.0" fitWidth="200.0" layoutX="542.0" layoutY="148.0" pickOnBounds="true" preserveRatio="true" />
-   </children>
+<?import javafx.scene.control.ScrollPane?>
+<AnchorPane prefHeight="601.0" prefWidth="918.0"
+            xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.esprit.controllers.AjouterAnimal"
+            stylesheets="style.css"
+            styleClass="root">
+
+    <!-- Back Button -->
+    <HBox layoutX="20" layoutY="20">
+        <Label text="←"
+               onMouseClicked="#handleRetour"
+               styleClass="back-icon"/>
+    </HBox>
+
+    <ScrollPane fitToWidth="true"
+                AnchorPane.topAnchor="60.0"
+                AnchorPane.bottomAnchor="20.0"
+                AnchorPane.leftAnchor="50.0"
+                AnchorPane.rightAnchor="50.0"
+                style="-fx-background-color:transparent;">
+
+        <VBox alignment="CENTER"
+              spacing="18"
+              styleClass="card">
+
+            <!-- Image Selection -->
+            <VBox alignment="CENTER" spacing="10">
+                <ImageView fx:id="imagePreview"
+                           fitHeight="150"
+                           fitWidth="200"
+                           preserveRatio="true"/>
+                <Button text="Choose Image"
+                        onAction="#chooseimage"
+                        styleClass="button"/>
+            </VBox>
+
+            <!-- Name -->
+            <VBox alignment="CENTER_LEFT" spacing="5" styleClass="text-field-wrapper">
+                <TextField fx:id="name" promptText="Name" styleClass="input-field"/>
+            </VBox>
+
+            <!-- Breed -->
+            <VBox alignment="CENTER_LEFT" spacing="5" styleClass="text-field-wrapper">
+                <TextField fx:id="breed" promptText="Breed" styleClass="input-field"/>
+            </VBox>
+
+            <!-- Species -->
+            <VBox alignment="CENTER_LEFT" spacing="5" styleClass="text-field-wrapper">
+                <TextField fx:id="species" promptText="Species" styleClass="input-field"/>
+            </VBox>
+
+            <!-- Age -->
+            <VBox alignment="CENTER_LEFT" spacing="5" styleClass="text-field-wrapper">
+                <TextField fx:id="age" promptText="Age" styleClass="input-field"/>
+            </VBox>
+
+            <!-- Gender -->
+            <VBox alignment="CENTER_LEFT" spacing="5" styleClass="text-field-wrapper">
+                <ComboBox fx:id="gender"
+                          promptText="Gender"
+                          styleClass="combo-box"/>
+            </VBox>
+
+            <!-- Description -->
+            <VBox alignment="CENTER_LEFT" spacing="5" styleClass="text-field-wrapper">
+                <TextField fx:id="description"
+                           promptText="Description"
+                           styleClass="input-field"/>
+            </VBox>
+
+            <!-- Save Button -->
+            <HBox alignment="CENTER">
+                <Button text="Save"
+                        onAction="#save"
+                        styleClass="button-save"
+                        prefWidth="150"
+                        prefHeight="45"/>
+            </HBox>
+
+        </VBox>
+
+    </ScrollPane>
+
 </AnchorPane>

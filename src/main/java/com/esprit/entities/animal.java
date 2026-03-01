@@ -1,5 +1,7 @@
 package com.esprit.entities;
 
+import java.util.Objects;
+
 public class animal {
 
     public enum gender {
@@ -23,10 +25,9 @@ public class animal {
     private status status;
     private String image;
 
-    public animal() {}
+    public animal (){}
 
-
-    public animal( String name, String species,  String breed, int age,  gender gender, String description, status status , String image) {
+    public animal(String name , String species, String breed, int age,  gender gender,  String description,status status, String image) {
         this.name = name;
         this.species = species;
         this.breed = breed;
@@ -77,6 +78,8 @@ public class animal {
         this.image = image;
     }
 
+
+
     @Override
     public String toString() {
         return "animal{" +
@@ -89,5 +92,18 @@ public class animal {
                 ", status=" + status +
                 ", image='" + image + '\'' +
                 '}';
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        animal animal = (animal) o;
+        return age == animal.age && Objects.equals(name, animal.name) && Objects.equals(species, animal.species) && Objects.equals(breed, animal.breed) && Objects.equals(description, animal.description) && gender == animal.gender && status == animal.status;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, age, species, breed, description, gender, status);
     }
 }

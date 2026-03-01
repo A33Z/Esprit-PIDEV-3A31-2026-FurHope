@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.esprit.controllers.adopdetails"
+           styleClass="root"
+           stylesheets="style.css">
+
+    <ScrollPane fx:id="scrollPane"
+                fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                styleClass="scroll-pane">
+
+        <StackPane alignment="CENTER">
+
+            <VBox alignment="TOP_CENTER"
+                  spacing="25"
+                  maxWidth="500"
+                  minWidth="300"
+                  prefWidth="400"
+                  prefHeight="750"
+                  styleClass="card">
+
+                <!-- IMAGE -->
+                <ImageView fx:id="petImage"
+                           fitWidth="360"
+                           fitHeight="300"
+                           preserveRatio="false"
+                           styleClass="pet-image"/>
+
+                <HBox alignment="CENTER_LEFT"
+                      spacing="15"
+                      styleClass="name-status-container">
+
+                    <Label fx:id="petName"
+                           text="Luna"
+                           styleClass="pet-name"/>
+
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <Label fx:id="petStatus"
+                           text="AVAILABLE"
+                           styleClass="status-badge"/>
+                </HBox>
+
+                <!-- INFO BOX -->
+                <HBox spacing="15"
+                      alignment="CENTER"
+                      styleClass="section-container">
+
+                    <VBox alignment="CENTER" spacing="5" styleClass="mini-box">
+                        <Label text="Gender" styleClass="mini-title"/>
+                        <Label fx:id="petGender" text="Male" styleClass="mini-value"/>
+                    </VBox>
+
+                    <VBox alignment="CENTER" spacing="5" styleClass="mini-box">
+                        <Label text="Age" styleClass="mini-title"/>
+                        <Label fx:id="petAge" text="2 Years" styleClass="mini-value"/>
+                    </VBox>
+
+                    <VBox alignment="CENTER" spacing="5" styleClass="mini-box">
+                        <Label text="Species" styleClass="mini-title"/>
+                        <Label fx:id="petSpecies" text="Dog" styleClass="mini-value"/>
+                    </VBox>
+
+                    <VBox alignment="CENTER" spacing="5" styleClass="mini-box">
+                        <Label text="Breed" styleClass="mini-title"/>
+                        <Label fx:id="petBreed" text="Husky" styleClass="mini-value"/>
+                    </VBox>
+
+                </HBox>
+
+                <!-- DESCRIPTION BOX -->
+                <VBox spacing="10"
+                      styleClass="section-container">
+
+                    <Label text="Description"
+                           styleClass="section-title"/>
+
+                    <Label fx:id="petDescription"
+                           wrapText="true"
+                           text="Pet description here..."
+                           styleClass="section-value"/>
+                </VBox>
+
+                <!-- OWNER BOX -->
+                <VBox spacing="10"
+                      styleClass="section-container">
+
+                    <Label text="Owner Information"
+                           styleClass="section-title"/>
+                </VBox>
+
+                <!-- BUTTON -->
+                <Button fx:id="adoptButton"
+                        text="Adopt Now"
+                        onAction="#handleAdopt"
+                        maxWidth="Infinity"
+                        styleClass="button-save"/>
+
+            </VBox>
+        </StackPane>
+    </ScrollPane>
+</StackPane>

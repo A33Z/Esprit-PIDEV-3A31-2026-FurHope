@@ -3,33 +3,71 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<?import javafx.scene.control.ComboBox?>
-<AnchorPane prefHeight="579.0" prefWidth="820.0" styleClass="root" stylesheets="@style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.esprit.controllers.AjouterRequest">
+<AnchorPane prefHeight="600.0" prefWidth="820.0"
+            xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.esprit.controllers.AjouterRequest"
+            styleClass="root"
+            stylesheets="style.css">
 
-    <children>
-      <Text layoutX="210.0" layoutY="65.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="title" text="Adoption Request" textAlignment="CENTER" wrappingWidth="378.9187927246094">
-         <font>
-            <Font size="41.0" />
-         </font>
-      </Text>
-      <TextField fx:id="animal_id" layoutX="185.0" layoutY="116.0" prefHeight="42.0" prefWidth="198.0" promptText="animal_id" />
-      <TextField fx:id="client_id" layoutX="415.0" layoutY="116.0" prefHeight="41.0" prefWidth="198.0" promptText="client_id" />
-      <TextField fx:id="message" layoutX="185.0" layoutY="178.0" prefHeight="100.0" prefWidth="428.0" promptText="message" />
-      <TextField fx:id="phone" layoutX="185.0" layoutY="296.0" prefHeight="42.0" prefWidth="198.0" promptText="phone" />
-      <TextField fx:id="address" layoutX="415.0" layoutY="296.0" prefHeight="42.0" prefWidth="198.0" promptText="address" />
-      <Button layoutX="329.0" layoutY="390.0" mnemonicParsing="false" onAction="#Envoyer" prefHeight="63.0" prefWidth="140.0" styleClass="primary-button" text="Send">
-         <font>
-            <Font size="21.0" />
-         </font>
-      </Button>
-        <ComboBox fx:id="status" layoutX="602.0" layoutY="500.0" prefHeight="42.0" prefWidth="182.0" promptText="Status" />
-      <Button layoutX="329.0" layoutY="468.0" mnemonicParsing="false" onAction="#Afficher" prefHeight="63.0" prefWidth="140.0" styleClass="secondary-button" text="Display">
-         <font>
-            <Font size="21.0" />
-         </font>
-      </Button>
-   </children>
+    <!-- Main Container -->
+    <VBox alignment="CENTER" spacing="15"
+          styleClass="v-box"
+          AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0"
+          AnchorPane.bottomAnchor="0.0">
+
+        <!-- Title -->
+        <Text text="Adoption Request" textAlignment="CENTER" styleClass="title">
+            <font>
+                <Font size="36"/>
+            </font>
+        </Text>
+
+        <!-- Animal Name -->
+        <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
+            <TextField fx:id="animalNameLabel" text="Animal Name" styleClass="text-field"/>
+        </VBox>
+
+        <!-- Animal ID -->
+        <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
+            <TextField fx:id="animal_id" promptText="Animal ID" styleClass="text-field"/>
+        </VBox>
+
+        <!-- Client ID -->
+        <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
+            <TextField fx:id="client_id" promptText="Client ID" styleClass="text-field"/>
+        </VBox>
+
+        <!-- Message -->
+        <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
+            <TextField fx:id="message" promptText="Message" styleClass="text-field"/>
+        </VBox>
+
+        <!-- Phone -->
+        <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
+            <TextField fx:id="phone" promptText="Phone" styleClass="text-field"/>
+        </VBox>
+
+        <!-- Address -->
+        <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
+            <TextField fx:id="address" promptText="Address" styleClass="text-field"/>
+        </VBox>
+
+        <!-- Action Buttons -->
+        <HBox alignment="CENTER" spacing="20">
+            <Button text="Send"
+                    onAction="#Envoyer"
+                    styleClass="button-save"
+                    prefWidth="150"
+                    prefHeight="50"/>
+        </HBox>
+
+    </VBox>
 </AnchorPane>

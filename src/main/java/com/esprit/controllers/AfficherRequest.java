@@ -1,6 +1,5 @@
 package com.esprit.controllers;
 
-import com.esprit.entities.animal;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -10,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 import com.esprit.Services.adoptionservices;
@@ -24,33 +24,70 @@ public class AfficherRequest {
     @FXML
     private ListView<adoptionRequest> Listview;
 
-
-
     adoptionservices as = new adoptionservices();
 
     @FXML
     void initialize() {
+
+        Listview.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(adoptionRequest request, boolean empty) {
+                super.updateItem(request, empty);
+
+                if (empty || request == null) {
+                    setGraphic(null);
+                    return;
+                }
+
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/requestcard.fxml"));
+                    Parent root = loader.load();
+
+                    requestCard controller = loader.getController();
+                    controller.setData(request, getIndex());
+
+                    setGraphic(root);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        loadRequests();
+    }
+
+    public void loadRequests() {
+
         try {
+
             List<adoptionRequest> requests = as.afficher();
-            ObservableList<adoptionRequest> observableList = FXCollections.observableList(requests);
-            Listview.setItems(observableList);
+
+            Listview.getItems().setAll(requests);
 
         } catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("ERROR");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            e.printStackTrace();
         }
     }
+
 
     @FXML
     void handleRetour(ActionEvent event) {
         try {
-            Parent previousPage = FXMLLoader.load(getClass().getResource("/AjouterRequest.fxml"));
-            Scene scene = new Scene(previousPage);
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
+            Parent previousPage = FXMLLoader.load(getClass().getResource("/AfficherAnimal.fxml"));
+
+            // Create a new stage for the details page
+            Stage stage = new Stage();
+            stage.setScene(new Scene(previousPage));
+            // Maximize the new window
+            stage.setMaximized(true);
             stage.show();
+
+            // Close the current window (afficher animal)
+            Stage currentStage = (Stage) Listview.getScene().getWindow();
+            currentStage.close();
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -83,6 +120,8 @@ public class AfficherRequest {
     public void removeDemandeFromList(adoptionRequest request) {
         Listview.getItems().remove(request);
     }
+
+
 }
 
 

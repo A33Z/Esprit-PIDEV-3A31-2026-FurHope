@@ -16,7 +16,7 @@ public class animalServices implements ICrud<animal> {
     @Override
     public void ajouter(animal Animal) throws SQLException {
         String sql = "INSERT INTO `animal`( `name`, `species`,`breed`,`age`,`gender`,`description`,`status`,`image`) VALUES " +
-                "('"+Animal.getName()+"','"+Animal.getSpecies()+"','"+Animal.getBreed()+"',"+Animal.getAge()+",'"+Animal.getGender()+"','"+Animal.getDescription()+"','"+Animal.getStatus()+"','"+Animal.getImage()+"')";
+                "('"+Animal.getName()+"','"+Animal.getSpecies()+"','"+Animal.getBreed()+"',"+Animal.getAge()+",'"+Animal.getGender()+"','"+Animal.getDescription()+"','"+Animal.getStatus()+"','"+Animal.getImage()+"' )";
         Statement statement = con.createStatement();
         statement.executeUpdate(sql);
         System.out.println("animal ajoutée avec succes!");
@@ -75,6 +75,7 @@ public class animalServices implements ICrud<animal> {
         preparedStatement.setString(6, animal.getDescription());
         preparedStatement.setString(7, animal.getStatus().toString());
         preparedStatement.setInt(8, animal.getId());
+
 
         preparedStatement.executeUpdate();
 

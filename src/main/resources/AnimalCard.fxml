@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.esprit.controllers.AnimalCard"
+            prefHeight="140" prefWidth="1200"
+            maxWidth="1200"
+            styleClass="card">
+
+    <children>
+
+        <HBox spacing="20" layoutX="20" layoutY="20" AnchorPane.leftAnchor="20" AnchorPane.topAnchor="20" AnchorPane.rightAnchor="20">
+            <ImageView fx:id="animalImage"
+                       fitHeight="100"
+                       fitWidth="100"/>
+
+            <VBox spacing="8" AnchorPane.leftAnchor="140">
+                <Label fx:id="nameLabel"
+                       styleClass="card-title"/>
+                <Label fx:id="speciesLabel"
+                       styleClass="card-subtitle"/>
+                <Label fx:id="ageLabel"
+                       styleClass="card-subtitle"/>
+
+                <!-- Bottom Button inside VBox -->
+                <Button text="Voir détails"
+                        fx:id="detailsButton"
+                        onAction="#voirdetails"
+                        styleClass="details-button"
+                        maxWidth="Infinity"/>
+            </VBox>
+        </HBox>
+
+        <!-- Floating Heart Button -->
+        <Button fx:id="favoriteButton"
+                onAction="#handleFavoriteButton"
+                text="♡"
+                style="-fx-font-size: 24px; -fx-text-fill: gray; -fx-background-color: transparent;"
+                styleClass="favorite-button"
+                AnchorPane.topAnchor="10"
+                AnchorPane.rightAnchor="10"
+                prefWidth="50"
+                prefHeight="50"/>
+</children>
+</AnchorPane>

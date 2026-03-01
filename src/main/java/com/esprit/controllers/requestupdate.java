@@ -11,9 +11,9 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 public class requestupdate {
+
     @FXML
     private TextField animalidfield;
-
     @FXML
     private TextField clientidfield;
 
@@ -53,7 +53,6 @@ public class requestupdate {
     @FXML
     void handleSave(ActionEvent event) {
         try {
-            // 1. Mettre à jour l'objet demande
             requestSelected.setAnimal_id(Integer.parseInt(animalidfield.getText()));
             requestSelected.setClient_id(Integer.parseInt(clientidfield.getText()));
             requestSelected.setMessage(messagefield.getText());
@@ -61,27 +60,25 @@ public class requestupdate {
             requestSelected.setAddress(addressfield.getText());
             requestSelected.setStatus(com.esprit.entities.adoptionRequest.status.valueOf(statusField.getText()));
 
-            // 2. Sauvegarder dans la BD
+            //  Sauvegarder dans la BD
             adoptionservices service = new adoptionservices();
             service.modifier(requestSelected);
 
-            // 3. Mettre à jour la ListView si elle existe
             if (listView != null) {
-                // Si l'objet est le même dans la liste, juste refresh
                 listView.refresh();
 
             }
 
-            // 4. Fermer la fenêtre de modification
             Stage stage = (Stage) saveButton.getScene().getWindow();
             stage.close();
 
-            // 5. Ouvrir la fenêtre de liste des demandes
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherRequest.fxml"));
             Parent root = loader.load();
 
             Stage listStage = new Stage();
             listStage.setScene(new Scene(root));
+            // Maximize the a
+            listStage.setMaximized(true);
             listStage.show();
 
         } catch (Exception e) {

@@ -62,11 +62,11 @@ public class Animalupdate {
         descriptionField.setText(animal.getDescription());
         statusField.setText(animal.getStatus().toString());
 
-        try {
-            Image img = new Image(new File(animal.getImage()).toURI().toString());
-            imageView.setImage(img);
-        } catch (Exception e) {
-            System.out.println("Image non trouvée");
+        if (animal.getImage() != null) {
+            File file = new File("images/" + animal.getImage());
+            if (file.exists()) {
+                imageView.setImage(new Image(file.toURI().toString()));
+            }
         }
     }
 
@@ -86,7 +86,6 @@ public class Animalupdate {
 
             Image im = new Image(file.toURI().toString());
             imageView.setImage(im);
-            //imagePath = file.getAbsolutePath();
         }
     }
 
@@ -98,7 +97,6 @@ public class Animalupdate {
     @FXML
     void handleSave(ActionEvent event) {
         try {
-            // mettre à jour l'objet animal
             animal.setName(nameField.getText());
             animal.setSpecies(speciesField.getText());
             animal.setBreed(breedField.getText());
@@ -107,7 +105,6 @@ public class Animalupdate {
             animal.setDescription(descriptionField.getText());
             animal.setStatus(com.esprit.entities.animal.status.valueOf(statusField.getText()));
 
-            // mettre à jour l'image si une nouvelle a été sélectionnée
             if (image != null) {
                 animal.setImage(image);
             }
@@ -116,23 +113,25 @@ public class Animalupdate {
             animalServices service = new animalServices();
             service.modifier(animal);
 
-            // mettre à jour la ListView
             if (listView != null) {
-                // Si l'objet est le même dans la liste, juste refresh
                 listView.refresh();
 
             }
 
-            // fermer la fenêtre
-            Stage stage = (Stage) saveButton.getScene().getWindow();
-            stage.close();
+            // Close the current window
+            Stage currentStage = (Stage) saveButton.getScene().getWindow();
+            currentStage.close();
 
+// Load the new FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherAnimal.fxml"));
             Parent root = loader.load();
 
-            Stage listStage = new Stage();
-            listStage.setScene(new Scene(root));
-            listStage.show();
+// Open the new window
+            Stage newStage = new Stage();
+            newStage.setTitle("Request Details");
+            newStage.setScene(new Scene(root));
+            newStage.setMaximized(true);
+            newStage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }

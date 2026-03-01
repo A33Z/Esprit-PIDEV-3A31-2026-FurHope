@@ -8,7 +8,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
@@ -59,11 +58,11 @@ public class AnimalDetails {
 
 
 
-        try {
-            Image img = new Image(new File(animal.getImage()).toURI().toString());
-            imageView.setImage(img);
-        } catch (Exception e) {
-            System.out.println("Image non trouvée");
+        if (animal.getImage() != null) {
+            File file = new File("images/" + animal.getImage());
+            if (file.exists()) {
+                imageView.setImage(new Image(file.toURI().toString()));
+            }
         }
     }
 
@@ -72,7 +71,6 @@ public class AnimalDetails {
     void handlemodifier(ActionEvent event) {
 
             try {
-                // 1. Fermer la fenêtre Details
                 Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 currentStage.close();
 
@@ -81,13 +79,22 @@ public class AnimalDetails {
                 Parent root = loader.load();
 
                 Animalupdate controller = loader.getController();
-                controller.setAnimal(animalSelected);      // passer l'animal sélectionné
-                controller.setListView(listView);        // passer la table pour refresh
+                controller.setAnimal(animalSelected);
+                controller.setListView(listView);
 
+                // Create a new stage for the details page
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root));
                 stage.setTitle("Modifier Animal");
+
+
+                // Maximize the new window
+                stage.setMaximized(true);
+
+                // Show the details window
                 stage.show();
+
+
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -102,22 +109,25 @@ public class AnimalDetails {
             animalServices service = new animalServices();
             service.supprimer(animalSelected.getId());
 
-            // fermer la fenêtre
             Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             currentStage.close();
 
 
-            // 3. Ouvrir la fenêtre d'affichage des animaux
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherAnimal.fxml"));
             Parent root = loader.load();
 
-            // Récupérer le controller de la liste pour mettre à jour la TableView/ListView
             AfficherAnimal controller = loader.getController();
-            controller.removeAnimalFromList(animalSelected); // méthode à créer dans le controller
+            controller.removeAnimalFromList(animalSelected);
 
-            Stage listStage = new Stage();
-            listStage.setScene(new Scene(root));
-            listStage.show();
+            // Create a new stage for the details page
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+
+            // Maximize the new window
+            stage.setMaximized(true);
+
+            // Show the details window
+            stage.show();
 
         } catch (Exception e) {
             e.printStackTrace();

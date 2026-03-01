@@ -1,80 +1,100 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<?import javafx.scene.image.ImageView?>
+<?import javafx.geometry.Insets?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.esprit.controllers.Animalupdate"
+            styleClass="root"
+            stylesheets="style.css"
             prefHeight="400.0" prefWidth="600.0">
-    <VBox alignment="CENTER" spacing="10"
-          style="-fx-background-color:white; -fx-padding:20; -fx-background-radius:15; -fx-border-radius:15; -fx-border-color:#dddddd;"
-          AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0" AnchorPane.bottomAnchor="50.0">
 
-        <!-- Image + Button -->
-        <VBox alignment="CENTER" spacing="5">
-            <ImageView fx:id="imageView" fitHeight="150" fitWidth="150" preserveRatio="true" style="-fx-border-color:#cccccc; -fx-border-radius:10;" />
-            <Button text="Change Image" fx:id="changeImageButton" onAction="#handleChangeImage" />
+    <!-- Scrollable container -->
+    <ScrollPane fitToWidth="true"
+                AnchorPane.leftAnchor="0.0"
+                AnchorPane.rightAnchor="0.0"
+                AnchorPane.topAnchor="0.0"
+                AnchorPane.bottomAnchor="0.0"
+                style="-fx-background: transparent; -fx-background-color: transparent;">
+
+        <VBox alignment="CENTER" spacing="10"
+              styleClass="v-box">
+            <!-- Padding correct -->
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+
+            <!-- Image + Button -->
+            <VBox alignment="CENTER" spacing="5">
+                <ImageView fx:id="imageView"
+                           fitHeight="150"
+                           fitWidth="150"
+                           preserveRatio="true"
+                           styleClass="animal-image"/>
+                <Button text="Change Image"
+                        fx:id="changeImageButton"
+                        onAction="#handleChangeImage"
+                        styleClass="button"/>
+            </VBox>
+
+            <!-- Name -->
+            <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
+                <Label text="Name:" styleClass="label-bold"/>
+                <TextField fx:id="nameField" styleClass="text-field"/>
+            </VBox>
+
+            <!-- Species -->
+            <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
+                <Label text="Species:" styleClass="label-bold"/>
+                <TextField fx:id="speciesField" styleClass="text-field"/>
+            </VBox>
+
+            <!-- Breed -->
+            <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
+                <Label text="Breed:" styleClass="label-bold"/>
+                <TextField fx:id="breedField" styleClass="text-field"/>
+            </VBox>
+
+            <!-- Age -->
+            <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
+                <Label text="Age:" styleClass="label-bold"/>
+                <TextField fx:id="ageField" styleClass="text-field"/>
+            </VBox>
+
+            <!-- Gender -->
+            <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
+                <Label text="Gender:" styleClass="label-bold"/>
+                <TextField fx:id="genderField" styleClass="text-field"/>
+            </VBox>
+
+            <!-- Description -->
+            <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
+                <Label text="Description:" styleClass="label-bold"/>
+                <TextArea fx:id="descriptionField" wrapText="true" prefHeight="60" styleClass="text-field"/>
+            </VBox>
+
+            <!-- Status -->
+            <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
+                <Label text="Status:" styleClass="label-bold"/>
+                <TextField fx:id="statusField" styleClass="text-field"/>
+            </VBox>
+
+            <!-- Save Button -->
+            <HBox alignment="CENTER" spacing="20">
+                <Button fx:id="saveButton"
+                        onAction="#handleSave"
+                        text="Save"
+                        styleClass="button-save"
+                        prefHeight="38"
+                        prefWidth="106"/>
+            </HBox>
+
         </VBox>
-
-        <!-- Name -->
-        <VBox alignment="CENTER_LEFT" style="-fx-background-color:#f5f5f5; -fx-padding:10; -fx-background-radius:10;">
-            <Label style="-fx-font-weight:bold;" text="Name:"/>
-            <TextField fx:id="nameField"/>
-        </VBox>
-
-        <!-- Species -->
-        <VBox alignment="CENTER_LEFT" style="-fx-background-color:#f5f5f5; -fx-padding:10; -fx-background-radius:10;">
-            <Label style="-fx-font-weight:bold;" text="Species:"/>
-            <TextField fx:id="speciesField"/>
-        </VBox>
-
-        <!-- Breed -->
-        <VBox alignment="CENTER_LEFT" style="-fx-background-color:#f5f5f5; -fx-padding:10; -fx-background-radius:10;">
-            <Label style="-fx-font-weight:bold;" text="Breed:"/>
-            <TextField fx:id="breedField"/>
-        </VBox>
-
-        <!-- Age -->
-        <VBox alignment="CENTER_LEFT" style="-fx-background-color:#f5f5f5; -fx-padding:10; -fx-background-radius:10;">
-            <Label style="-fx-font-weight:bold;" text="Age:"/>
-            <TextField fx:id="ageField"/>
-        </VBox>
-
-        <!-- Gender -->
-        <VBox alignment="CENTER_LEFT" style="-fx-background-color:#f5f5f5; -fx-padding:10; -fx-background-radius:10;">
-            <Label style="-fx-font-weight:bold;" text="Gender:"/>
-            <TextField fx:id="genderField"/>
-        </VBox>
-
-        <!-- Description -->
-        <VBox alignment="CENTER_LEFT" style="-fx-background-color:#f5f5f5; -fx-padding:10; -fx-background-radius:10;">
-            <Label style="-fx-font-weight:bold;" text="Description:"/>
-            <TextArea fx:id="descriptionField" wrapText="true" prefHeight="60"/>
-        </VBox>
-
-        <!-- Status -->
-        <VBox alignment="CENTER_LEFT" style="-fx-background-color:#f5f5f5; -fx-padding:10; -fx-background-radius:10;">
-            <Label style="-fx-font-weight:bold;" text="Status:"/>
-            <TextField fx:id="statusField"/>
-        </VBox>
-
-        <!-- Save Button -->
-        <HBox alignment="CENTER" spacing="20">
-            <Button fx:id="saveButton" onAction="#handleSave" text="Save" prefHeight="38" prefWidth="106"
-                    style="-fx-background-color:#4CAF50; -fx-text-fill:white; -fx-background-radius:10;">
-                <font>
-                    <Font size="16"/>
-                </font>
-            </Button>
-        </HBox>
-
-    </VBox>
-
+    </ScrollPane>
 
 </AnchorPane>

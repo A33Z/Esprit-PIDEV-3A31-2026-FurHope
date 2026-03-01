@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.esprit.controllers.favoritecontroller"
+            prefHeight="600" prefWidth="800"
+            styleClass="root"
+            stylesheets="style.css">
+
+    <children>
+        <ScrollPane fitToWidth="true" fitToHeight="true"
+                    AnchorPane.topAnchor="0"
+                    AnchorPane.bottomAnchor="0"
+                    AnchorPane.leftAnchor="0"
+                    AnchorPane.rightAnchor="0"
+                    style="-fx-background-color: transparent;">
+
+            <content>
+                <GridPane fx:id="favoritesGrid" hgap="15" vgap="15" styleClass="grid-container">
+                    <padding>
+                        <Insets top="15" right="15" bottom="15" left="15"/>
+                    </padding>
+                </GridPane>
+            </content>
+        </ScrollPane>
+    </children>
+</AnchorPane>

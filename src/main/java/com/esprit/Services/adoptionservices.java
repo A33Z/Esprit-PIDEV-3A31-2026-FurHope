@@ -68,8 +68,9 @@ request.setAddress(rs.getString("address"));
         preparedStatement.setInt(2, request.getClient_id());
         preparedStatement.setString(3, request.getMessage());
         preparedStatement.setString(4, request.getPhone());
-        preparedStatement.setString(4, request.getAddress());
-        preparedStatement.setInt(5, request.getId());
+        preparedStatement.setString(5, request.getAddress());
+        preparedStatement.setString(6, "PENDING");  // fixed value
+        preparedStatement.setInt(7, request.getId());
 
         preparedStatement.executeUpdate();
 

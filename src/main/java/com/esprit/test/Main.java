@@ -3,6 +3,7 @@ package com.esprit.test;
 import com.esprit.Services.adoptionservices;
 import com.esprit.Services.animalServices;
 import com.esprit.entities.adoptionRequest;
+import com.esprit.entities.animal;
 
 import java.sql.SQLException;
 
@@ -11,7 +12,7 @@ public class Main {
      // MyDataBase.getInstance(); connexion de bd
         animalServices ps = new animalServices();
         try {
-           // ps.ajouter(new animal("loulou","cat","americain",2,animal.gender.FEMALE,"great cat",  animal.status.AVAILABLE));
+           //ps.ajouter(new animal("loulou","cat","americain",2,animal.gender.FEMALE,"great cat",  animal.status.AVAILABLE, "C:\\0Users\\joumana\\OneDrive\\Images\\download (1).jpg"));
             //ps.supprimer(3);
             System.out.println(ps.afficher());
         } catch (SQLException e) {
@@ -20,11 +21,12 @@ public class Main {
 
         adoptionservices adreq = new adoptionservices();
         try {
-            adreq.ajouter(new adoptionRequest(6,1,"je veux adopter ce chat svp!","5464646587","odsfdjhfejfe",adoptionRequest.status.PENDING));
+            //adreq.ajouter(new adoptionRequest(6,1,"je veux adopter ce chat svp!","5464646587","odsfdjhfejfe",adoptionRequest.status.PENDING));
             //ps.supprimer(3);
             System.out.println(ps.afficher());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
+
 }
