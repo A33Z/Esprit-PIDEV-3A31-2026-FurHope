@@ -1,72 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="600.0" prefWidth="820.0"
+<AnchorPane prefHeight="700.0" prefWidth="900.0"
             xmlns="http://javafx.com/javafx/25"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.esprit.controllers.AjouterRequest"
             styleClass="root"
             stylesheets="style.css">
 
-    <!-- Main Container -->
-    <VBox alignment="CENTER" spacing="15"
-          styleClass="v-box"
+    <VBox spacing="20" alignment="CENTER"
+          AnchorPane.topAnchor="0.0"
           AnchorPane.leftAnchor="0.0"
           AnchorPane.rightAnchor="0.0"
-          AnchorPane.topAnchor="0.0"
-          AnchorPane.bottomAnchor="0.0">
+          AnchorPane.bottomAnchor="0.0"
+          styleClass="v-box">
 
         <!-- Title -->
-        <Text text="Adoption Request" textAlignment="CENTER" styleClass="title">
+        <Text text="Adoption Request" styleClass="title">
             <font>
                 <Font size="36"/>
             </font>
         </Text>
 
-        <!-- Animal Name -->
-        <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
-            <TextField fx:id="animalNameLabel" text="Animal Name" styleClass="text-field"/>
+        <!-- Animal Info Card -->
+        <HBox spacing="20" alignment="CENTER" styleClass="animal-card">
+            <ImageView fx:id="animalImageView" fitWidth="200" fitHeight="150" preserveRatio="true" styleClass="pet-image"/>
+            <VBox spacing="10">
+                <Label fx:id="animalNameLabel" text="Name: Luna" styleClass="pet-info-label"/>
+                <Label fx:id="animalSpeciesLabel" text="Species: Dog" styleClass="pet-info-label"/>
+                <Label fx:id="animalBreedLabel" text="Breed: Husky" styleClass="pet-info-label"/>
+                <Label fx:id="animalAgeGenderLabel" text="2 Years / Male" styleClass="pet-info-label"/>
+            </VBox>
+        </HBox>
+
+        <Separator/>
+
+        <!-- Client Info Card -->
+        <VBox spacing="10" styleClass="client-card">
+            <Label fx:id="clientNameLabel" text="Name: Joumana" styleClass="client-info-label"/>
+            <Label fx:id="clientEmailLabel" text="Email: example@mail.com" styleClass="client-info-label"/>
+            <Label fx:id="clientPhoneLabel" text="Phone: 12345678" styleClass="client-info-label"/>
         </VBox>
 
-        <!-- Animal ID -->
-        <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
-            <TextField fx:id="animal_id" promptText="Animal ID" styleClass="text-field"/>
+        <!-- Message Section -->
+        <VBox spacing="10" styleClass="message-section">
+            <Label text="Your Message" styleClass="section-title"/>
+            <TextArea fx:id="message" promptText="Write your message here..." wrapText="true" prefRowCount="5" styleClass="text-area"/>
         </VBox>
 
-        <!-- Client ID -->
-        <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
-            <TextField fx:id="client_id" promptText="Client ID" styleClass="text-field"/>
-        </VBox>
-
-        <!-- Message -->
-        <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
-            <TextField fx:id="message" promptText="Message" styleClass="text-field"/>
-        </VBox>
-
-        <!-- Phone -->
-        <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
-            <TextField fx:id="phone" promptText="Phone" styleClass="text-field"/>
-        </VBox>
-
-        <!-- Address -->
-        <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
-            <TextField fx:id="address" promptText="Address" styleClass="text-field"/>
-        </VBox>
-
-        <!-- Action Buttons -->
+        <!-- Send Button -->
         <HBox alignment="CENTER" spacing="20">
-            <Button text="Send"
-                    onAction="#Envoyer"
-                    styleClass="button-save"
-                    prefWidth="150"
-                    prefHeight="50"/>
+            <Button text="Send" fx:id="sendButton" onAction="#Envoyer"
+                    prefWidth="180" prefHeight="50" styleClass="button-save"/>
         </HBox>
 
     </VBox>

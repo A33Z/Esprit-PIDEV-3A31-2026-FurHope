@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.scene.image.ImageView?>
+
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.esprit.controllers.AnimalCard"
@@ -29,12 +30,6 @@
                 <Label fx:id="ageLabel"
                        styleClass="card-subtitle"/>
 
-                <!-- Bottom Button inside VBox -->
-                <Button text="Voir détails"
-                        fx:id="detailsButton"
-                        onAction="#voirdetails"
-                        styleClass="details-button"
-                        maxWidth="Infinity"/>
             </VBox>
         </HBox>
 

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.esprit.controllers.RequestDetailAdmin"
+            prefHeight="500.0" prefWidth="400.0"
+            stylesheets="@style.css">
+
+    <VBox spacing="20" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20"
+          AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20" styleClass="card">
+
+        <!-- Animal Info Section -->
+        <VBox spacing="10" styleClass="section-container">
+            <Label text="Animal Info" styleClass="section-title"/>
+            <Label fx:id="animalNameLabel" styleClass="pet-name"/>
+            <Label fx:id="animalSpeciesLabel" styleClass="section-value"/>
+            <Label fx:id="animalBreedLabel" styleClass="section-value"/>
+            <Label fx:id="animalAgeGenderLabel" styleClass="section-value"/>
+            <ImageView fx:id="animalImageView" fitWidth="120" fitHeight="120"/>
+        </VBox>
+
+        <!-- Requester Info Section -->
+        <VBox spacing="10" styleClass="section-container">
+            <Label text="Requester Info" styleClass="section-title"/>
+            <Label fx:id="requesterNameLabel" styleClass="section-value"/>
+            <Label fx:id="requesterEmailLabel" styleClass="section-value"/>
+            <Label fx:id="requesterPhoneLabel" styleClass="section-value"/>
+        </VBox>
+
+        <!-- Status -->
+        <Label fx:id="statusLabel" styleClass="status-badge" alignment="CENTER"/>
+
+        <!-- Approve / Decline Buttons -->
+        <HBox spacing="20" alignment="CENTER">
+            <Button fx:id="approveButton" text="Approve" styleClass="button-save"/>
+            <Button fx:id="declineButton" text="Decline" styleClass="danger-button"/>
+        </HBox>
+
+    </VBox>
+
+</AnchorPane>

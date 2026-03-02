@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ScrollPane?>
 
 <AnchorPane prefHeight="600.0" prefWidth="600.0"
             xmlns="http://javafx.com/javafx/25"
@@ -14,77 +15,111 @@
             styleClass="root"
             stylesheets="style.css">
 
-    <VBox alignment="CENTER"
-          spacing="18"
-          AnchorPane.leftAnchor="50.0"
-          AnchorPane.rightAnchor="50.0"
-          AnchorPane.topAnchor="40.0">
+    <!-- Scrollable container -->
+    <ScrollPane fitToWidth="true" fitToHeight="true"
+                prefWidth="600" prefHeight="600"
+                AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0"
+                AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0">
 
-        <!-- Animal Image -->
-        <ImageView fx:id="imageView"
-                   fitHeight="150"
-                   fitWidth="150"
-                   preserveRatio="true"
-                   styleClass="animal-image"/>
+        <!-- Content VBox -->
+        <VBox alignment="CENTER"
+              spacing="18"
+              style="-fx-padding:20;">  <!-- padding pour éviter que le contenu touche les bords -->
 
-        <!-- Name -->
-        <HBox alignment="CENTER_LEFT" spacing="15" styleClass="info-container">
-            <Label text="Name" styleClass="info-title"/>
-            <Label fx:id="nameLabel" styleClass="info-value"/>
-        </HBox>
+            <!-- Animal Image -->
+            <ImageView fx:id="imageView"
+                       fitHeight="150"
+                       fitWidth="150"
+                       preserveRatio="true"
+                       styleClass="animal-image"/>
 
-        <!-- Species -->
-        <HBox alignment="CENTER_LEFT" spacing="15" styleClass="info-container">
-            <Label text="Species" styleClass="info-title"/>
-            <Label fx:id="speciesLabel" styleClass="info-value"/>
-        </HBox>
+            <!-- Name -->
+            <HBox alignment="CENTER_LEFT" spacing="15" styleClass="info-container">
+                <Label text="Name" styleClass="info-title"/>
+                <Label fx:id="nameLabel" styleClass="info-value"/>
+            </HBox>
 
-        <!-- Breed -->
-        <HBox alignment="CENTER_LEFT" spacing="15" styleClass="info-container">
-            <Label text="Breed" styleClass="info-title"/>
-            <Label fx:id="breedLabel" styleClass="info-value"/>
-        </HBox>
+            <!-- Species -->
+            <HBox alignment="CENTER_LEFT" spacing="15" styleClass="info-container">
+                <Label text="Species" styleClass="info-title"/>
+                <Label fx:id="speciesLabel" styleClass="info-value"/>
+            </HBox>
 
-        <!-- Age -->
-        <HBox alignment="CENTER_LEFT" spacing="15" styleClass="info-container">
-            <Label text="Age" styleClass="info-title"/>
-            <Label fx:id="ageLabel" styleClass="info-value"/>
-        </HBox>
+            <!-- Breed -->
+            <HBox alignment="CENTER_LEFT" spacing="15" styleClass="info-container">
+                <Label text="Breed" styleClass="info-title"/>
+                <Label fx:id="breedLabel" styleClass="info-value"/>
+            </HBox>
 
-        <!-- Gender -->
-        <HBox alignment="CENTER_LEFT" spacing="15" styleClass="info-container">
-            <Label text="Gender" styleClass="info-title"/>
-            <Label fx:id="genderLabel" styleClass="info-value"/>
-        </HBox>
+            <!-- Age -->
+            <HBox alignment="CENTER_LEFT" spacing="15" styleClass="info-container">
+                <Label text="Age" styleClass="info-title"/>
+                <Label fx:id="ageLabel" styleClass="info-value"/>
+            </HBox>
 
-        <!-- Description -->
-        <VBox spacing="8" styleClass="info-container">
-            <Label text="Description" styleClass="info-title"/>
-            <Label fx:id="descriptionLabel"
-                   wrapText="true"
-                   styleClass="info-value"/>
+            <!-- Gender -->
+            <HBox alignment="CENTER_LEFT" spacing="15" styleClass="info-container">
+                <Label text="Gender" styleClass="info-title"/>
+                <Label fx:id="genderLabel" styleClass="info-value"/>
+            </HBox>
+
+            <!-- Description -->
+            <VBox spacing="8" styleClass="info-container">
+                <Label text="Description" styleClass="info-title"/>
+                <Label fx:id="descriptionLabel"
+                       wrapText="true"
+                       styleClass="info-value"/>
+            </VBox>
+
+            <!-- Status -->
+            <HBox alignment="CENTER_LEFT" spacing="15" styleClass="info-container">
+                <Label text="Status" styleClass="info-title"/>
+                <Label fx:id="statusLabel" styleClass="info-value"/>
+            </HBox>
+
+            <!-- Owner Info -->
+            <VBox spacing="10" style="-fx-padding:10; -fx-border-color:#dddddd; -fx-border-radius:10; -fx-background-radius:10; -fx-background-color:#f7f7f7;">
+                <Label text="Owner Info" style="-fx-font-size:16px; -fx-font-weight:bold; -fx-text-fill:#4A3828;"/>
+
+                <HBox spacing="10" styleClass="info-container">
+                    <Label text="Name:" styleClass="info-title"/>
+                    <Label fx:id="ownerNameLabel" styleClass="info-value"/>
+                </HBox>
+
+                <HBox spacing="10" styleClass="info-container">
+                    <Label text="Email:" styleClass="info-title"/>
+                    <Label fx:id="ownerEmailLabel" styleClass="info-value"/>
+                </HBox>
+
+                <HBox spacing="10" styleClass="info-container">
+                    <Label text="Phone:" styleClass="info-title"/>
+                    <Label fx:id="ownerPhoneLabel" styleClass="info-value"/>
+                </HBox>
+
+                <HBox spacing="10" styleClass="info-container">
+                    <Label text="Role:" styleClass="info-title"/>
+                    <Label fx:id="ownerRoleLabel" styleClass="info-value"/>
+                </HBox>
+            </VBox>
+
+            <!-- Buttons -->
+            <HBox alignment="CENTER" spacing="20">
+
+                <Button fx:id="modifyButton"
+                        onAction="#handlemodifier"
+                        text="Modify"
+                        styleClass="button-save"
+                        prefWidth="110"/>
+
+                <Button fx:id="deleteButton"
+                        onAction="#handlesupprimer"
+                        text="Delete"
+                        styleClass="button-save"
+                        prefWidth="110"/>
+
+            </HBox>
+
         </VBox>
+    </ScrollPane>
 
-        <!-- Status -->
-        <HBox alignment="CENTER_LEFT" spacing="15" styleClass="info-container">
-            <Label text="Status" styleClass="info-title"/>
-            <Label fx:id="statusLabel" styleClass="info-value"/>
-        </HBox>
-
-        <!-- Buttons -->
-        <HBox alignment="CENTER" spacing="20">
-            <Button fx:id="modifyButton"
-                    onAction="#handlemodifier"
-                    text="Modify"
-                    styleClass="button-save"
-                    prefWidth="110"/>
-
-            <Button fx:id="deleteButton"
-                    onAction="#handlesupprimer"
-                    text="Delete"
-                    styleClass="button-save"
-                    prefWidth="110"/>
-        </HBox>
-
-    </VBox>
 </AnchorPane>

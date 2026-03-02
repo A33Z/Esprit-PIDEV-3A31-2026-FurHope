@@ -16,7 +16,7 @@
                 vbarPolicy="AS_NEEDED"
                 styleClass="scroll-pane">
 
-        <StackPane alignment="CENTER">
+        <StackPane fx:id="centerContainer" alignment="CENTER">
 
             <VBox alignment="TOP_CENTER"
                   spacing="25"
@@ -88,12 +88,25 @@
                            styleClass="section-value"/>
                 </VBox>
 
-                <!-- OWNER BOX -->
-                <VBox spacing="10"
-                      styleClass="section-container">
-
-                    <Label text="Owner Information"
-                           styleClass="section-title"/>
+                <!-- OWNER INFO -->
+                <VBox spacing="10" styleClass="section-container">
+                    <Label text="Owner Information" styleClass="section-title"/>
+                    <HBox spacing="10" styleClass="info-container">
+                        <Label text="Name:" styleClass="info-title"/>
+                        <Label fx:id="ownerNameLabel" styleClass="info-value"/>
+                    </HBox>
+                    <HBox spacing="10" styleClass="info-container">
+                        <Label text="Email:" styleClass="info-title"/>
+                        <Label fx:id="ownerEmailLabel" styleClass="info-value"/>
+                    </HBox>
+                    <HBox spacing="10" styleClass="info-container">
+                        <Label text="Phone:" styleClass="info-title"/>
+                        <Label fx:id="ownerPhoneLabel" styleClass="info-value"/>
+                    </HBox>
+                    <HBox spacing="10" styleClass="info-container">
+                        <Label text="Role:" styleClass="info-title"/>
+                        <Label fx:id="ownerRoleLabel" styleClass="info-value"/>
+                    </HBox>
                 </VBox>
 
                 <!-- BUTTON -->

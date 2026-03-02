@@ -31,6 +31,18 @@ public class AfficherAnimal {
     @FXML
     private Button btnAddAnimal;
 
+    @FXML
+    private Button btnRequests;
+
+    @FXML
+    private Button btnFavorite;
+
+    @FXML
+    private Button btnMyRequests;
+
+    @FXML
+    private Button btnMyAnimals;
+
 
     animalServices ps = new animalServices();
 
@@ -67,18 +79,34 @@ public class AfficherAnimal {
         });
 
         // 2️⃣ Click on Card → Open Details Page
-        listview.setOnMouseClicked(event -> {
+        listview.setOnMouseClicked(event -> {if (event.getClickCount() == 2) {
             animal selectedAnimal = listview.getSelectionModel().getSelectedItem();
 
             if (selectedAnimal != null) {
                 try {
-                    // Load FXML for the details page
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/adopanimaldetails.fxml"));
-                    Parent root = loader.load();
+                    FXMLLoader loader;
+                    Parent root;
 
-                    // Pass the selected animal to the details controller
-                    adopdetails controller = loader.getController();
-                    controller.setPetData(selectedAnimal);
+                    // 🔥 Vérifier si l'utilisateur connecté est le propriétaire
+                    if (selectedAnimal.getOwnerid() == com.esprit.utils.Session.getUserId()) {
+
+                        // ➜ Ouvrir AnimalDetails (Owner View)
+                        loader = new FXMLLoader(getClass().getResource("/AnimalDetails.fxml"));
+                        root = loader.load();
+
+                        AnimalDetails controller = loader.getController();
+                        controller.setAnimal(selectedAnimal);
+
+                    } else {
+
+                        // ➜ Ouvrir Adoption Details (Client View)
+                        loader = new FXMLLoader(getClass().getResource("/adopanimaldetails.fxml"));
+                        root = loader.load();
+
+                        adopdetails controller = loader.getController();
+                        controller.setPetData(selectedAnimal);
+                    }
+
 
                     // Create a new stage for the details page
                     Stage stage = new Stage();
@@ -99,7 +127,7 @@ public class AfficherAnimal {
                     e.printStackTrace();
                 }
             }
-        });
+        }});
 
         // 2️⃣ Then load data from database
         try {
@@ -175,6 +203,23 @@ public class AfficherAnimal {
             Parent root = FXMLLoader.load(getClass().getResource("/MyAnimals.fxml"));
             listview.getScene().setRoot(root);
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    void openRequests(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Requests.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Requests for My Animals");
+            stage.setMaximized(true);
+            stage.show();
+
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+
+    <VBox xmlns="http://javafx.com/javafx/21"
+          xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="com.esprit.controllers.login"
+          alignment="CENTER" spacing="20"
+          style="-fx-background-color: linear-gradient(to bottom right, #fff7ed, #ffe4c7);
+             -fx-padding: 50;">
+
+        <!-- Titre -->
+        <VBox alignment="CENTER" spacing="10">
+            <Label text="🐾 Connexion Client"
+                   style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #92400e;"/>
+            <Label text="Entrez vos identifiants pour continuer"
+                   style="-fx-font-size: 14; -fx-text-fill: #b45309;"/>
+        </VBox>
+
+        <!-- Email Field -->
+        <TextField fx:id="emailField"
+                   promptText="Email"
+                   style="-fx-font-size: 14; -fx-padding: 10; -fx-background-radius: 8;"/>
+
+        <!-- Password Field -->
+        <PasswordField fx:id="passwordField"
+                       promptText="Mot de passe"
+                       style="-fx-font-size: 14; -fx-padding: 10; -fx-background-radius: 8;"/>
+
+        <!-- Label Erreur -->
+        <Label fx:id="errorLabel"
+               style="-fx-text-fill: red; -fx-font-size: 13;"/>
+
+        <!-- Boutons -->
+        <HBox alignment="CENTER" spacing="15">
+            <Button text="Se connecter"
+                    onAction="#login"
+                    style="-fx-background-color: #f59e0b; -fx-text-fill: white;
+                       -fx-font-weight: bold; -fx-background-radius: 12;
+                       -fx-padding: 10 30; -fx-cursor: hand;"/>
+            <Button text="Retour"
+                    onAction="#goBack"
+                    style="-fx-background-color: #d1d5db; -fx-text-fill: #111;
+                       -fx-font-weight: bold; -fx-background-radius: 12;
+                       -fx-padding: 10 30; -fx-cursor: hand;"/>
+        </HBox>
+
+    </VBox>

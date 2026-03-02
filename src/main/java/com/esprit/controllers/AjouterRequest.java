@@ -1,17 +1,17 @@
 package com.esprit.controllers;
 
+import com.esprit.utils.Session;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import com.esprit.Services.adoptionservices;
 import com.esprit.entities.adoptionRequest;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -19,64 +19,66 @@ import java.sql.SQLException;
 
 public class AjouterRequest {
     @FXML
-    private TextField address;
+    private Label animalNameLabel, animalSpeciesLabel, animalBreedLabel, animalAgeGenderLabel;
 
     @FXML
-    private TextField animalNameLabel;
+    private ImageView animalImageView;
 
     @FXML
-    private TextField animal_id;
+    private Label clientNameLabel, clientEmailLabel, clientPhoneLabel;
 
     @FXML
-    private TextField client_id;
+    private TextArea message;
 
     @FXML
-    private TextField message;
+    private Button sendButton;
 
-    @FXML
-    private TextField phone;
-
-    private int animalId; // store internally
-
+    private int animalId;
 
     adoptionservices serv = new adoptionservices();
 
-
-    // Method to set animal info when opening this page
-    public void setAnimalInfo(int id, String name) {
+    // 1️⃣ Méthode pour pré-remplir l’animal
+    public void setAnimalInfo(int id, String name, String species, String breed, String ageGender, Image image) {
         this.animalId = id;
-        animal_id.setText(String.valueOf(id));
-        animal_id.setEditable(false); // cannot modify
-        animalNameLabel.setText(name);
-        animalNameLabel.setEditable(false); // cannot modify
+
+        animalNameLabel.setText("Name: " + name);
+        animalSpeciesLabel.setText("Species: " + species);
+        animalBreedLabel.setText("Breed: " + breed);
+        animalAgeGenderLabel.setText(ageGender);
+
+        if (image != null) {
+            animalImageView.setImage(image);
+        }
     }
+
+    // 2️⃣ Méthode pour pré-remplir client depuis Session
+    public void setClientInfoFromSession() {
+        clientNameLabel.setText("Name: " + Session.getUserName());
+        clientEmailLabel.setText("Email: " + Session.getUserEmail());
+        clientPhoneLabel.setText("Phone: " + Session.getUserPhone());
+    }
+
 
     @FXML
     void Envoyer(ActionEvent event) {
         try {
-            // 1️⃣ Trim et récupérer les valeurs
-            String clientText = client_id.getText().trim();
             String msg = message.getText().trim();
-            String addr = address.getText().trim();
-            String phoneNum = phone.getText().trim();
+
 
             // 2️⃣ Contrôle des champs vides
-            if ( clientText.isEmpty() || msg.isEmpty() ||
-                    addr.isEmpty() || phoneNum.isEmpty()) {
-
+            if (msg.isEmpty()) {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Champs manquants ⚠️");
-                alert.setHeaderText("Attention !");
-                alert.setContentText("Tous les champs doivent être remplis avant d'envoyer la demande.");
+                alert.setTitle("Message missing");
+                alert.setContentText("Please write a message before sending!");
                 alert.showAndWait();
-                return; // stop la méthode si un champ est vide
+                return;
             }
 
             // 3️⃣ Conversion en nombres
-            int clientId = Integer.parseInt(clientText);
+            int clientId = Session.getUserId();
 
             // 4️⃣ Créer et ajouter la demande
-            adoptionRequest request = new adoptionRequest(animalId, clientId, msg, addr, phoneNum, adoptionRequest.status.PENDING);
+            adoptionRequest request = new adoptionRequest(animalId, clientId, msg, Session.getUserPhone()+"", "dummy address", adoptionRequest.status.PENDING);
             serv.ajouter(request);
 
             // 5️⃣ Notification créative

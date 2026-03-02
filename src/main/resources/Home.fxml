@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+    <VBox xmlns="http://javafx.com/javafx/21"
+          xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="com.esprit.controllers.Home"
+          alignment="CENTER" spacing="30"
+          style="-fx-background-color: linear-gradient(to bottom right, #fff7ed, #ffe4c7);
+             -fx-padding: 50;">
+
+        <!-- Titre -->
+        <VBox alignment="CENTER" spacing="8">
+            <Label text="🐾 Adoption Animale"
+                   style="-fx-font-size: 36; -fx-font-weight: bold; -fx-text-fill: #92400e;"/>
+            <Label text="Bienvenue dans votre espace d’adoption"
+                   style="-fx-font-size: 14; -fx-text-fill: #b45309;"/>
+        </VBox>
+
+        <!-- Bouton Client -->
+        <VBox alignment="CENTER" spacing="10">
+            <Label text="👤 Espace Client / Adoptant"
+                   style="-fx-font-size: 13; -fx-text-fill: #9ca3af; -fx-font-style: italic;"/>
+            <Button text="🔑 Se connecter"
+                    onAction="#goLoginClient"
+                    style="-fx-font-size: 16; -fx-background-color: #f59e0b;
+                       -fx-text-fill: white; -fx-background-radius: 12;
+                       -fx-padding: 14 40; -fx-font-weight: bold; -fx-cursor: hand;
+                       -fx-effect: dropshadow(gaussian,rgba(245,158,11,0.4),8,0,0,3);"/>
+        </VBox>
+
+    </VBox>
+

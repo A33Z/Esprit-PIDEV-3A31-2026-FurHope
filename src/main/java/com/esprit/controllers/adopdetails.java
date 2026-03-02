@@ -1,5 +1,6 @@
 package com.esprit.controllers;
 
+import com.esprit.entities.User;
 import com.esprit.entities.animal;
 import com.esprit.utils.MyDataBase;
 import javafx.fxml.FXML;
@@ -21,6 +22,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+
+import static com.esprit.utils.Session.getUserId;
 
 public class adopdetails {
 
@@ -53,6 +56,15 @@ public class adopdetails {
 
     @FXML
     private ScrollPane scrollPane;
+    // Owner info labels
+    @FXML
+    private Label ownerNameLabel;
+    @FXML
+    private Label ownerEmailLabel;
+    @FXML
+    private Label ownerPhoneLabel;
+    @FXML
+    private Label ownerRoleLabel;
 
     @FXML
     private StackPane centerContainer;
@@ -89,6 +101,13 @@ public class adopdetails {
                 petImage.setImage(new Image(file.toURI().toString()));
             }
         }
+        if (a.getOwner() != null) {
+            ownerNameLabel.setText(a.getOwner().getName());
+            ownerEmailLabel.setText(a.getOwner().getEmail());
+            ownerPhoneLabel.setText(String.valueOf(a.getOwner().getPhone()));
+            ownerRoleLabel.setText(a.getOwner().getRole());
+        }
+
 
     }
 
@@ -99,23 +118,38 @@ public class adopdetails {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/AjouterRequest.fxml"));
             Parent root = loader.load();
 
-            // Get the controller of AjouterRequest
             com.esprit.controllers.AjouterRequest controller = loader.getController();
 
-            // Pass the current animal info
-            controller.setAnimalInfo(currentAnimal.getId(), currentAnimal.getName());
+            // Préparer l'image correctement
+            Image animalImage = null;
+            if (currentAnimal.getImage() != null) {
+                File file = new File("images/" + currentAnimal.getImage());
+                if (file.exists()) {
+                    animalImage = new Image(file.toURI().toString());
+                } else {
+                    System.out.println("Image introuvable : " + file.getAbsolutePath());
+                }
+            }
+
+            // Passer toutes les infos à AjouterRequest
+            controller.setAnimalInfo(
+                    currentAnimal.getId(),
+                    currentAnimal.getName(),
+                    currentAnimal.getSpecies(),
+                    currentAnimal.getBreed(),
+                    currentAnimal.getAge() + " - " + currentAnimal.getGender(),
+                    animalImage
+            );
 
             Stage stage = new Stage();
             stage.setTitle("Add Adoption Request");
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);  // maximize new stage
+            stage.setMaximized(true);
             stage.show();
 
-            // Close the current window (adopdetails)
+            // Fermer la fenêtre actuelle
             Stage currentStage = (Stage) adoptButton.getScene().getWindow();
             currentStage.close();
-
-
 
         } catch (Exception e) {
             e.printStackTrace();

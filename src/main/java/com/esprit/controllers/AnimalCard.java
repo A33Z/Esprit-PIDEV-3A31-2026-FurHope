@@ -112,35 +112,7 @@ public class AnimalCard {
     }
 
 
-    // ✅ Open Details Page (YOUR FUNCTION — cleaned)
-    @FXML
-    private void voirdetails(ActionEvent event) {
 
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/animalDetails.fxml"));
-            Parent root = loader.load();
-
-            AnimalDetails controller = loader.getController();
-            controller.setAnimal(currentAnimal);
-
-            // 🔹 Get current stage (the one containing this button)
-            Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
-            // 🔹 Create new stage for details
-            Stage detailsStage = new Stage();
-            detailsStage.setTitle("Animal Details");
-            detailsStage.setScene(new Scene(root));
-
-            detailsStage.setMaximized(true); // REAL full screen
-            detailsStage.show();
-
-            // 🔹 Close current window
-            currentStage.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
 
 

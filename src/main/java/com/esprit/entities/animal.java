@@ -24,10 +24,15 @@ public class animal {
     private gender gender;
     private status status;
     private String image;
+    private int ownerid;
+
+    private User owner;
+
+
 
     public animal (){}
 
-    public animal(String name , String species, String breed, int age,  gender gender,  String description,status status, String image) {
+    public animal(String name , String species, String breed, int age,  gender gender,  String description,status status, String image ,  int ownerid) {
         this.name = name;
         this.species = species;
         this.breed = breed;
@@ -36,6 +41,7 @@ public class animal {
         this.description = description;
         this.status = status;
         this.image = image;
+        this.ownerid = ownerid;
     }
 
     public int getId() {return idAnimal;}
@@ -78,6 +84,16 @@ public class animal {
         this.image = image;
     }
 
+    public int getOwnerid() {
+        return ownerid;
+    }
+    public void setOwnerid(int ownerid) {
+        this.ownerid = ownerid;
+    }
+
+    // 🔹 getter / setter pour l'objet User
+    public User getOwner() { return owner; }
+    public void setOwner(User owner) { this.owner = owner; }
 
 
     @Override
@@ -91,6 +107,7 @@ public class animal {
                 ", gender=" + gender +
                 ", status=" + status +
                 ", image='" + image + '\'' +
+                ", ownerid=" + ownerid +
                 '}';
     }
 

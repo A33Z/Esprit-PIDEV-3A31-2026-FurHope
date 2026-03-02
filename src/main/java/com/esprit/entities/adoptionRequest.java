@@ -87,6 +87,11 @@ public class adoptionRequest {
         this.status = status;
     }
 
+    private animal animal; // nouvel attribut
+
+    public animal getAnimal() { return animal; }
+    public void setAnimal(animal animal) { this.animal = animal; }
+
     @Override
     public String toString() {
         return "adoptionRequest{" +

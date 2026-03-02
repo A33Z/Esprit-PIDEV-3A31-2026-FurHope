@@ -1,5 +1,6 @@
 package com.esprit.controllers;
 
+import com.esprit.entities.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -47,6 +48,7 @@ public class AjouterAnimal {
     private TextField species;
 
 
+    private User currentUser;
 
 
 
@@ -125,6 +127,7 @@ public class AjouterAnimal {
                 }
             }
 
+            int ownerId = com.esprit.utils.Session.getUserId();
 
             // 5️⃣ Ajouter l’animal dans la base
             animal newAnimal = new animal(
@@ -135,7 +138,9 @@ public class AjouterAnimal {
                     animal.gender.valueOf(genderValue.toString()),
                     descriptionText,
                     animal.status.AVAILABLE,
-                    image
+                    image,
+                    ownerId
+
             );
             service.ajouter(newAnimal);
 

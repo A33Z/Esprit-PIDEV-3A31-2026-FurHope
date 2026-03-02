@@ -2,12 +2,14 @@ package com.esprit.controllers;
 
 import com.esprit.Services.animalServices;
 import com.esprit.entities.animal;
+import com.esprit.utils.Session;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
@@ -42,6 +44,19 @@ public class AnimalDetails {
     @FXML
     private Label statusLabel;
 
+    @FXML
+    private Label ownerNameLabel;
+    @FXML
+    private Label ownerEmailLabel;
+    @FXML
+    private Label ownerPhoneLabel;
+    @FXML
+    private Label ownerRoleLabel;
+
+    @FXML private Button modifyButton;
+    @FXML private Button deleteButton;
+
+
     private animal animalSelected;
     private ListView<animal> listView;
 
@@ -64,6 +79,21 @@ public class AnimalDetails {
                 imageView.setImage(new Image(file.toURI().toString()));
             }
         }
+
+        // Affichage infos owner
+        if (animal.getOwner() != null) {
+            ownerNameLabel.setText(animal.getOwner().getName());
+            ownerEmailLabel.setText(animal.getOwner().getEmail());
+            ownerPhoneLabel.setText(String.valueOf(animal.getOwner().getPhone()));
+            ownerRoleLabel.setText(animal.getOwner().getRole());
+        }
+
+        // 🔹 Gestion dynamique des boutons
+        boolean isOwner = animal.getOwnerid() == Session.getUserId();
+
+        modifyButton.setVisible(isOwner);
+        deleteButton.setVisible(isOwner);
+
     }
 
 

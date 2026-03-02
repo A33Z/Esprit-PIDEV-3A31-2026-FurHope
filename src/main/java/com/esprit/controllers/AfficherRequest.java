@@ -1,14 +1,12 @@
 package com.esprit.controllers;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
@@ -40,10 +38,10 @@ public class AfficherRequest {
                 }
 
                 try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/requestcard.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/Myrequestcard.fxml"));
                     Parent root = loader.load();
 
-                    requestCard controller = loader.getController();
+                    MyrequestCard controller = loader.getController();
                     controller.setData(request, getIndex());
 
                     setGraphic(root);
@@ -60,10 +58,14 @@ public class AfficherRequest {
     public void loadRequests() {
 
         try {
+            List<adoptionRequest> allRequests = as.afficher();
 
-            List<adoptionRequest> requests = as.afficher();
+            // Filtrer uniquement les demandes du current user
+            List<adoptionRequest> myRequests = allRequests.stream()
+                    .filter(r -> r.getClient_id() == com.esprit.utils.Session.getUserId())
+                    .toList();
 
-            Listview.getItems().setAll(requests);
+            Listview.getItems().setAll(FXCollections.observableList(myRequests));
 
         } catch (SQLException e) {
             e.printStackTrace();

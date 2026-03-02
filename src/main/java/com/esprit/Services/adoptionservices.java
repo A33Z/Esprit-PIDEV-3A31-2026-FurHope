@@ -1,6 +1,7 @@
 package com.esprit.Services;
 
 import com.esprit.entities.adoptionRequest;
+import com.esprit.entities.animal;
 import com.esprit.utils.MyDataBase;
 
 import java.sql.*;
@@ -16,11 +17,15 @@ public class adoptionservices implements ICrud<adoptionRequest>{
 
     @Override
     public void ajouter(adoptionRequest adoption) throws SQLException {
-        String sql = "INSERT INTO `adoptionrequest`( `animal_id`,`client_id`, `message`,`phone`,`address`,`status`) VALUES ("+adoption.getAnimal_id()+","+adoption.getClient_id()+" ,'"+adoption.getMessage()+"','"+adoption.getPhone()+"','"+adoption.getAddress()+"','"+adoption.getStatus()+"')";
-        Statement statement = con.createStatement();
-        statement.executeUpdate(sql);
-        System.out.println("adoption request ajoutée avec succes!");
-
+        String sql = "INSERT INTO adoptionrequest (animal_id, client_id, message, phone, address, status) VALUES (?, ?, ?, ?, ?, ?)";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setInt(1, adoption.getAnimal_id());
+        ps.setInt(2, adoption.getClient_id());
+        ps.setString(3, adoption.getMessage());
+        ps.setString(4, adoption.getPhone());
+        ps.setString(5, adoption.getAddress());
+        ps.setString(6, adoption.getStatus().toString());
+        ps.executeUpdate();
 
     }
 
@@ -76,6 +81,42 @@ request.setAddress(rs.getString("address"));
 
 
     }
+    public List<adoptionRequest> getRequestsForMyAnimals(int ownerId) throws SQLException {
 
+        List<adoptionRequest> requests = new ArrayList<>();
 
+        String sql = "SELECT r.*, a.name as animalName, a.species, a.breed, a.age, a.gender, a.image " +
+                "FROM adoptionrequest r " +
+                "JOIN animal a ON r.animal_id = a.idAnimal " +
+                "WHERE a.ownerid = ?";
+
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setInt(1, ownerId);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+
+            adoptionRequest r = new adoptionRequest();
+            r.setId(rs.getInt("id"));
+            r.setAnimal_id(rs.getInt("animal_id"));
+            r.setClient_id(rs.getInt("client_id"));
+            r.setStatus(adoptionRequest.status.valueOf(rs.getString("status")));
+
+            // 🔹 Créer l’animal et l’injecter dans la demande
+            animal a = new animal();
+            a.setId(rs.getInt("animal_id"));
+            a.setName(rs.getString("animalName"));
+            a.setSpecies(rs.getString("species"));
+            a.setBreed(rs.getString("breed"));
+            a.setAge(rs.getInt("age"));
+            a.setGender(animal.gender.valueOf(rs.getString("gender")));
+            a.setImage(rs.getString("image"));
+
+            r.setAnimal(a); // ⚡ on stocke directement dans l’objet
+
+            requests.add(r);
+        }
+
+        return requests;
+    }
 }
