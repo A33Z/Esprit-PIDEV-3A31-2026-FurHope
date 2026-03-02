@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="14"
+      alignment="TOP_CENTER"
+      fillWidth="true"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.AdminController"
+      stylesheets="@styles.css"
+      styleClass="page">
+
+    <padding>
+        <Insets top="24" right="24" bottom="24" left="24"/>
+    </padding>
+
+    <Label text="Pending Veterinaires"
+           styleClass="title" />
+
+    <ListView fx:id="pendingTable" prefHeight="320.0" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS"/>
+
+    <FlowPane hgap="12" vgap="12" alignment="CENTER">
+        <Button text="Approve Selected"
+                styleClass="primary-button action-button"
+                onAction="#approveSelected"/>
+        <Button text="Back"
+                styleClass="secondary-button action-button"
+                onAction="#goBack"/>
+    </FlowPane>
+
+</VBox>
+
