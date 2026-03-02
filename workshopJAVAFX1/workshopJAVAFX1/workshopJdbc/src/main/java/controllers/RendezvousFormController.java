@@ -1,210 +1,202 @@
 package controllers;
 
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import model.Disponibilite;
 import model.Rendezvous;
+import services.EmailService;
 import services.ServiceDisponibilite;
 import services.ServiceRendezvous;
-import utils.EditState;
-import utils.ValidationUtils;
+import utils.MyDatabase;
+import utils.SessionManager;
+import utils.ViewNavigator;
 
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+import java.sql.*;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class RendezvousFormController {
 
-    @FXML
-    private Label titleLabel;
-    @FXML
-    private TextField statusField;
-    @FXML
-    private TextArea descriptionArea;
-    @FXML
-    private TextField clientIdField;
-    @FXML
-    private ComboBox<Disponibilite> disponibiliteBox;
-    @FXML
-    private TextField vetIdField;
-    @FXML
-    private TextField animalIdField;
-    @FXML
-    private DatePicker appDatePicker;
-    @FXML
-    private TextField appTimeField;
-    @FXML
-    private Button saveButton;
+    @FXML private Label titleLabel;
+    @FXML private Label vetLabel;
+    @FXML private Label errorLabel;
+    @FXML private ComboBox<String> disponibiliteBox;
+    @FXML private TextField animalNomField;
+    @FXML private ComboBox<String> animalTypeBox;
+    @FXML private TextArea descriptionArea;
+    @FXML private Button saveButton;
+    @FXML private TextField numField;
 
-    private final ServiceRendezvous serviceRdv = new ServiceRendezvous();
     private final ServiceDisponibilite serviceDispo = new ServiceDisponibilite();
+    private final ServiceRendezvous serviceRdv = new ServiceRendezvous();
+    private final EmailService emailService = new EmailService();
 
-    private Rendezvous editing;
+    private final Map<String, Integer> disponibiliteIds = new HashMap<>();
+    private final Map<String, String>  slotStartTimes   = new HashMap<>(); // ✅ Nouveau
 
     @FXML
     public void initialize() {
-        disponibiliteBox.setCellFactory(list -> new ListCell<>() {
-            @Override
-            protected void updateItem(Disponibilite item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : formatDispo(item));
-            }
-        });
-        disponibiliteBox.setButtonCell(new ListCell<>() {
-            @Override
-            protected void updateItem(Disponibilite item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : formatDispo(item));
-            }
-        });
-
-        disponibiliteBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, selected) -> {
-            if (selected != null) {
-                vetIdField.setText(String.valueOf(selected.getId()));
-            } else {
-                vetIdField.clear();
-            }
-        });
-
+        vetLabel.setText("👨‍⚕️ Vétérinaire : " + SessionManager.getSelectedVetNom());
+        animalTypeBox.setItems(FXCollections.observableArrayList(
+                "🐶 Chien", "🐱 Chat", "🐦 Oiseau",
+                "🐹 Hamster", "🐰 Lapin", "🐍 Reptile", "🐾 Autre"
+        ));
         loadDisponibilites();
-
-        editing = EditState.rendezvousToEdit;
-        if (editing != null) {
-            titleLabel.setText("Modifier rendez-vous #" + editing.getId_rdv());
-            saveButton.setText("Mettre a jour");
-            fillForm(editing);
-        }
-    }
-
-    @FXML
-    private void onSave() {
-        try {
-            String status = ValidationUtils.requireMinLength(statusField.getText(), "status", 3);
-            if (status.length() > 30) {
-                throw new IllegalArgumentException("status doit contenir max 30 caracteres.");
-            }
-
-            String description = descriptionArea.getText() == null ? "" : descriptionArea.getText().trim();
-
-            int clientId = ValidationUtils.parsePositiveInt(clientIdField.getText(), "client_id");
-            int animalId = ValidationUtils.parsePositiveInt(animalIdField.getText(), "animal_id");
-
-            Disponibilite selectedDispo = disponibiliteBox.getValue();
-            if (selectedDispo == null) {
-                throw new IllegalArgumentException("disponibilite_id est obligatoire.");
-            }
-            int vetId = selectedDispo.getId();
-
-            //LocalDate appDate = ValidationUtils.requireDate(appDatePicker.getValue(), "app_date");
-            //LocalTime appTime = ValidationUtils.parseHourMinute(appTimeField.getText(), "app_time");
-
-            Rendezvous rdv = new Rendezvous(
-                    status,
-                    description,
-                    clientId,
-                    vetId,
-                    animalId,
-                    selectedDispo.getId_disponibilite()
-                   // appDate.toString(),
-                   // appTime.format(DateTimeFormatter.ofPattern("HH:mm"))
-            );
-
-            if (editing == null) {
-                serviceRdv.add(rdv);
-                showInfo("Rendez-vous ajoute.");
-                clearForm();
-            } else {
-                rdv.setId_rdv(editing.getId_rdv());
-                serviceRdv.update(rdv);
-                EditState.rendezvousToEdit = null;
-                showInfo("Rendez-vous mis a jour.");
-            }
-
-        } catch (Exception e) {
-            showError(e.getMessage());
-        }
-    }
-
-    @FXML
-    private void onGoList(javafx.event.ActionEvent event) {
-        EditState.rendezvousToEdit = null;
-        utils.ViewNavigator.goTo(event, "/RendezvousList.fxml", "Rendez-vous - Affichage");
-    }
-
-    @FXML
-    private void onGoHome(javafx.event.ActionEvent event) {
-        EditState.rendezvousToEdit = null;
-        utils.ViewNavigator.goTo(event, "/Home.fxml", "Gestion Veterinaire");
-    }
-
-    @FXML
-    private void onRefreshDisponibilites() {
-        loadDisponibilites();
-    }
-
-    private void fillForm(Rendezvous rdv) {
-        statusField.setText(rdv.getStatus());
-        descriptionArea.setText(rdv.getDescription());
-        clientIdField.setText(String.valueOf(rdv.getClient_id()));
-        animalIdField.setText(String.valueOf(rdv.getAnimal_id()));
-       // appTimeField.setText(rdv.getApp_time());
-
-      /*  try {
-            appDatePicker.setValue(LocalDate.parse(rdv.getApp_date()));
-        } catch (Exception e) {
-            appDatePicker.setValue(null);
-        }
-*/
-        Disponibilite matched = null;
-        for (Disponibilite d : disponibiliteBox.getItems()) {
-            if (d.getId_disponibilite() == rdv.getDisponibilite_id()) {
-                matched = d;
-                break;
-            }
-        }
-        disponibiliteBox.setValue(matched);
-        vetIdField.setText(String.valueOf(rdv.getVet_id()));
-    }
-
-    private void clearForm() {
-        statusField.clear();
-        descriptionArea.clear();
-        clientIdField.clear();
-        animalIdField.clear();
-        disponibiliteBox.setValue(null);
-        vetIdField.clear();
-        appDatePicker.setValue(null);
-        appTimeField.clear();
+        prefillPhone();
     }
 
     private void loadDisponibilites() {
         try {
-            disponibiliteBox.setItems(FXCollections.observableArrayList(serviceDispo.read()));
-        } catch (SQLException e) {
-            showError("Chargement disponibilites impossible: " + e.getMessage());
+            int vetId = SessionManager.getSelectedVetId();
+            List<Disponibilite> dispos = serviceDispo.readByVetId(vetId);
+            List<String> takenSlots = serviceRdv.getTakenSlots(vetId);
+
+            for (Disponibilite d : dispos) {
+                if (d.getStatut() == Disponibilite.Statut.VALABLE) {
+                    LocalDateTime start = d.getStarttime();
+                    LocalDateTime end   = d.getEndtime();
+
+                    while (!start.plusMinutes(30).isAfter(end)) {
+                        LocalDateTime slotEnd = start.plusMinutes(30);
+
+                        String slotStart = start.toLocalDate() + " " +
+                                start.toLocalTime().toString().substring(0, 5);
+                        if (!takenSlots.contains(slotStart)) {
+                            String label = "📅 " + start.toLocalDate() + "  " +
+                                    start.toLocalTime().toString().substring(0, 5) +
+                                    " → " + slotEnd.toLocalTime().toString().substring(0, 5);
+
+                            disponibiliteBox.getItems().add(label);
+                            disponibiliteIds.put(label, d.getId_disponibilite());
+                            slotStartTimes.put(label, slotStart);
+                        }
+
+                        start = slotEnd;
+                    }
+                }
+            }
+
+            if (disponibiliteBox.getItems().isEmpty()) {
+                disponibiliteBox.setPromptText("❌ Aucun créneau disponible");
+                disponibiliteBox.setDisable(true);
+            }
+
+        } catch (Exception e) {
+            errorLabel.setText("❌ Erreur disponibilités : " + e.getMessage());
         }
     }
 
-    private String formatDispo(Disponibilite d) {
-        return "#" + d.getId_disponibilite() + " | vet=" + d.getId() + " | " + d.getStarttime() + "-" + d.getEndtime()
-                + " | " + d.getStatut().name().toLowerCase();
+    private void prefillPhone() {
+        try {
+            Connection conn = MyDatabase.getInstance().getConnection();
+            PreparedStatement ps = conn.prepareStatement(
+                    "SELECT phone FROM user WHERE id = ?"
+            );
+            ps.setInt(1, SessionManager.getUserId());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next() && rs.getString("phone") != null) {
+                numField.setText(rs.getString("phone"));
+            }
+        } catch (Exception ignored) {}
     }
 
-    private void showError(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Erreur saisie");
-        alert.setHeaderText("Controle de saisie");
-        alert.setContentText(message);
-        alert.showAndWait();
+    @FXML
+    private void onSave(ActionEvent event) {
+        errorLabel.setText("");
+
+        if (disponibiliteBox.getValue() == null) {
+            errorLabel.setText("⚠️ Choisissez un créneau !");
+            return;
+        }
+        if (animalNomField.getText().trim().isEmpty()) {
+            errorLabel.setText("⚠️ Entrez le nom de votre animal !");
+            return;
+        }
+        if (animalTypeBox.getValue() == null) {
+            errorLabel.setText("⚠️ Choisissez le type d'animal !");
+            return;
+        }
+        if (numField.getText().trim().isEmpty()) {
+            errorLabel.setText("⚠️ Entrez votre numéro de téléphone !");
+            return;
+        }
+        if (descriptionArea.getText().trim().isEmpty()) {
+            errorLabel.setText("⚠️ Ajoutez une description !");
+            return;
+        }
+
+        try {
+            int dispoId  = disponibiliteIds.get(disponibiliteBox.getValue());
+            int clientId = SessionManager.getUserId();
+            int vetId    = SessionManager.getSelectedVetId();
+
+            final int num = Integer.parseInt(
+                    numField.getText().trim().replaceAll("[^0-9]", "")
+            );
+            String slotStart = slotStartTimes.get(disponibiliteBox.getValue());
+            if (serviceRdv.slotAlreadyTaken(vetId, dispoId, slotStart)) {
+                errorLabel.setText("⚠️ Ce créneau est déjà réservé !");
+                return;
+            }
+
+            String animalInfo = animalNomField.getText().trim() +
+                    " (" + animalTypeBox.getValue() + ")";
+
+            Rendezvous rdv = new Rendezvous();
+            rdv.setClient_id(clientId);
+            rdv.setVet_id(vetId);
+            rdv.setAnimal_id(0);
+            rdv.setDisponibilite_id(dispoId);
+            rdv.setSlotStart(slotStart);
+            rdv.setStatus("EN_ATTENTE");
+            rdv.setDescription("[🐾 " + animalInfo + "] [⏰ " + slotStart + "] " +
+                    descriptionArea.getText().trim());
+            rdv.setNum(num);
+
+            serviceRdv.add(rdv);
+
+
+            CompletableFuture.runAsync(() -> {
+                try {
+                    String vetEmail = serviceRdv.getVetEmail(vetId);
+                    String vetNom   = serviceRdv.getVetNom(vetId);
+                    emailService.notifyVetNewRdv(
+                            vetEmail, vetNom,
+                            String.valueOf(num),
+                            rdv.getDescription()
+                    );
+                } catch (Exception ignored) {}
+            });
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("✅ Succès");
+            alert.setHeaderText(null);
+            alert.setContentText("Votre rendez-vous a été envoyé !\nEn attente de confirmation. 😊");
+            alert.showAndWait();
+
+            ViewNavigator.goTo(event, "/DashboardClient.fxml", "Mon Espace");
+
+        } catch (Exception e) {
+            errorLabel.setText("❌ Erreur : " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
-    private void showInfo(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Succes");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+    @FXML
+    private void onRefreshDisponibilites(ActionEvent event) {
+        disponibiliteBox.getItems().clear();
+        disponibiliteIds.clear();
+        slotStartTimes.clear(); // ✅
+        loadDisponibilites();
+    }
+
+    @FXML
+    private void onGoHome(ActionEvent event) {
+        ViewNavigator.goTo(event, "/ListeVeterinaires.fxml", "Nos Vétérinaires");
     }
 }

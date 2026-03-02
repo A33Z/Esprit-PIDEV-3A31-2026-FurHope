@@ -3,9 +3,9 @@ package tests;
 import model.Disponibilite;
 import services.IService;
 import services.ServiceDisponibilite;
-import utils.MyDatabase;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 
 public class Main {
     public static void main(String[] args) {
@@ -13,12 +13,15 @@ public class Main {
         IService<Disponibilite> disponibiliteIService = new ServiceDisponibilite();
 
         try {
-            disponibiliteIService.add(new Disponibilite(1, "10:20","14:30", Disponibilite.Statut.VALABLE));
-            System.out.println("disponibilite ajoutée");
-        }catch (SQLException e){
+            // ✅ LocalDateTime au lieu de String
+            LocalDateTime start = LocalDateTime.of(2026, 2, 20, 10, 20);
+            LocalDateTime end   = LocalDateTime.of(2026, 2, 20, 14, 30);
 
-            System.out.println(e.getMessage());
+            disponibiliteIService.add(new Disponibilite(1, start, end, Disponibilite.Statut.VALABLE));
+            System.out.println("✅ Disponibilité ajoutée !");
+
+        } catch (SQLException e) {
+            System.out.println("❌ " + e.getMessage());
         }
-
     }
 }

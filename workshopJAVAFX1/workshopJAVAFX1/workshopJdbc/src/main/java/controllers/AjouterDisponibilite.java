@@ -8,7 +8,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import model.Disponibilite;
 import services.ServiceDisponibilite;
-
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -16,9 +17,6 @@ public class AjouterDisponibilite {
 
     @FXML
     private TextField vet_idTF;
-
-    @FXML
-    private TextField vet_nomTF; // ✅ Nouveau champ pour le nom du vétérinaire
 
     @FXML
     private TextField starttimeTF;
@@ -35,9 +33,11 @@ public class AjouterDisponibilite {
     void save(ActionEvent event) {
         try {
             int vetId = Integer.parseInt(vet_idTF.getText());
-            String vetNom = vet_nomTF.getText(); // ✅ Lecture du nom
-            String startTime = starttimeTF.getText();
-            String endTime = endtimeTF.getText();
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+            LocalDateTime startTime = LocalDateTime.parse(starttimeTF.getText(), formatter);
+            LocalDateTime endTime = LocalDateTime.parse(endtimeTF.getText(), formatter);
 
             Disponibilite.Statut statut;
             if (statutTF.getText().equalsIgnoreCase("VALABLE")) {
@@ -46,9 +46,9 @@ public class AjouterDisponibilite {
                 statut = Disponibilite.Statut.NONVALABLE;
             }
 
-            // ✅ Ajout du nom dans l'objet Disponibilite
+
             Disponibilite dispo = new Disponibilite(vetId, startTime, endTime, statut);
-            dispo.setVetNom(vetNom);
+
 
             ps.add(dispo);
 

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.MesRendezvousController"
+      spacing="0"
+      style="-fx-background-color: #fff7ed;">
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="16"
+          style="-fx-background-color: #eab308; -fx-padding: 18 28;">
+        <Label text="📋 Mes Rendez-vous"
+               style="-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        <HBox HBox.hgrow="ALWAYS"/>
+        <Button text="🏠 Retour" onAction="#goBack"
+                style="-fx-background-color: white; -fx-text-fill: #eab308;
+                       -fx-font-weight: bold; -fx-background-radius: 8;
+                       -fx-cursor: hand; -fx-padding: 7 18;"/>
+    </HBox>
+
+    <!-- Contenu scrollable avec cartes -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                style="-fx-background-color: #fff7ed; -fx-background: #fff7ed;
+                       -fx-border-color: transparent;">
+        <VBox fx:id="cardsContainer" spacing="16"
+              style="-fx-padding: 24; -fx-background-color: #fff7ed;">
+            <Label text="Chargement..."
+                   style="-fx-text-fill: #9ca3af; -fx-font-size: 14;"/>
+        </VBox>
+    </ScrollPane>
+
+</VBox>

@@ -38,16 +38,14 @@ public class DisponibiliteListController {
                             + "-fx-background-radius: 10; "
                             + "-fx-padding: 10;");
 
-                    // Ligne 1 : nom du vétérinaire ou indication
-                    Label vetLabel = new Label("👨‍⚕️ Vétérinaire : " + item.getVetNom());
-                    vetLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16; -fx-text-fill: #064e3b;");
+
 
                     // Ligne 2 : horaire et statut
                     Label horaireLabel = new Label("🕒 " + item.getStarttime() + " → " + item.getEndtime()
                             + "   •   Statut : " + item.getStatut().name().toLowerCase());
                     horaireLabel.setStyle("-fx-font-size: 14; -fx-text-fill: #166534;");
 
-                    box.getChildren().addAll(vetLabel, horaireLabel);
+                    box.getChildren().addAll( horaireLabel);
 
                     // Ombre esthétique
                     box.setEffect(new DropShadow(2, Color.LIGHTGREEN));
@@ -63,7 +61,6 @@ public class DisponibiliteListController {
                 detailsLabel.setText("Sélectionnez une disponibilité pour voir les détails, modifier ou supprimer.");
             } else {
                 detailsLabel.setText(
-                        "👨‍⚕️ " + selected.getVetNom() + "\n" +
                                 "🕒 De " + selected.getStarttime() + " à " + selected.getEndtime() + "\n" +
                                 "📅 Statut : " + selected.getStatut().name().toLowerCase()
                 );

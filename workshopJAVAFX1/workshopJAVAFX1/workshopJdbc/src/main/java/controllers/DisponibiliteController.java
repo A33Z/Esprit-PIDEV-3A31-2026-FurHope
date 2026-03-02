@@ -24,8 +24,6 @@ public class DisponibiliteController {
     @FXML
     private TableColumn<Disponibilite, Integer> colVetId;
     @FXML
-    private TableColumn<Disponibilite, String> colVetNom;
-    @FXML
     private TableColumn<Disponibilite, String> colStart;
     @FXML
     private TableColumn<Disponibilite, String> colEnd;
@@ -34,8 +32,7 @@ public class DisponibiliteController {
 
     @FXML
     private TextField vetIdField;
-    @FXML
-    private TextField vetNomField;
+
     @FXML
     private DatePicker dateField;
     @FXML
@@ -52,14 +49,19 @@ public class DisponibiliteController {
     public void initialize() {
         // Initialisation des statuts
         statutBox.setItems(FXCollections.observableArrayList(Disponibilite.Statut.values()));
-
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         // Lier les colonnes du tableau
         colDispoId.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getId_disponibilite()).asObject());
         colVetId.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getId()).asObject());
-        colVetNom.setCellValueFactory(data -> new SimpleStringProperty(
-                data.getValue().getVetNom() == null ? "" : data.getValue().getVetNom()));
-        colStart.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getStarttime()));
-        colEnd.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getEndtime()));
+        colStart.setCellValueFactory(data ->
+                new SimpleStringProperty(
+                        data.getValue().getStarttime().format(formatter)
+                )
+        );        colEnd.setCellValueFactory(data ->
+                new SimpleStringProperty(
+                        data.getValue().getEndtime().format(formatter)
+                )
+        );
         colStatut.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getStatut().name()));
 
         // Quand on clique sur une ligne du tableau
@@ -72,7 +74,6 @@ public class DisponibiliteController {
         refreshTable();
     }
 
-    // ➕ Ajouter une disponibilité
     @FXML
     private void onCreate() {
         try {
@@ -135,7 +136,6 @@ public class DisponibiliteController {
     // 🔍 Lecture des données saisies dans le formulaire
     private Disponibilite readFromForm() {
         int vetId = ValidationUtils.parsePositiveInt(vetIdField.getText(), "Vet ID");
-        String vetNom = ValidationUtils.requireText(vetNomField.getText(), "Nom du vétérinaire");
         LocalDate date = ValidationUtils.requireDate(dateField.getValue(), "Date");
         LocalTime startTime = ValidationUtils.parseHourMinute(startTimeField.getText(), "Heure début");
         LocalTime endTime = ValidationUtils.parseHourMinute(endTimeField.getText(), "Heure fin");
@@ -151,22 +151,16 @@ public class DisponibiliteController {
 
         LocalDateTime startDateTime = LocalDateTime.of(date, startTime);
         LocalDateTime endDateTime = LocalDateTime.of(date, endTime);
-
-        // ✅ Création de l’objet Disponibilite avec vetNom
-        Disponibilite disponibilite = new Disponibilite(vetId, startDateTime.format(DATETIME_FORMAT), endDateTime.format(DATETIME_FORMAT), statut);
-        disponibilite.setVetNom(vetNom);
+        Disponibilite disponibilite = new Disponibilite(vetId, startDateTime, endDateTime, statut);
         return disponibilite;
     }
-
-    // Remplir le formulaire lors d'une sélection
     private void fillForm(Disponibilite disponibilite) {
         vetIdField.setText(String.valueOf(disponibilite.getId()));
-        vetNomField.setText(disponibilite.getVetNom() == null ? "" : disponibilite.getVetNom());
         statutBox.setValue(disponibilite.getStatut());
 
         try {
-            LocalDateTime start = LocalDateTime.parse(disponibilite.getStarttime(), DATETIME_FORMAT);
-            LocalDateTime end = LocalDateTime.parse(disponibilite.getEndtime(), DATETIME_FORMAT);
+            LocalDateTime start = disponibilite.getStarttime();
+            LocalDateTime end = disponibilite.getEndtime();
             dateField.setValue(start.toLocalDate());
             startTimeField.setText(start.toLocalTime().toString().substring(0, 5));
             endTimeField.setText(end.toLocalTime().toString().substring(0, 5));
@@ -181,7 +175,6 @@ public class DisponibiliteController {
     private void clearForm() {
         disponibiliteTable.getSelectionModel().clearSelection();
         vetIdField.clear();
-        vetNomField.clear();
         dateField.setValue(null);
         startTimeField.clear();
         endTimeField.clear();

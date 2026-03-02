@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.StatsDashboardController"
+      spacing="0" style="-fx-background-color: #0f172a;">
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="16"
+          style="-fx-background-color: #1e293b; -fx-padding: 16 24;
+                 -fx-border-color: #334155; -fx-border-width: 0 0 1 0;">
+        <Label text="🐾 FurHope Analytics"
+               style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #f97316;"/>
+        <Label fx:id="welcomeLabel"
+               style="-fx-font-size: 13; -fx-text-fill: #94a3b8;"/>
+        <HBox HBox.hgrow="ALWAYS"/>
+        <Button text="📅 Disponibilités" onAction="#goDisponibilites"
+                style="-fx-background-color: #334155; -fx-text-fill: #e2e8f0;
+                       -fx-font-weight: bold; -fx-background-radius: 8;
+                       -fx-cursor: hand; -fx-padding: 8 16;"/>
+        <Button text="📋 Rendez-vous" onAction="#goRendezvous"
+                style="-fx-background-color: #334155; -fx-text-fill: #e2e8f0;
+                       -fx-font-weight: bold; -fx-background-radius: 8;
+                       -fx-cursor: hand; -fx-padding: 8 16;"/>
+        <Button text="🚪 Déconnexion" onAction="#logout"
+                style="-fx-background-color: #ef4444; -fx-text-fill: white;
+                       -fx-font-weight: bold; -fx-background-radius: 8;
+                       -fx-cursor: hand; -fx-padding: 8 16;"/>
+    </HBox>
+
+    <!-- WebView Dashboard -->
+    <WebView fx:id="webView" VBox.vgrow="ALWAYS"/>
+
+</VBox>

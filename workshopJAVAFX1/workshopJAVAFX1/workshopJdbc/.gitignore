@@ -36,4 +36,5 @@ build/
 
 ### Mac OS ###
 .DS_Store
-echo "src/main/resources/config.properties" >> .gitignore
+# === Configuration locale / Clés API ===
+src/main/resources/config.properties

@@ -3,29 +3,14 @@ package services;
 import com.google.gson.*;
 import okhttp3.*;
 import java.io.IOException;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import utils.Config;
 
 public class AnthropicChatService {
 
-    private static final String API_URL = "https://api.groq.com/openai/v1/chat/completions";
-    private static final String MODEL = "llama-3.3-70b-versatile";
-    private static final String API_KEY;  // ✅ déclaration séparée
-
-    // ✅ bloc static pour initialiser la clé
-    static {
-        String key;
-        try {
-            Properties props = new Properties();
-            props.load(AnthropicChatService.class
-                    .getResourceAsStream("/config.properties"));
-            key = props.getProperty("groq.api.key");
-        } catch (Exception e) {
-            key = "";
-            System.err.println("❌ config.properties introuvable !");
-        }
-        API_KEY = key;
-    }
+    private static final String API_KEY = Config.get("GROQ_KEY");
+    private static final String API_URL = Config.get("GROQ_URL");
+    private static final String MODEL   = Config.get("GROQ_MODEL");
 
     private final OkHttpClient httpClient = new OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
@@ -45,6 +30,7 @@ public class AnthropicChatService {
                     "Rappelle toujours de consulter un médecin ou vétérinaire pour un diagnostic officiel.";
 
     public String sendMessage(String userMessage) throws IOException {
+
 
         JsonObject systemMsg = new JsonObject();
         systemMsg.addProperty("role", "system");
@@ -82,6 +68,8 @@ public class AnthropicChatService {
                 throw new IOException("Erreur Groq " + response.code() + ": " + errorBody);
             }
             String responseBody = response.body().string();
+            System.out.println("Réponse Groq : " + responseBody);
+
             JsonObject json = gson.fromJson(responseBody, JsonObject.class);
             return json.getAsJsonArray("choices")
                     .get(0).getAsJsonObject()

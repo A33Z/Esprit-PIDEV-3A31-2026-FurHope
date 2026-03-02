@@ -7,23 +7,22 @@ import java.sql.Statement;
 
 public class MyDatabase {
 
-    final String URL = "jdbc:mysql://localhost:3306/furhope2?serverTimezone=UTC";
+    // ✅ URL corrigée avec zeroDateTimeBehavior
+    final String URL = "jdbc:mysql://localhost:3306/furhope2?serverTimezone=UTC&zeroDateTimeBehavior=CONVERT_TO_NULL";
     final String SERVER_URL = "jdbc:mysql://localhost:3306/?serverTimezone=UTC";
-    final String DB_NAME = "pidev";
+    final String DB_NAME = "furhope2"; // ✅ même nom que l'URL
 
     final String USER = "root";
     final String PASSWORD = "";
 
-    private Connection connection ;
+    private Connection connection;
     private String connectionError;
 
+    private static MyDatabase instance;
 
-    private  static MyDatabase instance ;
-
-   private MyDatabase(){
-
+    private MyDatabase() {
         try {
-            connection = DriverManager.getConnection(URL,USER,PASSWORD);
+            connection = DriverManager.getConnection(URL, USER, PASSWORD);
             initializeSchema(connection);
             System.out.println("Connected");
         } catch (SQLException e) {
@@ -45,13 +44,11 @@ public class MyDatabase {
         }
     }
 
-
-  public static MyDatabase  getInstance(){
-       if(instance == null)
-        instance =   new MyDatabase();
-
-       return  instance ;
-   }
+    public static MyDatabase getInstance() {
+        if (instance == null)
+            instance = new MyDatabase();
+        return instance;
+    }
 
     public Connection getConnection() {
         return connection;
@@ -63,7 +60,6 @@ public class MyDatabase {
             if (connectionError != null && !connectionError.isBlank()) {
                 message += " Cause: " + connectionError;
             }
-            message += " Verifiez que la base 'pidev' existe et que MySQL est demarre.";
             throw new SQLException(message);
         }
         return connection;
@@ -82,12 +78,14 @@ public class MyDatabase {
 
     private void initializeSchema(Connection conn) throws SQLException {
         try (Statement statement = conn.createStatement()) {
+
+            // ✅ DATETIME au lieu de VARCHAR pour starttime/endtime
             statement.executeUpdate(
                     "CREATE TABLE IF NOT EXISTS disponibilite (" +
                             "id_disponibilite INT PRIMARY KEY AUTO_INCREMENT, " +
-                            "vet_id INT NOT NULL, " +
-                            "starttime VARCHAR(50) NOT NULL, " +
-                            "endtime VARCHAR(50) NOT NULL, " +
+                            "id INT NOT NULL, " +           // ✅ id au lieu de vet_id
+                            "starttime DATETIME NOT NULL, " + // ✅ DATETIME
+                            "endtime DATETIME NOT NULL, " +   // ✅ DATETIME
                             "statut VARCHAR(20) NOT NULL" +
                             ")"
             );
@@ -101,9 +99,8 @@ public class MyDatabase {
                             "vet_id INT NOT NULL, " +
                             "animal_id INT NOT NULL, " +
                             "disponibilite_id INT NOT NULL, " +
-                            "app_date VARCHAR(20) NOT NULL, " +
-                            "app_time VARCHAR(10) NOT NULL, " +
-                            "CONSTRAINT fk_rdv_dispo FOREIGN KEY (disponibilite_id) REFERENCES disponibilite(id_disponibilite) ON DELETE RESTRICT" +
+                            "CONSTRAINT fk_rdv_dispo FOREIGN KEY (disponibilite_id) " +
+                            "REFERENCES disponibilite(id_disponibilite) ON DELETE RESTRICT" +
                             ")"
             );
         }
