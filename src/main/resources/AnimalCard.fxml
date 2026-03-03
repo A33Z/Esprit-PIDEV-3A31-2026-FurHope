@@ -1,47 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <?import javafx.scene.image.ImageView?>
+<?import javafx.geometry.Insets?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+<?import javafx.scene.effect.DropShadow?>
+<AnchorPane xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.esprit.controllers.AnimalCard"
-            prefHeight="140" prefWidth="1200"
+            prefHeight="160" prefWidth="1200"
             maxWidth="1200"
+            style="-fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 10; -fx-background-color: #ffffff; -fx-background-radius: 10;"
             styleClass="card">
 
     <children>
 
-        <HBox spacing="20" layoutX="20" layoutY="20" AnchorPane.leftAnchor="20" AnchorPane.topAnchor="20" AnchorPane.rightAnchor="20">
+        <!-- Main HBox Container -->
+        <HBox spacing="20"
+              AnchorPane.leftAnchor="20"
+              AnchorPane.topAnchor="20"
+              AnchorPane.rightAnchor="80"
+              AnchorPane.bottomAnchor="20"
+              alignment="CENTER_LEFT">
+
+            <!-- Animal Image -->
             <ImageView fx:id="animalImage"
-                       fitHeight="100"
-                       fitWidth="100"/>
+                       fitHeight="120"
+                       fitWidth="120"
+                       preserveRatio="true"
+                       style="-fx-border-color: #bdc3c7; -fx-border-width: 2; -fx-border-radius: 8;"/>
 
-            <VBox spacing="8" AnchorPane.leftAnchor="140">
+            <!-- Animal Info VBox -->
+            <VBox spacing="10" HBox.hgrow="ALWAYS">
+
+                <!-- Name -->
                 <Label fx:id="nameLabel"
-                       styleClass="card-title"/>
-                <Label fx:id="speciesLabel"
-                       styleClass="card-subtitle"/>
-                <Label fx:id="ageLabel"
-                       styleClass="card-subtitle"/>
+                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"
+                       text="Nom de l'animal"/>
 
+                <!-- Species & Age HBox -->
+                <HBox spacing="20">
+                    <Label fx:id="speciesLabel"
+                           style="-fx-font-size: 13px; -fx-text-fill: #34495e;"
+                           text="Espèce"/>
+                    <Separator orientation="VERTICAL"/>
+                    <Label fx:id="ageLabel"
+                           style="-fx-font-size: 13px; -fx-text-fill: #34495e;"
+                           text="Âge"/>
+                </HBox>
+
+                <!-- Status Badge -->
+                <HBox spacing="10">
+                    <Label text="Statut:"
+                           style="-fx-font-weight: bold; -fx-text-fill: #7f8c8d;"/>
+                    <Label fx:id="statusLabel"
+                           style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #27ae60; -fx-padding: 5 12; -fx-background-color: #d5f4e6; -fx-border-radius: 15; -fx-background-radius: 15;"
+                           text="Disponible"/>
+                </HBox>
             </VBox>
         </HBox>
 
-        <!-- Floating Heart Button -->
+        <!-- Favorite Button (Heart) -->
         <Button fx:id="favoriteButton"
                 onAction="#handleFavoriteButton"
-                text="♡"
-                style="-fx-font-size: 24px; -fx-text-fill: gray; -fx-background-color: transparent;"
-                styleClass="favorite-button"
-                AnchorPane.topAnchor="10"
-                AnchorPane.rightAnchor="10"
+                text="🤍"
+                style="-fx-font-size: 28px; -fx-background-color: transparent; -fx-padding: 0; -fx-focus-traversable: false; -fx-cursor: hand;"
+                AnchorPane.topAnchor="15"
+                AnchorPane.rightAnchor="20"
                 prefWidth="50"
-                prefHeight="50"/>
-</children>
+                prefHeight="50">
+            <tooltip>
+                <Tooltip text="Ajouter aux favoris"/>
+            </tooltip>
+        </Button>
+
+
+
+    </children>
+
 </AnchorPane>

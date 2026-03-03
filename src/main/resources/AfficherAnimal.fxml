@@ -15,58 +15,74 @@
 
     <AnchorPane>
 
-
+        <!-- Header -->
+        <HBox layoutY="0" AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
+              spacing="20" style="-fx-padding: 15 20; -fx-background-color: #2c3e50; -fx-alignment: center-left;">
+            <Label text="🐾 Animaux disponibles pour adoption"
+                   style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="statusLabel" text="✓ Chargement..."
+                   style="-fx-text-fill: #ecf0f1; -fx-font-size: 12px;"/>
+        </HBox>
 
         <!-- ListView -->
         <ListView fx:id="listview"
                   layoutY="70"
                   AnchorPane.topAnchor="70.0"
                   AnchorPane.leftAnchor="20.0"
-                  AnchorPane.rightAnchor="20.0"
-                  AnchorPane.bottomAnchor="20.0"/>
+                  AnchorPane.rightAnchor="280.0"
+                  AnchorPane.bottomAnchor="20.0"
+                  style="-fx-control-inner-background: #ecf0f1;"/>
+
+        <!-- Sidebar Buttons -->
+        <VBox AnchorPane.rightAnchor="20.0"
+              AnchorPane.topAnchor="90.0"
+              AnchorPane.bottomAnchor="20.0"
+              spacing="15"
+              alignment="TOP_CENTER"
+              style="-fx-padding: 20; -fx-background-color: #ffffff; -fx-background-radius: 15; -fx-border-radius: 15; -fx-border-color: #dddddd; -fx-border-width: 1;"
+              prefWidth="240">
+
+            <Label text="🎯 Menu"
+                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+
+            <Separator/>
+
+            <Button fx:id="btnAddAnimal"
+                    text="➕ Ajouter animal"
+                    style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 12 20; -fx-background-radius: 8;"
+                    prefWidth="Infinity" prefHeight="45"/>
+
+            <Button fx:id="btnFavorite"
+                    text="❤️ Mes favoris"
+                    onAction="#openFavoriteList"
+                    style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 12 20; -fx-background-radius: 8;"
+                    prefWidth="Infinity" prefHeight="45"/>
+
+            <Button fx:id="btnMyRequests"
+                    text="📋 Mes demandes"
+                    onAction="#openMessageRequests"
+                    style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 12 20; -fx-background-radius: 8;"
+                    prefWidth="Infinity" prefHeight="45"/>
+
+            <Button fx:id="btnRequests"
+                    text="📧 Demandes reçues"
+                    onAction="#openRequests"
+                    style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 12 20; -fx-background-radius: 8;"
+                    prefWidth="Infinity" prefHeight="45"/>
+
+            <Button fx:id="btnMyAnimals"
+                    text="🏠 Mes animaux"
+                    onAction="#openMyAnimals"
+                    style="-fx-background-color: #9b59b6; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 12 20; -fx-background-radius: 8;"
+                    prefWidth="Infinity" prefHeight="45"/>
+
+            <Button text="🚪 Logout" onAction="#logout" style="-fx-background-color: #9b59b6; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 12 20; -fx-background-radius: 8;"
+                    prefWidth="Infinity" prefHeight="45" />
 
 
-
-        <!-- Right buttons -->
-        <StackPane AnchorPane.rightAnchor="20.0"
-                   AnchorPane.topAnchor="0.0"
-                   AnchorPane.bottomAnchor="0.0">
-
-            <VBox alignment="CENTER"
-                  spacing="20"
-                  prefHeight="400"
-                  maxHeight="400"
-                  prefWidth="250"
-                  style="-fx-padding:30; -fx-background-color:#ffffff; -fx-background-radius:15; -fx-border-radius:15; -fx-border-color:#dddddd;">
-
-                <Button fx:id="btnAddAnimal"
-                        text="Ajouter Animal"
-                        style="-fx-background-color: linear-gradient(to right, #CBB29D, #E2C5B2); -fx-text-fill: #4A3828; -fx-font-weight: bold; -fx-font-size: 14px; -fx-background-radius: 16;" />
-
-                <Button fx:id="btnRequests"
-                        text="Requests"
-                        onAction="#openRequests"
-                        style="-fx-background-color: linear-gradient(to right, #C0A689, #D8BCA2); -fx-text-fill: #4A3828; -fx-font-weight: bold; -fx-font-size: 14px; -fx-background-radius: 16;" />
-
-                <Button fx:id="btnFavorite"
-                        text="Favorite List"
-                        onAction="#openFavoriteList"
-                        style="-fx-background-color: linear-gradient(to right, #D4BFAA, #E8D3C0); -fx-text-fill: #4A3828; -fx-font-weight: bold; -fx-font-size: 14px; -fx-background-radius: 16;" />
-
-                <Button fx:id="btnMyRequests"
-                        text="My Requests"
-                        onAction="#openMessageRequests"
-                        style="-fx-background-color: linear-gradient(to right, #E2C5B2, #F0D9C9); -fx-text-fill: #4A3828; -fx-font-weight: bold; -fx-font-size: 14px; -fx-background-radius: 16;" />
-
-                <Button fx:id="btnMyAnimals"
-                        text="My Animals"
-                        onAction="#openMyAnimals"
-                        style="-fx-background-color: linear-gradient(to right, #BFA88A, #D7B89D); -fx-text-fill: #4A3828; -fx-font-weight: bold; -fx-font-size: 14px; -fx-background-radius: 16;" />
-            </VBox>
-
-        </StackPane>
+        </VBox>
 
     </AnchorPane>
-
 
 </StackPane>

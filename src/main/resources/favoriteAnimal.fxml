@@ -1,30 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+<AnchorPane xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.esprit.controllers.favoritecontroller"
-            prefHeight="600" prefWidth="800"
+            prefHeight="700" prefWidth="1000"
             styleClass="root"
-            stylesheets="style.css">
+            stylesheets="@style.css">
 
-    <children>
-        <ScrollPane fitToWidth="true" fitToHeight="true"
-                    AnchorPane.topAnchor="0"
-                    AnchorPane.bottomAnchor="0"
-                    AnchorPane.leftAnchor="0"
-                    AnchorPane.rightAnchor="0"
-                    style="-fx-background-color: transparent;">
+    <!-- Header -->
+    <VBox AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
+          spacing="15" style="-fx-padding: 20; -fx-background-color: #e74c3c;">
 
-            <content>
-                <GridPane fx:id="favoritesGrid" hgap="15" vgap="15" styleClass="grid-container">
-                    <padding>
-                        <Insets top="15" right="15" bottom="15" left="15"/>
-                    </padding>
+        <HBox spacing="15" alignment="CENTER_LEFT">
+
+            <!-- Back Button -->
+            <Button fx:id="backButton"
+                   text="← Retour"
+                   onMouseClicked="#handleBack"
+                   style="-fx-font-size: 28px; -fx-cursor: hand; -fx-text-fill: white;"/>
+
+            <!-- Title -->
+            <Label text="❤️ Mes animaux favoris"
+                   style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+
+            <!-- Spacer -->
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <!-- Stats Button -->
+            <Button text="📊 Statistiques"
+                    onAction="#showStats"
+                    style="-fx-font-size: 12px; -fx-padding: 8 15; -fx-background-color: #c0392b; -fx-text-fill: white; -fx-border-radius: 5;"/>
+
+            <!-- Clear Button -->
+            <Button text="🗑️ Supprimer tout"
+                    onAction="#clearAllFavorites"
+                    style="-fx-font-size: 12px; -fx-padding: 8 15; -fx-background-color: #a93226; -fx-text-fill: white; -fx-border-radius: 5;"/>
+        </HBox>
+    </VBox>
+
+    <!-- Content ScrollPane -->
+    <ScrollPane fitToWidth="true" fitToHeight="true"
+                AnchorPane.topAnchor="100"
+                AnchorPane.bottomAnchor="0"
+                AnchorPane.leftAnchor="0"
+                AnchorPane.rightAnchor="0"
+                style="-fx-background-color: #ecf0f1;">
+
+        <content>
+            <VBox spacing="20" style="-fx-padding: 20;">
+
+                <!-- Empty Message Label -->
+                <Label fx:id="emptyLabel"
+                       text="❤️ Aucun animal favori pour le moment."
+                       textAlignment="CENTER"
+                       wrapText="true"
+                       visible="false"
+                       style="-fx-font-size: 16px; -fx-text-fill: #7f8c8d; -fx-padding: 40;"/>
+
+                <!-- Favorites Grid (2 columns) -->
+                <GridPane fx:id="favoritesGrid"
+                          hgap="20" vgap="20"
+                          style="-fx-padding: 10;">
+                    <columnConstraints>
+                        <ColumnConstraints prefWidth="500" hgrow="SOMETIMES"/>
+                        <ColumnConstraints prefWidth="500" hgrow="SOMETIMES"/>
+                    </columnConstraints>
                 </GridPane>
-            </content>
-        </ScrollPane>
-    </children>
+            </VBox>
+        </content>
+    </ScrollPane>
+
 </AnchorPane>

@@ -35,15 +35,17 @@ public class login {
             ps.setString(2, password);
 
             ResultSet rs = ps.executeQuery();
+
+
             if (rs.next()) {
                 // ✅ Stocker les infos dans SessionManager
                 Session.setUserId(rs.getInt("id"));
                 Session.setUserName(rs.getString("name") );
                 Session.setUserRole(rs.getString("role"));
-                // tu peux ajouter email, phone, etc. si besoin
 
                 // Redirection vers AfficherAnimal (tous les animaux)
                 ViewNavigator.goTo(event, "/AfficherAnimal.fxml");
+
             } else {
                 errorLabel.setText("❌ Email ou mot de passe incorrect !");
             }

@@ -1,5 +1,6 @@
 package com.esprit.entities;
 
+
 public class adoptionRequest {
 
     public enum status {
@@ -91,6 +92,11 @@ public class adoptionRequest {
 
     public animal getAnimal() { return animal; }
     public void setAnimal(animal animal) { this.animal = animal; }
+
+    private User Client; // nouvel attribut
+
+    public User getClient() { return Client; }
+    public void setAnimal(User User) { this.Client = User; }
 
     @Override
     public String toString() {

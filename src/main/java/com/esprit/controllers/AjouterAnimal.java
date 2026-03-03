@@ -1,6 +1,7 @@
 package com.esprit.controllers;
 
 import com.esprit.entities.User;
+import com.esprit.Services.AutoRecognitionService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DialogPane;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
@@ -29,49 +31,91 @@ import java.sql.SQLException;
 
 public class AjouterAnimal {
 
-    @FXML
-    private TextField age;
-
-    @FXML
-    private TextField breed;
-
-    @FXML
-    private TextField description;
-
-    @FXML
-    private ComboBox<String> gender;
-
-    @FXML
-    private TextField name;
-
-    @FXML
-    private TextField species;
-
+    @FXML private TextField age;
+    @FXML private TextField breed;
+    @FXML private TextField description;
+    @FXML private ComboBox<String> gender;
+    @FXML private TextField name;
+    @FXML private TextField species;
+    @FXML private ImageView imagePreview;
+    @FXML private Label confidenceLabel;
+    @FXML private Label imagePathLabel;
 
     private User currentUser;
-
-
-
-    @FXML
-    private ImageView imagePreview;
-    private File selectedFile; 
+    private File selectedFile;
     private String image;
-   // private String imagePath;
-    animalServices service = new animalServices();
-
+    private AutoRecognitionService.AnimalRecognitionResult lastRecognitionResult;
+    private animalServices service = new animalServices();
 
     @FXML
     public void initialize() {
-
         gender.getItems().addAll("MALE", "FEMALE");
-
-
+        confidenceLabel.setText("");
     }
 
+    /**
+     * 📸 Sélectionner une image
+     */
+    @FXML
+    void chooseimage(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choisir une image");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp")
+        );
+
+        selectedFile = fileChooser.showOpenDialog(null);
+
+        if (selectedFile != null) {
+            imagePathLabel.setText("✓ " + selectedFile.getName());
+            Image img = new Image(selectedFile.toURI().toString());
+            imagePreview.setImage(img);
+        }
+    }
+
+    /**
+     * 🤖 RECONNAISSANCE AUTOMATIQUE - Analyze l'image et remplit les champs
+     */
+    @FXML
+    void autoRecognize(ActionEvent event) {
+        if (selectedFile == null) {
+            showAlert("⚠️ Veuillez d'abord sélectionner une image", Alert.AlertType.WARNING);
+            return;
+        }
+
+        // Analyser l'image
+        lastRecognitionResult = AutoRecognitionService.analyzeImage(selectedFile);
+
+        // Remplir les champs
+        species.setText(lastRecognitionResult.getSpecies());
+        breed.setText(lastRecognitionResult.getBreed());
+
+        // Afficher la confiance avec couleur
+        int confidencePercent = (int) (lastRecognitionResult.getConfidence() * 100);
+        confidenceLabel.setText(String.format("✓ Confiance : %d%%", confidencePercent));
+
+        if (confidencePercent >= 85) {
+            confidenceLabel.setStyle("-fx-text-fill: #27ae60; -fx-font-weight: bold; -fx-font-size: 12px;");
+        } else if (confidencePercent >= 70) {
+            confidenceLabel.setStyle("-fx-text-fill: #f39c12; -fx-font-weight: bold; -fx-font-size: 12px;");
+        } else {
+            confidenceLabel.setStyle("-fx-text-fill: #e74c3c; -fx-font-weight: bold; -fx-font-size: 12px;");
+        }
+
+        showAlert(
+                "✓ Reconnaissance réussie\n\n" + lastRecognitionResult.toString() +
+                        "\n\nVérifiez et complétez avant de valider.",
+                Alert.AlertType.INFORMATION
+        );
+    }
+
+    /**
+     * 💾 Sauvegarder l'animal
+     */
     @FXML
     void save(ActionEvent event) {
         try {
-            // 1️⃣ Trim et récupérer les valeurs
+            // Récupérer et valider
             String nameText = name.getText().trim();
             String speciesText = species.getText().trim();
             String breedText = breed.getText().trim();
@@ -79,35 +123,21 @@ public class AjouterAnimal {
             String descriptionText = description.getText().trim();
             Object genderValue = gender.getValue();
 
-
-
-            // 2️⃣ Contrôle des champs vides
             if (nameText.isEmpty() || speciesText.isEmpty() || breedText.isEmpty() ||
-                    ageText.isEmpty() || descriptionText.isEmpty() ||
-                    genderValue == null ) {
-
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Champs manquants ⚠️");
-                alert.setHeaderText("Attention !");
-                alert.setContentText("Tous les champs doivent être remplis avant d'ajouter un animal.");
-                alert.showAndWait();
-                return; // stop la méthode si un champ est vide
+                    ageText.isEmpty() || descriptionText.isEmpty() || genderValue == null) {
+                showAlert("Tous les champs doivent être remplis ⚠️", Alert.AlertType.WARNING);
+                return;
             }
 
-            // 3️⃣ Vérifier que l’âge est un nombre
             int ageValue;
             try {
                 ageValue = Integer.parseInt(ageText);
             } catch (NumberFormatException e) {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Entrée invalide ⚠️");
-                alert.setHeaderText("Oops !");
-                alert.setContentText("L'âge doit être un nombre entier.");
-                alert.showAndWait();
+                showAlert("L'âge doit être un nombre entier ⚠️", Alert.AlertType.WARNING);
                 return;
             }
 
-            // 4️⃣ Gestion de l’image
+            // Gestion de l'image
             if (selectedFile != null) {
                 String fileName = System.currentTimeMillis() + "_" + selectedFile.getName();
                 try {
@@ -115,21 +145,17 @@ public class AjouterAnimal {
                     Files.createDirectories(dir);
                     Path destination = dir.resolve(fileName);
                     Files.copy(selectedFile.toPath(), destination, StandardCopyOption.REPLACE_EXISTING);
-                    image = fileName; // sauvegarder seulement le nom
+                    image = fileName;
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Erreur image ❌");
-                    alert.setHeaderText("Impossible de copier l'image.");
-                    alert.setContentText(e.getMessage());
-                    alert.showAndWait();
+                    showAlert("Erreur lors de la sauvegarde de l'image ❌", Alert.AlertType.ERROR);
                     return;
                 }
             }
 
             int ownerId = com.esprit.utils.Session.getUserId();
 
-            // 5️⃣ Ajouter l’animal dans la base
+            // Créer l'animal
             animal newAnimal = new animal(
                     nameText,
                     speciesText,
@@ -137,69 +163,32 @@ public class AjouterAnimal {
                     ageValue,
                     animal.gender.valueOf(genderValue.toString()),
                     descriptionText,
-                    animal.status.AVAILABLE,
+                    animal.status.AVAILABLE,  // ✅ Status AVAILABLE par défaut
                     image,
                     ownerId
-
             );
+
             service.ajouter(newAnimal);
 
-            // 6️⃣ Notification créative succès
+            // Succès
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Animal ajouté 🐾");
+            alert.setTitle("🐾 Animal ajouté avec succès !");
             alert.setHeaderText("Félicitations ! 🎉");
-            alert.setContentText("L'animal a été ajouté avec succès.\n" +
-                    "Il est prêt à rejoindre sa nouvelle famille 🐶💖");
-
+            alert.setContentText(nameText + " est prêt à trouver sa nouvelle famille !");
             DialogPane dialogPane = alert.getDialogPane();
             dialogPane.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
-            dialogPane.getStyleClass().add("custom-alert");
             alert.showAndWait();
 
-            // 7️⃣ Charger page affichage
+            // Retourner à la liste
             Parent root = FXMLLoader.load(getClass().getResource("/AfficherAnimal.fxml"));
             name.getScene().setRoot(root);
 
         } catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur base de données ❌");
-            alert.setHeaderText("Impossible d'ajouter l'animal 😢");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-
+            showAlert("Erreur base de données : " + e.getMessage(), Alert.AlertType.ERROR);
         } catch (IOException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur Fichier ❌");
-            alert.setHeaderText("Impossible de charger la page d'affichage.");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-
-        } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur inattendue ❌");
-            alert.setHeaderText("Quelque chose s'est mal passé 😱");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            showAlert("Erreur fichier : " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
-
-
-    @FXML
-    void chooseimage(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choisir une image");
-
-        fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter(System.getProperty("user.dir") +"Images", "*.png", "*.jpg", "*.jpeg")
-        );
-
-        selectedFile = fileChooser.showOpenDialog(null);
-
-        // Optionnel : afficher directement un aperçu dans ton ImageView
-        if (selectedFile != null) {
-            Image img = new Image(selectedFile.toURI().toString());
-            imagePreview.setImage(img);
-        }}
 
     @FXML
     void handleRetour(ActionEvent event) {
@@ -212,10 +201,14 @@ public class AjouterAnimal {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-    }
     }
 
-
-
-
+    private void showAlert(String message, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(type == Alert.AlertType.INFORMATION ? "ℹ️ Info" :
+                type == Alert.AlertType.WARNING ? "⚠️ Attention" : "❌ Erreur");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+}

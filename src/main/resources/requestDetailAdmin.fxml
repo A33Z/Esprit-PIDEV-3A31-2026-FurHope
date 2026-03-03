@@ -24,12 +24,14 @@
             <ImageView fx:id="animalImageView" fitWidth="120" fitHeight="120"/>
         </VBox>
 
-        <!-- Requester Info Section -->
+        <!-- Request Message Section -->
         <VBox spacing="10" styleClass="section-container">
-            <Label text="Requester Info" styleClass="section-title"/>
-            <Label fx:id="requesterNameLabel" styleClass="section-value"/>
-            <Label fx:id="requesterEmailLabel" styleClass="section-value"/>
-            <Label fx:id="requesterPhoneLabel" styleClass="section-value"/>
+            <Label text="Request Message" styleClass="section-title"/>
+            <TextArea fx:id="messageArea"
+                      wrapText="true"
+                      editable="false"
+                      prefHeight="100"
+                      styleClass="section-value"/>
         </VBox>
 
         <!-- Status -->
