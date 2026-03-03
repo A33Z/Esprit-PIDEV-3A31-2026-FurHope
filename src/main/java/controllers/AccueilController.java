@@ -6,6 +6,7 @@ import entities.ManagerAccount;
 import entities.User;
 import java.awt.Desktop;
 import java.net.URI;
+import java.util.Locale;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,6 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import utils.SessionManager;
 
 public class AccueilController {
 
@@ -144,6 +146,7 @@ public class AccueilController {
     @FXML
     private void logout(ActionEvent event) {
         SessionContext.clear();
+        SessionManager.logout();
         switchScene(event, "/accueil.fxml");
     }
 
@@ -159,7 +162,24 @@ public class AccueilController {
 
     @FXML
     private void openVetCare(ActionEvent event) {
-        openModule("Vet Care");
+        if (!SessionContext.isLoggedIn()) {
+            showAlert(Alert.AlertType.INFORMATION, "Login Required",
+                    "Please sign in to access Vet Care.");
+            return;
+        }
+
+        User user = SessionContext.getCurrentUser();
+        if (user == null) {
+            showAlert(Alert.AlertType.WARNING, "Session Error", "Unable to resolve current user session.");
+            return;
+        }
+
+        syncLegacyDashboardSession(user);
+        if (isVeterinarian(user)) {
+            switchScene(event, "/VetDashboard.fxml");
+        } else {
+            switchScene(event, "/DashboardClient.fxml");
+        }
     }
 
     @FXML
@@ -229,6 +249,26 @@ public class AccueilController {
         return "ADMIN".equalsIgnoreCase(normalizedRole)
                 || "HOTEL_MANAGER".equalsIgnoreCase(normalizedRole)
                 || "MANAGER".equalsIgnoreCase(normalizedRole);
+    }
+
+    private boolean isVeterinarian(User user) {
+        if (user == null || user.getRole() == null) {
+            return false;
+        }
+        String normalizedRole = user.getRole()
+                .trim()
+                .replace('-', '_')
+                .replace(' ', '_')
+                .toUpperCase(Locale.ROOT);
+        return "VETERINAIRE".equals(normalizedRole)
+                || "VETERINARIAN".equals(normalizedRole)
+                || "VET".equals(normalizedRole);
+    }
+
+    private void syncLegacyDashboardSession(User user) {
+        SessionManager.setUserId(user.getId());
+        SessionManager.setUserNom(resolveDisplayName(user));
+        SessionManager.setUserRole(user.getRole());
     }
 
     private void openModule(String name) {

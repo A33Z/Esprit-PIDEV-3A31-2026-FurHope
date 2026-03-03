@@ -75,7 +75,7 @@
 
                         <VBox spacing="14" alignment="TOP_LEFT" styleClass="hero-card">
                             <Label text="About FurHope" styleClass="section-title" />
-                    <Label text="- Adopt and foster\n- Vet appointments\n- Reclamations and support\n- Client and shelter management" styleClass="subtitle" wrapText="true" />
+                            <Label text="- Adopt and foster\n- Vet appointments\n- Reclamations and support\n- Client and shelter management" styleClass="subtitle" wrapText="true" />
                             <VBox spacing="10" styleClass="stat-grid">
                                 <HBox spacing="12" alignment="CENTER_LEFT">
                                     <Label text="24/7" styleClass="stat-number" />
@@ -135,4 +135,3 @@
         </content>
     </ScrollPane>
 </StackPane>
-

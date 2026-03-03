@@ -1,56 +1,33 @@
 package com.esprit.utils;
 
-import com.esprit.config.DatabaseConfig;
 import services.DatabaseSchemaService;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class DBConnection {
 
+    private static final String URL = "jdbc:mariadb://localhost:3306/FurHope3";
+    private static final String USER = "root";
+    private static final String PASSWORD = "";
+
     public static Connection getConnection() throws SQLException {
-        ensureDriverLoaded();
-        try {
-            Connection connection = DriverManager.getConnection(
-                    DatabaseConfig.jdbcUrl(),
-                    DatabaseConfig.user(),
-                    DatabaseConfig.password()
-            );
-            DatabaseSchemaService.ensureSecuritySchema(connection);
-            return connection;
-        } catch (SQLException e) {
-            throw new SQLException(
-                    "Unable to connect to MariaDB at " + DatabaseConfig.jdbcUrl()
-                            + " with user '" + DatabaseConfig.user() + "'. Cause: " + e.getMessage(),
-                    e
-            );
-        }
-    }
-
-    public static void runStartupHealthCheck() {
-        try {
-            ensureDriverLoaded();
-            try (Connection connection = DriverManager.getConnection(
-                    DatabaseConfig.jdbcUrl(),
-                    DatabaseConfig.user(),
-                    DatabaseConfig.password());
-                 Statement statement = connection.createStatement()) {
-                statement.execute("SELECT 1");
-                System.out.println("DB OK");
-            }
-        } catch (SQLException e) {
-            Throwable root = e.getCause() != null ? e.getCause() : e;
-            System.err.println("DB ERROR: " + root.getMessage());
-        }
-    }
-
-    private static void ensureDriverLoaded() throws SQLException {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             throw new SQLException("MariaDB JDBC driver is not available on the classpath.", e);
+        }
+        Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+        DatabaseSchemaService.ensureSecuritySchema(connection);
+        return connection;
+    }
+
+    public static void runStartupHealthCheck() {
+        try (Connection ignored = getConnection()) {
+            System.out.println("Database startup health check passed.");
+        } catch (SQLException e) {
+            throw new IllegalStateException("Database startup health check failed.", e);
         }
     }
 }

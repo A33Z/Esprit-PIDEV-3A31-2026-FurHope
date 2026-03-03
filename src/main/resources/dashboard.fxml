@@ -42,9 +42,7 @@
                     <FlowPane alignment="CENTER_LEFT" hgap="10" styleClass="nav-bar" vgap="10">
                         <Button onAction="#openAdoption" styleClass="nav-button" text="Adoption" />
                         <Button onAction="#openProduct" styleClass="nav-button" text="Products" />
-                        <Button onAction="#openVetRdv" styleClass="nav-button" text="Rendez-vous Vet" />
                         <Button onAction="#openSocial" styleClass="nav-button" text="Social" />
-                        <Button onAction="#openHostelLocation" styleClass="nav-button" text="Hostel Location" />
                     </FlowPane>
 
                     <VBox spacing="8" styleClass="dashboard-hero">
