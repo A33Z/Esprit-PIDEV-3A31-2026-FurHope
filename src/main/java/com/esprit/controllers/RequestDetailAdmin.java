@@ -2,45 +2,75 @@ package com.esprit.controllers;
 
 import com.esprit.Services.adoptionservices;
 import com.esprit.Services.animalServices;
-import com.esprit.Services.BrevoService;
+import com.esprit.Services.EmailNotificationService;
 import com.esprit.entities.adoptionRequest;
 import com.esprit.entities.animal;
+import com.esprit.i18n.LanguageManager;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.io.File;
 
-public class RequestDetailAdmin {
+public class RequestDetailAdmin extends BaseUIController {
 
-    @FXML private Label animalNameLabel;
-    @FXML private Label animalSpeciesLabel;
-    @FXML private Label animalBreedLabel;
-    @FXML private Label animalAgeGenderLabel;
-    @FXML private ImageView animalImageView;
+    @FXML
+    private Label animalNameLabel;
+    @FXML
+    private Label animalSpeciesLabel;
+    @FXML
+    private Label animalBreedLabel;
+    @FXML
+    private Label animalAgeGenderLabel;
+    @FXML
+    private ImageView animalImageView;
 
-    @FXML private Label requesterNameLabel;
-    @FXML private Label requesterEmailLabel;
-    @FXML private Label requesterPhoneLabel;
-    @FXML private Label requesterAddressLabel;
+    @FXML
+    private Label requesterNameLabel;
+    @FXML
+    private Label requesterEmailLabel;
+    @FXML
+    private Label requesterPhoneLabel;
+    @FXML
+    private Label requesterAddressLabel;
 
-    @FXML private Label statusLabel;
+    @FXML
+    private Label statusLabel;
     @FXML
     private TextArea messageArea;
-    @FXML private Button approveButton;
-    @FXML private Button declineButton;
-    @FXML private Button closeButton;
+    @FXML
+    private Button approveButton;
+    @FXML
+    private Button declineButton;
+    @FXML
+    private Button closeButton;
 
     private adoptionRequest currentRequest;
-    private adoptionservices adoptionService = new adoptionservices();
-    private animalServices animalService = new animalServices();
-    private BrevoService brevoService = new BrevoService();
+    private final adoptionservices adoptionService = new adoptionservices();
+    private final animalServices animalService = new animalServices();
+    private final EmailNotificationService emailNotificationService = new EmailNotificationService();
+
+    @Override
+    protected String getViewPath() {
+        return "/requestDetailAdmin.fxml";
+    }
+
+    @Override
+    protected String getBackViewPath() {
+        return "/Requests.fxml";
+    }
 
     @FXML
     public void initialize() {
-        // Désactiver le scroll automatique du TextArea
         messageArea.setWrapText(true);
         messageArea.setEditable(false);
     }
@@ -50,14 +80,16 @@ public class RequestDetailAdmin {
 
         animal a = request.getAnimal();
 
-        // 🐾 Afficher les infos de l'animal
         if (a != null) {
-            animalNameLabel.setText("🐾 " + a.getName());
-            animalSpeciesLabel.setText("Espèce: " + a.getSpecies());
-            animalBreedLabel.setText("Race: " + a.getBreed());
-            animalAgeGenderLabel.setText("Âge: " + a.getAge() + " ans | Sexe: " + a.getGender().toString());
+            animalNameLabel.setText(labelValue("request.card.animal", a.getName()));
+            animalSpeciesLabel.setText(labelValue("request.detail.species", a.getSpecies()));
+            animalBreedLabel.setText(labelValue("request.detail.breed", a.getBreed()));
+            animalAgeGenderLabel.setText(
+                    tr("request.detail.age") + ": " + a.getAge() + " | " +
+                            tr("request.detail.gender") + ": " +
+                            (a.getGender() == animal.gender.MALE ? tr("gender.male") : tr("gender.female"))
+            );
 
-            // Charger l'image
             if (a.getImage() != null && !a.getImage().isEmpty()) {
                 try {
                     File imageFile = new File("images/" + a.getImage());
@@ -66,142 +98,114 @@ public class RequestDetailAdmin {
                         animalImageView.setImage(image);
                     }
                 } catch (Exception e) {
-                    System.err.println("❌ Erreur chargement image: " + e.getMessage());
+                    System.err.println("Erreur chargement image: " + e.getMessage());
                 }
             }
         }
 
-        // 👤 Afficher les infos du demandeur
-        if (request.getClient() != null) {
-            requesterNameLabel.setText("👤 " + request.getClient().getName());
-            requesterEmailLabel.setText("📧 " + request.getClient().getEmail());
-            requesterPhoneLabel.setText("☎️ " + request.getClient().getPhone());
+        if (request.getClientCompte() != null && request.getClientCompte().getUser() != null) {
+            requesterNameLabel.setText(labelValue("request.card.applicant", request.getClientCompte().getUser().getName()));
+            requesterEmailLabel.setText(labelValue("request.detail.email", request.getClientCompte().getUser().getEmail()));
+            requesterPhoneLabel.setText(labelValue("request.card.phone", String.valueOf(request.getClientCompte().getUser().getPhone())));
         } else {
-            requesterNameLabel.setText("👤 Client ID: " + request.getClient_id());
-            requesterEmailLabel.setText("📧 -");
-            requesterPhoneLabel.setText("☎️ -");
+            requesterNameLabel.setText(labelValue("request.detail.clientId", String.valueOf(request.getClientCompteId())));
+            requesterEmailLabel.setText(labelValue("request.detail.email", "-"));
+            requesterPhoneLabel.setText(labelValue("request.card.phone", "-"));
         }
 
-        // 📍 Adresse de la demande
-        requesterAddressLabel.setText("📍 " + request.getAddress());
+        requesterAddressLabel.setText(labelValue("request.card.address", safeText(request.getAddress(), "-")));
+        messageArea.setText(safeText(request.getMessage(), tr("request.card.noMessage")));
 
-        // 💬 Message du demandeur
-        messageArea.setText(request.getMessage().isEmpty() ? "[Aucun message]" : request.getMessage());
-
-        // 📊 Statut actuel
         updateStatusLabel();
 
-        // 🎯 Actions des boutons
         approveButton.setOnAction(e -> approveRequest());
         declineButton.setOnAction(e -> declineRequest());
         closeButton.setOnAction(e -> closeWindow());
     }
 
-    /**
-     * ✅ Approuver la demande et envoyer un email
-     */
     @FXML
     private void approveRequest() {
-        if (currentRequest == null) return;
+        if (currentRequest == null) {
+            return;
+        }
 
-        // Confirmation
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmAlert.setTitle("✅ Confirmation");
-        confirmAlert.setHeaderText("Approuver cette demande ?");
-        confirmAlert.setContentText("L'animal sera marqué comme ADOPTÉ et un email sera envoyé au demandeur.");
+        confirmAlert.setTitle(tr("request.confirm.title"));
+        confirmAlert.setHeaderText(tr("request.confirm.approveHeader"));
+        confirmAlert.setContentText(tr("request.confirm.approveContent"));
 
         if (confirmAlert.showAndWait().orElse(ButtonType.NO) != ButtonType.OK) {
             return;
         }
 
         try {
-            // 1️⃣ Mettre à jour le statut dans la BD
             currentRequest.setStatus(adoptionRequest.status.APPROVED);
             adoptionService.modifier(currentRequest);
 
-            // 2️⃣ Marquer l'animal comme adopté
             if (currentRequest.getAnimal() != null) {
-                animal a = currentRequest.getAnimal();
-                a.setStatus(animal.status.ADOPTED);
-                animalService.modifier(a);
+                animal animalToUpdate = currentRequest.getAnimal();
+                animalToUpdate.setStatus(animal.status.ADOPTED);
+                animalService.modifier(animalToUpdate);
             }
 
-            // 3️⃣ Envoyer un email au demandeur
-            System.out.println("📧 Envoi de l'email d'approbation...");
-            boolean emailSent = brevoService.sendApprovalEmail(currentRequest);
+            EmailNotificationService.NotificationResult emailResult =
+                    emailNotificationService.sendDecisionNotification(currentRequest, adoptionRequest.status.APPROVED);
 
-            if (emailSent) {
-                showSuccess("✅ Demande approuvée !",
-                        "La demande a été approuvée avec succès.\n" +
-                                "Un email de confirmation a été envoyé au demandeur.");
-            } else {
-                showWarning("⚠️ Approuvée mais email échoué",
-                        "La demande a été approuvée mais l'email n'a pas pu être envoyé.\n" +
-                                "Vérifiez votre configuration Brevo.");
-            }
-
+            showSuccess(tr("common.success"), composeResultMessage(tr("request.result.approved"), emailResult));
             updateStatusLabel();
             disableButtons();
+            goToAnimalListing();
 
         } catch (Exception e) {
-            showError("❌ Erreur", "Erreur lors de l'approbation: " + e.getMessage());
+            showError(tr("common.error"), tr("request.error.approve") + ": " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    /**
-     * ❌ Rejeter la demande et envoyer un email
-     */
     @FXML
     private void declineRequest() {
-        if (currentRequest == null) return;
+        if (currentRequest == null) {
+            return;
+        }
 
-        // Confirmation
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmAlert.setTitle("❌ Confirmation");
-        confirmAlert.setHeaderText("Rejeter cette demande ?");
-        confirmAlert.setContentText("Un email sera envoyé au demandeur pour l'informer du rejet.");
+        confirmAlert.setTitle(tr("request.confirm.title"));
+        confirmAlert.setHeaderText(tr("request.confirm.declineHeader"));
+        confirmAlert.setContentText(tr("request.confirm.declineContent"));
 
         if (confirmAlert.showAndWait().orElse(ButtonType.NO) != ButtonType.OK) {
             return;
         }
 
         try {
-            // 1️⃣ Mettre à jour le statut dans la BD
             currentRequest.setStatus(adoptionRequest.status.REJECTED);
             adoptionService.modifier(currentRequest);
 
-            // 2️⃣ Envoyer un email au demandeur
-            System.out.println("📧 Envoi de l'email de rejet...");
-            boolean emailSent = brevoService.sendDeclineEmail(currentRequest);
+            EmailNotificationService.NotificationResult emailResult =
+                    emailNotificationService.sendDecisionNotification(currentRequest, adoptionRequest.status.REJECTED);
 
-            if (emailSent) {
-                showSuccess("❌ Demande rejetée",
-                        "La demande a été rejetée avec succès.\n" +
-                                "Un email d'explication a été envoyé au demandeur.");
-            } else {
-                showWarning("⚠️ Rejetée mais email échoué",
-                        "La demande a été rejetée mais l'email n'a pas pu être envoyé.\n" +
-                                "Vérifiez votre configuration Brevo.");
-            }
-
+            showSuccess(tr("common.success"), composeResultMessage(tr("request.result.rejected"), emailResult));
             updateStatusLabel();
             disableButtons();
+            goToAnimalListing();
 
         } catch (Exception e) {
-            showError("❌ Erreur", "Erreur lors du rejet: " + e.getMessage());
+            showError(tr("common.error"), tr("request.error.decline") + ": " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    /**
-     * 📊 Mettre à jour l'affichage du statut
-     */
     private void updateStatusLabel() {
-        if (currentRequest == null) return;
+        if (currentRequest == null) {
+            return;
+        }
 
-        String status = currentRequest.getStatus().toString();
-        statusLabel.setText("Statut: " + status);
+        String status = switch (currentRequest.getStatus()) {
+            case APPROVED -> tr("status.approved");
+            case REJECTED -> tr("status.rejected");
+            case PENDING -> tr("status.pending");
+        };
+        statusLabel.setText(tr("request.card.status") + ": " + status);
 
         switch (currentRequest.getStatus()) {
             case APPROVED:
@@ -216,35 +220,28 @@ public class RequestDetailAdmin {
         }
     }
 
-    /**
-     * 🔒 Désactiver les boutons après une action
-     */
     private void disableButtons() {
         approveButton.setDisable(true);
         declineButton.setDisable(true);
     }
 
-    /**
-     * ⬅️ Fermer la fenêtre
-     */
     @FXML
     private void closeWindow() {
         Stage stage = (Stage) closeButton.getScene().getWindow();
         stage.close();
     }
 
-    // ==================== ALERTES ====================
+    private void goToAnimalListing() throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherAnimal.fxml"), LanguageManager.getBundle());
+        Parent root = loader.load();
+        Stage stage = (Stage) closeButton.getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.setMaximized(true);
+        stage.show();
+    }
 
     private void showSuccess(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    private void showWarning(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
@@ -257,5 +254,32 @@ public class RequestDetailAdmin {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private String tr(String key) {
+        try {
+            return LanguageManager.get(key);
+        } catch (Exception e) {
+            return key;
+        }
+    }
+
+    private String labelValue(String key, String value) {
+        return tr(key) + ": " + safeText(value, "-");
+    }
+
+    private String safeText(String value, String fallback) {
+        if (value == null || value.isBlank()) {
+            return fallback;
+        }
+        return value;
+    }
+
+    private String composeResultMessage(String mainMessage, EmailNotificationService.NotificationResult emailResult) {
+        if (emailResult == null) {
+            return mainMessage;
+        }
+        String prefix = emailResult.isSent() ? tr("email.notify.sent") : tr("email.notify.failed");
+        return mainMessage + "\n\n" + prefix + " " + emailResult.getMessage();
     }
 }

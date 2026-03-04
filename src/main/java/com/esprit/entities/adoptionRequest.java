@@ -1,6 +1,5 @@
 package com.esprit.entities;
 
-
 public class adoptionRequest {
 
     public enum status {
@@ -11,26 +10,26 @@ public class adoptionRequest {
 
     private int id;
     private int animal_id;
-    private int client_id;
+    private int clientCompteId;
     private String message;
     private String phone;
     private String address;
     private status status;
 
+    private animal animal;
+    private Compte clientCompte;
 
     public adoptionRequest() {
     }
 
-    public adoptionRequest(int animal_id, int client_id, String message, String phone, String address, status status) {
+    public adoptionRequest(int animal_id, int clientCompteId, String message, String phone, String address, status status) {
         this.animal_id = animal_id;
-        this.client_id = client_id;
+        this.clientCompteId = clientCompteId;
         this.message = message;
         this.phone = phone;
         this.address = address;
         this.status = status;
-
     }
-
 
     public int getId() {
         return id;
@@ -48,12 +47,12 @@ public class adoptionRequest {
         this.animal_id = animal_id;
     }
 
-    public int getClient_id() {
-        return client_id;
+    public int getClientCompteId() {
+        return clientCompteId;
     }
 
-    public void setClient_id(int client_id) {
-        this.client_id = client_id;
+    public void setClientCompteId(int clientCompteId) {
+        this.clientCompteId = clientCompteId;
     }
 
     public String getMessage() {
@@ -88,21 +87,27 @@ public class adoptionRequest {
         this.status = status;
     }
 
-    private animal animal; // nouvel attribut
+    public animal getAnimal() {
+        return animal;
+    }
 
-    public animal getAnimal() { return animal; }
-    public void setAnimal(animal animal) { this.animal = animal; }
+    public void setAnimal(animal animal) {
+        this.animal = animal;
+    }
 
-    private User Client; // nouvel attribut
+    public Compte getClientCompte() {
+        return clientCompte;
+    }
 
-    public User getClient() { return Client; }
-    public void setAnimal(User User) { this.Client = User; }
+    public void setClientCompte(Compte clientCompte) {
+        this.clientCompte = clientCompte;
+    }
 
     @Override
     public String toString() {
         return "adoptionRequest{" +
                 "animal_id=" + animal_id +
-                ", client_id=" + client_id +
+                ", clientCompteId=" + clientCompteId +
                 ", message='" + message + '\'' +
                 ", phone='" + phone + '\'' +
                 ", address='" + address + '\'' +

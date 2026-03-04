@@ -1,7 +1,9 @@
 package com.esprit.controllers;
 
-import com.esprit.entities.User;
+import com.esprit.Services.AnimalCareRecommendationService;
+import com.esprit.entities.AnimalCareAdvice;
 import com.esprit.entities.animal;
+import com.esprit.i18n.LanguageManager;
 import com.esprit.utils.MyDataBase;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,47 +18,31 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.net.URL;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ResourceBundle;
 
-import static com.esprit.utils.Session.getUserId;
-
-public class adopdetails {
+public class adopdetails extends BaseUIController {
 
     @FXML
     private ImageView petImage;
-
     @FXML
     private Label petName;
-
     @FXML
     private Label petStatus;
-
     @FXML
     private Label petGender;
-
     @FXML
     private Label petAge;
-
     @FXML
     private Label petSpecies;
-
     @FXML
     private Label petBreed;
-
     @FXML
     private Label petDescription;
-
     @FXML
     private Button adoptButton;
-
     @FXML
     private ScrollPane scrollPane;
-    // Owner info labels
+
     @FXML
     private Label ownerNameLabel;
     @FXML
@@ -65,35 +51,51 @@ public class adopdetails {
     private Label ownerPhoneLabel;
     @FXML
     private Label ownerRoleLabel;
-
     @FXML
     private StackPane centerContainer;
 
-    public void initialize() {
-        scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> {
-            centerContainer.setMinWidth(newVal.getWidth());
-        });
-        con = MyDataBase.getInstance().getConnection();
+    @FXML
+    private Label careExerciseLabel;
+    @FXML
+    private Label careDietLabel;
+    @FXML
+    private Label careEnvironmentLabel;
+    @FXML
+    private Label careGroomingLabel;
+    @FXML
+    private Label careTrainingLabel;
 
+    private Connection con;
+    private animal currentAnimal;
+    private final AnimalCareRecommendationService careRecommendationService = new AnimalCareRecommendationService();
+
+    @Override
+    protected String getViewPath() {
+        return "/adopanimaldetails.fxml";
     }
-    Connection con;
 
-    private animal currentAnimal;  // store the selected animal
+    @Override
+    protected void onControllerReloaded(Object controller) {
+        if (controller instanceof adopdetails reloaded && currentAnimal != null) {
+            reloaded.setPetData(currentAnimal);
+        }
+    }
 
+    public void initialize() {
+        scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> centerContainer.setMinWidth(newVal.getWidth()));
+        con = MyDataBase.getInstance().getConnection();
+    }
 
     public void setPetData(animal a) {
-        this.currentAnimal = a;  // <-- store it
-
+        this.currentAnimal = a;
 
         petName.setText(a.getName());
-        petStatus.setText(a.getStatus().toString());
-        petGender.setText(a.getGender().toString());
-        petAge.setText(a.getAge() + " Years");
+        petStatus.setText(localizeAnimalStatus(a.getStatus()));
+        petGender.setText(localizeGender(a.getGender()));
+        petAge.setText(a.getAge() + " " + tr("animal.card.years"));
         petSpecies.setText(a.getSpecies());
         petBreed.setText(a.getBreed());
         petDescription.setText(a.getDescription());
-
-
 
         if (a.getImage() != null) {
             File file = new File("images/" + a.getImage());
@@ -101,37 +103,40 @@ public class adopdetails {
                 petImage.setImage(new Image(file.toURI().toString()));
             }
         }
-        if (a.getOwner() != null) {
-            ownerNameLabel.setText(a.getOwner().getName());
-            ownerEmailLabel.setText(a.getOwner().getEmail());
-            ownerPhoneLabel.setText(String.valueOf(a.getOwner().getPhone()));
-            ownerRoleLabel.setText(a.getOwner().getRole());
+
+        if (a.getOwnerCompte() != null && a.getOwnerCompte().getUser() != null) {
+            ownerNameLabel.setText(a.getOwnerCompte().getUser().getName());
+            ownerEmailLabel.setText(a.getOwnerCompte().getUser().getEmail());
+            ownerPhoneLabel.setText(String.valueOf(a.getOwnerCompte().getUser().getPhone()));
+            ownerRoleLabel.setText(a.getOwnerCompte().getRole());
         }
 
-
+        AnimalCareAdvice advice = careRecommendationService.generateCareAdvice(a);
+        careExerciseLabel.setText(advice.getExerciseRecommendation());
+        careDietLabel.setText(advice.getDietRecommendation());
+        careEnvironmentLabel.setText(advice.getEnvironmentRecommendation());
+        careGroomingLabel.setText(advice.getGroomingRecommendation());
+        careTrainingLabel.setText(advice.getTrainingRecommendation());
     }
-
 
     @FXML
     private void handleAdopt() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AjouterRequest.fxml"));
+            FXMLLoader loader = createLoader("/AjouterRequest.fxml");
             Parent root = loader.load();
 
-            com.esprit.controllers.AjouterRequest controller = loader.getController();
+            AjouterRequest controller = loader.getController();
 
-            // Préparer l'image correctement
             Image animalImage = null;
             if (currentAnimal.getImage() != null) {
                 File file = new File("images/" + currentAnimal.getImage());
                 if (file.exists()) {
                     animalImage = new Image(file.toURI().toString());
                 } else {
-                    System.out.println("Image introuvable : " + file.getAbsolutePath());
+                    System.out.println("Image not found: " + file.getAbsolutePath());
                 }
             }
 
-            // Passer toutes les infos à AjouterRequest
             controller.setAnimalInfo(
                     currentAnimal.getId(),
                     currentAnimal.getName(),
@@ -140,19 +145,41 @@ public class adopdetails {
                     currentAnimal.getAge() + " - " + currentAnimal.getGender(),
                     animalImage
             );
+            controller.setClientInfoFromSession();
 
             Stage stage = new Stage();
-            stage.setTitle("Add Adoption Request");
+            stage.setTitle(tr("page.addRequest.title"));
             stage.setScene(new Scene(root));
             stage.setMaximized(true);
             stage.show();
 
-            // Fermer la fenêtre actuelle
             Stage currentStage = (Stage) adoptButton.getScene().getWindow();
             currentStage.close();
-
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private String localizeAnimalStatus(animal.status status) {
+        return switch (status) {
+            case AVAILABLE -> tr("status.available");
+            case UNAVAILABLE -> tr("status.unavailable");
+            case ADOPTED -> tr("status.adopted");
+        };
+    }
+
+    private String localizeGender(animal.gender gender) {
+        return switch (gender) {
+            case MALE -> tr("gender.male");
+            case FEMALE -> tr("gender.female");
+        };
+    }
+
+    private String tr(String key) {
+        try {
+            return LanguageManager.get(key);
+        } catch (Exception e) {
+            return key;
         }
     }
 }

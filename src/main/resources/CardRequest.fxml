@@ -4,38 +4,47 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.image.ImageView?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+<AnchorPane xmlns="http://javafx.com/javafx/22"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.esprit.controllers.CardRequest"
-            prefHeight="150.0" prefWidth="350.0">
+            prefHeight="260.0" prefWidth="500.0"
+            stylesheets="@style.css"
+            styleClass="root">
 
     <VBox fx:id="cardRoot"
           spacing="10"
           alignment="TOP_LEFT"
-          style="-fx-background-color:white;
-                 -fx-background-radius:12;
-                 -fx-border-radius:12;
-                 -fx-border-color:#dddddd;
-                 -fx-padding:15;
-                 -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 5, 0, 0, 2);">
+          styleClass="card"
+          AnchorPane.topAnchor="0.0"
+          AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0"
+          AnchorPane.bottomAnchor="0.0">
 
-        <!-- Animal Info -->
-        <HBox spacing="10" alignment="CENTER_LEFT">
+        <HBox spacing="12" alignment="TOP_LEFT">
             <ImageView fx:id="animalImageView"
-                       fitWidth="50" fitHeight="50"
-                       style="-fx-background-radius:8;"
+                       fitWidth="86" fitHeight="86"
                        preserveRatio="true"/>
-            <Label fx:id="animalLabel"
-                   style="-fx-font-size:16px; -fx-font-weight:bold;"/>
+
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label fx:id="animalNameLabel" styleClass="card-title" text="%request.card.animalDefault"/>
+                <Label fx:id="applicantNameLabel" styleClass="section-value" text="%request.card.applicantDefault"/>
+                <Label fx:id="phoneLabel" styleClass="section-value" text="%request.card.phoneDefault"/>
+                <Label fx:id="addressLabel" styleClass="section-value" text="%request.card.addressDefault"/>
+            </VBox>
         </HBox>
 
-        <!-- Requester Info -->
-        <Label fx:id="clientLabel"
-               style="-fx-font-size:14px; -fx-text-fill:#555555;"/>
+        <Label fx:id="statusLabel" styleClass="status-badge"/>
 
-        <!-- Optional Status -->
-        <Label fx:id="statusLabel"
-               style="-fx-text-fill:#2ecc71; -fx-font-weight:bold;"/>
+        <Label text="%request.card.message" styleClass="label-bold"/>
+        <Label fx:id="messageLabel"
+               wrapText="true"
+               styleClass="section-value"/>
+
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="approveButton" text="%request.action.approve" onAction="#approveFromCard" styleClass="button-save"/>
+            <Button fx:id="declineButton" text="%request.action.decline" onAction="#declineFromCard" styleClass="button-danger"/>
+        </HBox>
 
     </VBox>
 </AnchorPane>

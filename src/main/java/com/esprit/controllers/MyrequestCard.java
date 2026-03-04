@@ -1,6 +1,7 @@
 package com.esprit.controllers;
 
 import com.esprit.entities.adoptionRequest;
+import com.esprit.i18n.LanguageManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -36,7 +37,7 @@ public class MyrequestCard {
             titleLabel.setText("Request " + (index + 1));
 
             animalLabel.setText("Animal ID: " + request.getAnimal_id());
-            clientLabel.setText("Client ID: " + request.getClient_id());
+            clientLabel.setText("Client Compte ID: " + request.getClientCompteId());
             statusLabel.setText("Status: " + request.getStatus());
 
             cardRoot.setOnMouseClicked(e -> openDetails());
@@ -47,7 +48,7 @@ public class MyrequestCard {
             try {
 
                 FXMLLoader loader =
-                        new FXMLLoader(getClass().getResource("/RequestDetails.fxml"));
+                        new FXMLLoader(getClass().getResource("/RequestDetails.fxml"), LanguageManager.getBundle());
 
                 Parent root = loader.load();
 

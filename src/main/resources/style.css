@@ -1,364 +1,215 @@
-/* =========================================================
-   ROOT / ANCHORPANE
-   Elegant warm earthy pastel background
-========================================================= */
-.root, .anchor-pane {
-    -fx-background-color: linear-gradient(to bottom right, #FAF4EE, #F0E6DC); /* soft cream-beige */
-    -fx-font-family: "Segoe UI", sans-serif;
+.root,
+.anchor-pane,
+.stack-pane,
+.border-pane {
+    -fx-background-color: #f7f4ef;
+    -fx-font-family: "Segoe UI";
+    -fx-text-fill: #2d241c;
 }
 
-/* =========================================================
-   BACK ICON
-========================================================= */
-.back-icon {
-    -fx-text-fill: #7A5E48; /* warm brown */
-    -fx-font-size: 28px;
-    -fx-font-weight: bold;
+.top-bar {
+    -fx-background-color: #3f2f22;
+    -fx-padding: 14 18 14 18;
+    -fx-alignment: center-left;
+    -fx-spacing: 10;
+}
+
+.page-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #fff8ef;
+}
+
+.page-subtitle {
+    -fx-font-size: 12px;
+    -fx-text-fill: #f3e2cc;
+}
+
+.toolbar-button,
+.button,
+.button-save,
+.primary-button,
+.menu-button,
+.lang-button {
+    -fx-background-color: #d97706;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-padding: 10 16 10 16;
+    -fx-background-radius: 8;
     -fx-cursor: hand;
 }
 
-.back-icon:hover {
-    -fx-text-fill: #A17C63; /* lighter earthy highlight */
+.toolbar-button:hover,
+.button:hover,
+.button-save:hover,
+.primary-button:hover,
+.menu-button:hover,
+.lang-button:hover {
+    -fx-background-color: #b45309;
 }
 
-/* =========================================================
-   VBOX / CARD
-========================================================= */
-.v-box, .card, .animal-card {
-    -fx-background-color: #FFFFFF; /* clean card background */
-    -fx-background-radius: 15;
-    -fx-border-radius: 15;
-    -fx-border-color: #E6D9D0; /* subtle soft border */
-    -fx-padding: 20;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 12, 0, 0, 4); /* soft shadow */
+.lang-button {
+    -fx-font-size: 12px;
+    -fx-padding: 6 12 6 12;
+    -fx-min-width: 56px;
 }
 
-.card:hover, .animal-card:hover {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 16, 0, 0, 6);
+.button-secondary,
+.secondary-button,
+.ghost-button {
+    -fx-background-color: #ece5dc;
+    -fx-text-fill: #3f2f22;
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-padding: 10 16 10 16;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
 }
 
-/* =========================================================
-   TEXTFIELDS & COMBOBOX
-========================================================= */
-.text-field, .password-field, .text-area, .combo-box {
-    -fx-background-color: #F9F3EE; /* light warm cream */
-    -fx-text-fill: #5A4A3F; /* dark earthy brown */
-    -fx-prompt-text-fill: #C9A892; /* soft pastel brown */
-    -fx-border-color: #E4D6CC;
+.button-secondary:hover,
+.secondary-button:hover,
+.ghost-button:hover {
+    -fx-background-color: #decfbe;
+}
+
+.button-danger,
+.danger-button {
+    -fx-background-color: #dc2626;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-padding: 10 16 10 16;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.button-danger:hover,
+.danger-button:hover {
+    -fx-background-color: #b91c1c;
+}
+
+.sidebar,
+.card,
+.v-box,
+.animal-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #eadfce;
+    -fx-padding: 16;
+}
+
+.section-container,
+.info-container,
+.text-field-wrapper {
+    -fx-background-color: #fcf8f2;
+    -fx-border-color: #eadfce;
     -fx-border-radius: 10;
     -fx-background-radius: 10;
-    -fx-padding: 10;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.03), 3, 0, 0, 1);
-    -fx-font-size: 14px;
+    -fx-padding: 12;
 }
 
-.text-field:focused, .text-area:focused, .combo-box:focused {
-    -fx-border-color: #B68B6A; /* subtle earthy focus */
-}
-
-/* =========================================================
-   BUTTONS
-========================================================= */
-
-/* Primary buttons: Send, Save */
-.button, .button-save, .primary-button {
-    -fx-background-color: linear-gradient(to right, #CBB29D, #E2C5B2); /* warm muted beige gradient */
-    -fx-text-fill: #4A3828; /* deep brown */
-    -fx-font-weight: bold;
-    -fx-font-size: 14px;
-    -fx-background-radius: 14;
-    -fx-cursor: hand;
-    -fx-padding: 8 20 8 20;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 4, 0, 0, 2);
-}
-
-.button:hover, .button-save:hover, .primary-button:hover {
-    -fx-background-color: linear-gradient(to right, #B8947F, #D7B89D);
-}
-
-.button-save {
-    -fx-font-size: 16px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 6, 0, 0, 3);
-}
-
-/* Secondary buttons: Back, Cancel */
-.secondary-button {
-    -fx-background-color: #F3E8DF; /* soft cream */
-    -fx-text-fill: #7A5E48; /* warm brown */
-    -fx-background-radius: 14;
-    -fx-padding: 8 18;
+.section-title,
+.label-bold,
+.info-title,
+.mini-title {
     -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #5b4633;
 }
 
-.secondary-button:hover {
-    -fx-background-color: #E9DDD2;
+.section-value,
+.info-value,
+.mini-value,
+.readonly-label,
+.pet-info-label,
+.client-info-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #2d241c;
 }
 
-/* Danger buttons: Delete */
-.danger-button {
-    -fx-background-color: #B56C5B; /* muted terracotta */
-    -fx-text-fill: white;
-    -fx-background-radius: 14;
+.readonly-label {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #eadfce;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 8;
 }
 
-.danger-button:hover {
-    -fx-background-color: #955146;
+.text-field,
+.password-field,
+.text-area,
+.combo-box,
+.input-field {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d8ccb8;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 9;
+    -fx-font-size: 13px;
+    -fx-text-fill: #2d241c;
+    -fx-prompt-text-fill: #8a7157;
 }
 
-/* =========================================================
-   LISTVIEW
-========================================================= */
+.text-field:focused,
+.password-field:focused,
+.text-area:focused,
+.combo-box:focused,
+.input-field:focused {
+    -fx-border-color: #d97706;
+}
+
 .list-view {
-    -fx-background-color: #FAF4EE;
-    -fx-control-inner-background: #FAF4EE;
-    -fx-border-color: #E6D9D0;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
-    -fx-padding: 10;
+    -fx-background-color: #ffffff;
+    -fx-control-inner-background: #ffffff;
+    -fx-border-color: #eadfce;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 8;
 }
 
 .list-cell {
     -fx-background-color: transparent;
-    -fx-padding: 10;
-}
-
-.list-cell:selected {
-    -fx-background-color: rgba(181, 140, 108, 0.3); /* subtle earthy highlight */
-}
-
-.scroll-bar:vertical {
-    -fx-background-color: transparent;
-}
-.scroll-bar .thumb {
-    -fx-background-color: #CBB29D;
-    -fx-background-radius: 5;
-}
-
-/* =========================================================
-   CARD ELEMENTS
-========================================================= */
-.animal-card {
-    -fx-background-color: #FFFFFF;
-    -fx-background-radius: 15;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);
-    -fx-cursor: hand;
-}
-
-.animal-card:hover {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 18, 0, 0, 6);
-}
-
-.animal-image {
-    -fx-background-radius: 50;
-}
-
-.animal-name {
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #7A5E48;
-}
-
-.animal-info {
-    -fx-text-fill: #8B7765;
-}
-
-.details-button {
-    -fx-background-color: #D49C89; /* soft warm coral */
-    -fx-text-fill: white;
-    -fx-background-radius: 20;
-}
-
-.details-button:hover {
-    -fx-background-color: #C4816F; /* deeper coral accent */
-}
-
-/* =========================================================
-   DRAWER BUTTON
-========================================================= */
-.drawer-button {
-    -fx-background-color: transparent;
-    -fx-text-fill: #7A5E48;
-    -fx-font-size: 14px;
-    -fx-alignment: CENTER_LEFT;
-    -fx-padding: 8 10 8 10;
-    -fx-cursor: hand;
-}
-
-.drawer-button:hover {
-    -fx-background-color: #EDE1D7;
-    -fx-background-radius: 8;
-}
-
-/* =========================================================
-   LABELS
-========================================================= */
-.card-title, .animal-name {
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #7A5E48;
-}
-
-.card-subtitle, .animal-info {
-    -fx-font-size: 14px;
-    -fx-text-fill: #8B7765;
-}
-/* =========================================================
-   READ ONLY LABEL (like TextField)
-========================================================= */
-.readonly-label {
-    -fx-background-color: #F9F3EE;
-    -fx-text-fill: #5A4A3F;
-    -fx-border-color: #E4D6CC;
-    -fx-border-radius: 10;
-    -fx-background-radius: 10;
-    -fx-padding: 10;
-    -fx-font-size: 14px;
-    -fx-min-height: 35px;
-    -fx-alignment: CENTER_LEFT;
-}
-.info-card {
-    -fx-background-color: #F4E6FF;
-    -fx-padding: 12 18 12 18;
-    -fx-background-radius: 15;
-    -fx-alignment: center;
-    -fx-min-width: 80;
-}
-
-.info-label {
-    -fx-font-size: 11px;
-    -fx-text-fill: #777777;
-}
-
-.info-value {
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #333333;
-}
-/* Main section container */
-.section-container {
-    -fx-background-color: #f3ede6;
-    -fx-background-radius: 15;
-    -fx-padding: 18;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 3);
-}
-
-/* Section titles */
-.section-title {
-    -fx-font-size: 14px;
-    -fx-text-fill: #8a6f5a;
-    -fx-font-weight: bold;
-}
-
-/* Section text */
-.section-value {
-    -fx-font-size: 14px;
-    -fx-text-fill: #5c4b3b;
-}
-
-/* Small info boxes */
-.mini-box {
-    -fx-background-color: #e8dfd6;
-    -fx-background-radius: 12;
-    -fx-padding: 12;
-    -fx-min-width: 80;
-    -fx-alignment: center;
-}
-
-/* Mini titles */
-.mini-title {
-    -fx-font-size: 11px;
-    -fx-text-fill: #a68b74;
-}
-
-/* Mini values */
-.mini-value {
-    -fx-font-size: 13px;
-    -fx-text-fill: #4e3f33;
-    -fx-font-weight: bold;
-}
-
-/* Container spacing */
-.name-status-container {
-    -fx-padding: 5 5 5 5;
-}
-
-/* Pet Name Styling */
-.pet-name {
-    -fx-font-size: 22px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #4e3f33;
-}
-
-/* Status Badge */
-.status-badge {
-    -fx-background-color: #d7c2af;
-    -fx-text-fill: #4e3f33;
-    -fx-font-size: 11px;
-    -fx-font-weight: bold;
-    -fx-padding: 6 14 6 14;
-    -fx-background-radius: 20;
-}
-/* Container box */
-.info-container {
-    -fx-background-color: #f3ede6;
-    -fx-background-radius: 15;
-    -fx-padding: 15 20 15 20;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 3);
-}
-
-/* Left titles */
-.info-title {
-    -fx-font-size: 13px;
-    -fx-text-fill: #8a6f5a;
-    -fx-font-weight: bold;
-    -fx-min-width: 90;
-}
-
-/* Values */
-.info-value {
-    -fx-font-size: 14px;
-    -fx-text-fill: #4e3f33;
-}
-/* Main Card */
-.card {
-    -fx-background-color: white;
-    -fx-padding: 30;
-    -fx-background-radius: 20;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 15, 0, 0, 5);
-}
-
-/* Field Container */
-.text-field-wrapper {
-    -fx-background-color: #f3ede6;
-    -fx-padding: 15;
-    -fx-background-radius: 15;
-}
-
-/* Label Title */
-.label-bold {
-    -fx-font-weight: bold;
-    -fx-text-fill: #8a6f5a;
-    -fx-font-size: 13px;
-}
-
-/* Input */
-.input-field {
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
-    -fx-border-color: #d7c2af;
     -fx-padding: 8;
 }
 
-/* Save Button */
-.button-save {
-    -fx-background-color: #c89f7a;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
+.list-cell:selected {
+    -fx-background-color: #ffe9cf;
+}
+
+.status-badge {
+    -fx-background-color: #fde8cf;
+    -fx-text-fill: #8a4600;
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-padding: 4 10 4 10;
+    -fx-background-radius: 16;
+}
+
+.pet-name,
+.animal-name,
+.card-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #2d241c;
+}
+
+.mini-box {
+    -fx-background-color: #fff3e2;
     -fx-background-radius: 10;
-    -fx-padding: 10 20;
+    -fx-padding: 10;
+    -fx-min-width: 80;
+    -fx-alignment: center;
 }
 
-.button-save:hover {
-    -fx-background-color: #b58963;
+.back-icon {
+    -fx-text-fill: #5b4633;
+    -fx-font-size: 20px;
+    -fx-font-weight: 700;
+    -fx-cursor: hand;
 }
 
+.back-icon:hover {
+    -fx-text-fill: #3f2f22;
+}

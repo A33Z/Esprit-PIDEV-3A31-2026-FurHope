@@ -2,32 +2,39 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 
-<AnchorPane prefHeight="551.0"
-            prefWidth="794.0"
+<BorderPane prefHeight="760.0"
+            prefWidth="980.0"
             styleClass="root"
             stylesheets="@style.css"
-            xmlns="http://javafx.com/javafx/25"
+            xmlns="http://javafx.com/javafx/22"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.esprit.controllers.AfficherRequest">
 
-    <children>
+    <top>
+        <HBox styleClass="top-bar">
+            <Button text="%nav.back" onAction="#handleRetour" styleClass="button-secondary"/>
+            <Button text="%nav.home" onAction="#goHome" styleClass="button-secondary"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
+        </HBox>
+    </top>
 
-        <ListView fx:id="Listview"
-                  AnchorPane.topAnchor="10.0"
-                  AnchorPane.bottomAnchor="10.0"
-                  AnchorPane.leftAnchor="10.0"
-                  AnchorPane.rightAnchor="10.0"/>
+    <center>
+        <ListView fx:id="Listview" style="-fx-padding: 12;"/>
+    </center>
 
-        <Button layoutX="263.0"
-                layoutY="458.0"
-                prefHeight="60.0"
-                prefWidth="133.0"
-                text="BACK"
-                styleClass="primary-button"
-                onAction="#handleRetour"/>
+    <bottom>
+        <HBox spacing="10" style="-fx-padding: 0 16 16 16;">
+            <Button text="%nav.back" styleClass="button-secondary" onAction="#handleRetour"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
+        </HBox>
+    </bottom>
 
-
-    </children>
-</AnchorPane>
+</BorderPane>

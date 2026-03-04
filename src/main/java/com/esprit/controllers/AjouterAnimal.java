@@ -1,8 +1,12 @@
 package com.esprit.controllers;
 
-import com.esprit.entities.User;
+import com.esprit.Services.AIDescriptionService;
 import com.esprit.Services.AutoRecognitionService;
+import com.esprit.Services.animalServices;
+import com.esprit.entities.animal;
+import com.esprit.utils.Session;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -12,13 +16,11 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.stage.FileChooser;
-import com.esprit.Services.animalServices;
-import com.esprit.entities.animal;
-
 import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -29,23 +31,37 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 
-public class AjouterAnimal {
+public class AjouterAnimal extends BaseUIController {
 
-    @FXML private TextField age;
-    @FXML private TextField breed;
-    @FXML private TextField description;
-    @FXML private ComboBox<String> gender;
-    @FXML private TextField name;
-    @FXML private TextField species;
-    @FXML private ImageView imagePreview;
-    @FXML private Label confidenceLabel;
-    @FXML private Label imagePathLabel;
+    @FXML
+    private TextField age;
+    @FXML
+    private TextField breed;
+    @FXML
+    private TextArea description;
+    @FXML
+    private ComboBox<String> gender;
+    @FXML
+    private TextField name;
+    @FXML
+    private TextField species;
+    @FXML
+    private ImageView imagePreview;
+    @FXML
+    private Label confidenceLabel;
+    @FXML
+    private Label imagePathLabel;
 
-    private User currentUser;
     private File selectedFile;
     private String image;
     private AutoRecognitionService.AnimalRecognitionResult lastRecognitionResult;
-    private animalServices service = new animalServices();
+    private final animalServices service = new animalServices();
+    private final AIDescriptionService aiDescriptionService = new AIDescriptionService();
+
+    @Override
+    protected String getViewPath() {
+        return "/AjouterAnimal.fxml";
+    }
 
     @FXML
     public void initialize() {
@@ -53,9 +69,6 @@ public class AjouterAnimal {
         confidenceLabel.setText("");
     }
 
-    /**
-     * 📸 Sélectionner une image
-     */
     @FXML
     void chooseimage(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -67,32 +80,26 @@ public class AjouterAnimal {
         selectedFile = fileChooser.showOpenDialog(null);
 
         if (selectedFile != null) {
-            imagePathLabel.setText("✓ " + selectedFile.getName());
+            imagePathLabel.setText("OK " + selectedFile.getName());
             Image img = new Image(selectedFile.toURI().toString());
             imagePreview.setImage(img);
         }
     }
 
-    /**
-     * 🤖 RECONNAISSANCE AUTOMATIQUE - Analyze l'image et remplit les champs
-     */
     @FXML
     void autoRecognize(ActionEvent event) {
         if (selectedFile == null) {
-            showAlert("⚠️ Veuillez d'abord sélectionner une image", Alert.AlertType.WARNING);
+            showAlert("Veuillez d'abord selectionner une image.", Alert.AlertType.WARNING);
             return;
         }
 
-        // Analyser l'image
         lastRecognitionResult = AutoRecognitionService.analyzeImage(selectedFile);
 
-        // Remplir les champs
         species.setText(lastRecognitionResult.getSpecies());
         breed.setText(lastRecognitionResult.getBreed());
 
-        // Afficher la confiance avec couleur
         int confidencePercent = (int) (lastRecognitionResult.getConfidence() * 100);
-        confidenceLabel.setText(String.format("✓ Confiance : %d%%", confidencePercent));
+        confidenceLabel.setText(String.format("Confiance : %d%%", confidencePercent));
 
         if (confidencePercent >= 85) {
             confidenceLabel.setStyle("-fx-text-fill: #27ae60; -fx-font-weight: bold; -fx-font-size: 12px;");
@@ -103,19 +110,46 @@ public class AjouterAnimal {
         }
 
         showAlert(
-                "✓ Reconnaissance réussie\n\n" + lastRecognitionResult.toString() +
-                        "\n\nVérifiez et complétez avant de valider.",
+                "Reconnaissance reussie\n\n" + lastRecognitionResult + "\n\nVerifiez et completez avant de valider.",
                 Alert.AlertType.INFORMATION
         );
     }
 
-    /**
-     * 💾 Sauvegarder l'animal
-     */
+    @FXML
+    void generateDescription(ActionEvent event) {
+        String nameText = name.getText().trim();
+        String speciesText = species.getText().trim();
+        String breedText = breed.getText().trim();
+        String ageText = age.getText().trim();
+        Object genderValue = gender.getValue();
+
+        if (nameText.isEmpty() || speciesText.isEmpty() || breedText.isEmpty() || ageText.isEmpty() || genderValue == null) {
+            showAlert("Remplissez Nom, Age, Espece, Race et Sexe pour generer une description.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        int ageValue;
+        try {
+            ageValue = Integer.parseInt(ageText);
+        } catch (NumberFormatException e) {
+            showAlert("L'age doit etre un nombre entier pour generer la description.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        String generatedDescription = aiDescriptionService.generateDescription(
+                nameText,
+                speciesText,
+                breedText,
+                ageValue,
+                animal.gender.valueOf(genderValue.toString())
+        );
+
+        description.setText(generatedDescription);
+    }
+
     @FXML
     void save(ActionEvent event) {
         try {
-            // Récupérer et valider
             String nameText = name.getText().trim();
             String speciesText = species.getText().trim();
             String breedText = breed.getText().trim();
@@ -124,8 +158,8 @@ public class AjouterAnimal {
             Object genderValue = gender.getValue();
 
             if (nameText.isEmpty() || speciesText.isEmpty() || breedText.isEmpty() ||
-                    ageText.isEmpty() || descriptionText.isEmpty() || genderValue == null) {
-                showAlert("Tous les champs doivent être remplis ⚠️", Alert.AlertType.WARNING);
+                    ageText.isEmpty() || genderValue == null) {
+                showAlert("Nom, Age, Espece, Race et Sexe sont obligatoires.", Alert.AlertType.WARNING);
                 return;
             }
 
@@ -133,11 +167,10 @@ public class AjouterAnimal {
             try {
                 ageValue = Integer.parseInt(ageText);
             } catch (NumberFormatException e) {
-                showAlert("L'âge doit être un nombre entier ⚠️", Alert.AlertType.WARNING);
+                showAlert("L'age doit etre un nombre entier.", Alert.AlertType.WARNING);
                 return;
             }
 
-            // Gestion de l'image
             if (selectedFile != null) {
                 String fileName = System.currentTimeMillis() + "_" + selectedFile.getName();
                 try {
@@ -148,14 +181,24 @@ public class AjouterAnimal {
                     image = fileName;
                 } catch (IOException e) {
                     e.printStackTrace();
-                    showAlert("Erreur lors de la sauvegarde de l'image ❌", Alert.AlertType.ERROR);
+                    showAlert("Erreur lors de la sauvegarde de l'image.", Alert.AlertType.ERROR);
                     return;
                 }
             }
 
-            int ownerId = com.esprit.utils.Session.getUserId();
+            int ownerCompteId = Session.getCompteId();
 
-            // Créer l'animal
+            if (descriptionText.isEmpty()) {
+                descriptionText = aiDescriptionService.generateDescription(
+                        nameText,
+                        speciesText,
+                        breedText,
+                        ageValue,
+                        animal.gender.valueOf(genderValue.toString())
+                );
+                description.setText(descriptionText);
+            }
+
             animal newAnimal = new animal(
                     nameText,
                     speciesText,
@@ -163,50 +206,40 @@ public class AjouterAnimal {
                     ageValue,
                     animal.gender.valueOf(genderValue.toString()),
                     descriptionText,
-                    animal.status.AVAILABLE,  // ✅ Status AVAILABLE par défaut
+                    animal.status.AVAILABLE,
                     image,
-                    ownerId
+                    ownerCompteId
             );
 
             service.ajouter(newAnimal);
 
-            // Succès
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("🐾 Animal ajouté avec succès !");
-            alert.setHeaderText("Félicitations ! 🎉");
-            alert.setContentText(nameText + " est prêt à trouver sa nouvelle famille !");
+            alert.setTitle("Animal ajoute avec succes");
+            alert.setHeaderText("Operation terminee");
+            alert.setContentText(nameText + " est pret a trouver sa nouvelle famille.");
             DialogPane dialogPane = alert.getDialogPane();
             dialogPane.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
             alert.showAndWait();
 
-            // Retourner à la liste
-            Parent root = FXMLLoader.load(getClass().getResource("/AfficherAnimal.fxml"));
+            Parent root = loadView("/AfficherAnimal.fxml");
             name.getScene().setRoot(root);
 
         } catch (SQLException e) {
-            showAlert("Erreur base de données : " + e.getMessage(), Alert.AlertType.ERROR);
+            showAlert("Erreur base de donnees : " + e.getMessage(), Alert.AlertType.ERROR);
         } catch (IOException e) {
             showAlert("Erreur fichier : " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
     @FXML
-    void handleRetour(ActionEvent event) {
-        try {
-            Parent previousPage = FXMLLoader.load(getClass().getResource("/AfficherAnimal.fxml"));
-            Scene scene = new Scene(previousPage);
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    void handleRetour(Event event) {
+        navigate(event, "/AfficherAnimal.fxml");
     }
 
     private void showAlert(String message, Alert.AlertType type) {
         Alert alert = new Alert(type);
-        alert.setTitle(type == Alert.AlertType.INFORMATION ? "ℹ️ Info" :
-                type == Alert.AlertType.WARNING ? "⚠️ Attention" : "❌ Erreur");
+        alert.setTitle(type == Alert.AlertType.INFORMATION ? "Info" :
+                type == Alert.AlertType.WARNING ? "Attention" : "Erreur");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();

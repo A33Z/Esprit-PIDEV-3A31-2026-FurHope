@@ -1,5 +1,9 @@
 package com.esprit.controllers;
 
+import com.esprit.Services.AntiSpamAdoptionService;
+import com.esprit.Services.adoptionservices;
+import com.esprit.entities.adoptionRequest;
+import com.esprit.i18n.LanguageManager;
 import com.esprit.utils.Session;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -7,9 +11,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import com.esprit.Services.adoptionservices;
-import com.esprit.entities.adoptionRequest;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.DialogPane;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
@@ -17,15 +23,26 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class AjouterRequest {
+public class AjouterRequest extends BaseUIController {
+
     @FXML
-    private Label animalNameLabel, animalSpeciesLabel, animalBreedLabel, animalAgeGenderLabel;
+    private Label animalNameLabel;
+    @FXML
+    private Label animalSpeciesLabel;
+    @FXML
+    private Label animalBreedLabel;
+    @FXML
+    private Label animalAgeGenderLabel;
 
     @FXML
     private ImageView animalImageView;
 
     @FXML
-    private Label clientNameLabel, clientEmailLabel, clientPhoneLabel;
+    private Label clientNameLabel;
+    @FXML
+    private Label clientEmailLabel;
+    @FXML
+    private Label clientPhoneLabel;
 
     @FXML
     private TextArea message;
@@ -34,16 +51,44 @@ public class AjouterRequest {
     private Button sendButton;
 
     private int animalId;
+    private String animalName;
+    private String animalSpecies;
+    private String animalBreed;
+    private String animalAgeGender;
+    private Image animalImage;
 
-    adoptionservices serv = new adoptionservices();
+    private final adoptionservices adoptionService = new adoptionservices();
+    private final AntiSpamAdoptionService antiSpamService = new AntiSpamAdoptionService();
 
-    // 1️⃣ Méthode pour pré-remplir l’animal
+    @Override
+    protected String getViewPath() {
+        return "/AjouterRequest.fxml";
+    }
+
+    @Override
+    protected void onControllerReloaded(Object controller) {
+        if (!(controller instanceof AjouterRequest reloaded)) {
+            return;
+        }
+
+        if (animalId > 0) {
+            reloaded.setAnimalInfo(animalId, animalName, animalSpecies, animalBreed, animalAgeGender, animalImage);
+        }
+        reloaded.setClientInfoFromSession();
+        reloaded.message.setText(message.getText());
+    }
+
     public void setAnimalInfo(int id, String name, String species, String breed, String ageGender, Image image) {
         this.animalId = id;
+        this.animalName = name;
+        this.animalSpecies = species;
+        this.animalBreed = breed;
+        this.animalAgeGender = ageGender;
+        this.animalImage = image;
 
-        animalNameLabel.setText("Name: " + name);
-        animalSpeciesLabel.setText("Species: " + species);
-        animalBreedLabel.setText("Breed: " + breed);
+        animalNameLabel.setText(labelValue("name", name));
+        animalSpeciesLabel.setText(labelValue("field.species", species));
+        animalBreedLabel.setText(labelValue("field.breed", breed));
         animalAgeGenderLabel.setText(ageGender);
 
         if (image != null) {
@@ -51,90 +96,87 @@ public class AjouterRequest {
         }
     }
 
-    // 2️⃣ Méthode pour pré-remplir client depuis Session
     public void setClientInfoFromSession() {
-        clientNameLabel.setText("Name: " + Session.getUserName());
-        clientEmailLabel.setText("Email: " + Session.getUserEmail());
-        clientPhoneLabel.setText("Phone: " + Session.getUserPhone());
+        clientNameLabel.setText(labelValue("name", Session.getUserName()));
+        clientEmailLabel.setText(labelValue("request.detail.email", Session.getUserEmail()));
+        clientPhoneLabel.setText(labelValue("request.card.phone", String.valueOf(Session.getUserPhone())));
     }
-
 
     @FXML
     void Envoyer(ActionEvent event) {
         try {
             String msg = message.getText().trim();
+            int clientCompteId = Session.getCompteId();
 
-
-            // 2️⃣ Contrôle des champs vides
             if (msg.isEmpty()) {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Message missing");
-                alert.setContentText("Please write a message before sending!");
-                alert.showAndWait();
+                showAlert(tr("request.error.messageMissing.title"), tr("request.error.messageMissing.body"), Alert.AlertType.WARNING);
                 return;
             }
 
-            // 3️⃣ Conversion en nombres
-            int clientId = Session.getUserId();
+            if (animalId <= 0 || clientCompteId <= 0) {
+                showAlert(tr("request.error.invalid.title"), tr("request.error.invalid.body"), Alert.AlertType.ERROR);
+                return;
+            }
 
-            // 4️⃣ Créer et ajouter la demande
-            adoptionRequest request = new adoptionRequest(animalId, clientId, msg, Session.getUserPhone()+"", "dummy address", adoptionRequest.status.PENDING);
-            serv.ajouter(request);
+            AntiSpamAdoptionService.ValidationResult validation = antiSpamService.validateRequest(clientCompteId, animalId);
+            if (!validation.isValid()) {
+                showAlert(tr("request.error.blocked.title"), validation.getMessage(), Alert.AlertType.WARNING);
+                return;
+            }
 
-            // 5️⃣ Notification créative
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Adoption Request Submitted 🌟");
-            alert.setHeaderText("Hooray! 🎉");
-            alert.setContentText("Votre demande a été envoyée avec succès ! 🐾\n" +
-                    "Nos amis poilus ont hâte de vous rencontrer 😺💖");
+            adoptionRequest request = new adoptionRequest(
+                    animalId,
+                    clientCompteId,
+                    msg,
+                    String.valueOf(Session.getUserPhone()),
+                    "dummy address",
+                    adoptionRequest.status.PENDING
+            );
+            adoptionService.ajouter(request);
 
-            DialogPane dialogPane = alert.getDialogPane();
+            Alert success = new Alert(Alert.AlertType.INFORMATION);
+            success.setTitle(tr("common.success"));
+            success.setHeaderText(tr("common.success"));
+            success.setContentText(tr("request.success.sent"));
+            DialogPane dialogPane = success.getDialogPane();
             dialogPane.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
             dialogPane.getStyleClass().add("custom-alert");
+            success.showAndWait();
 
-            alert.showAndWait();
-
-            // 6️⃣ GO BACK TO AfficherAnimal.fxml
-            Parent root = FXMLLoader.load(
-                    getClass().getResource("/AfficherAnimal.fxml")
-            );
-
+            Parent root = loadView("/AfficherAnimal.fxml");
             Scene scene = new Scene(root);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(scene);
-            stage.setMaximized(false);  // first turn off maximize
-            stage.setMaximized(true);  // maximize new stage
-
+            stage.setMaximized(false);
+            stage.setMaximized(true);
             stage.show();
 
-        } catch (NumberFormatException e) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Entrée invalide ⚠️");
-            alert.setHeaderText("Oops !");
-            alert.setContentText("Les champs Animal ID et Client ID doivent être des nombres.");
-            alert.showAndWait();
-
         } catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur base de données ❌");
-            alert.setHeaderText("Impossible d'enregistrer la demande 😢");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-
+            showAlert(tr("request.error.database"), e.getMessage(), Alert.AlertType.ERROR);
         } catch (IOException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur Fichier ❌");
-            alert.setHeaderText("Impossible de charger la page d'affichage.");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-
+            showAlert(tr("request.error.file"), e.getMessage(), Alert.AlertType.ERROR);
         } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur inattendue ❌");
-            alert.setHeaderText("Quelque chose s'est mal passé 😱");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            showAlert(tr("request.error.unexpected"), e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
+    private void showAlert(String title, String content, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    private String labelValue(String key, String value) {
+        return tr(key) + ": " + (value == null ? "-" : value);
+    }
+
+    private String tr(String key) {
+        try {
+            return LanguageManager.get(key);
+        } catch (Exception e) {
+            return key;
+        }
+    }
 }

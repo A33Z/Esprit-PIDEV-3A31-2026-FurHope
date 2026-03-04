@@ -1,77 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/25"
+<BorderPane xmlns="http://javafx.com/javafx/22"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.esprit.controllers.favoritecontroller"
-            prefHeight="700" prefWidth="1000"
+            prefHeight="760.0"
+            prefWidth="1160.0"
             styleClass="root"
             stylesheets="@style.css">
 
-    <!-- Header -->
-    <VBox AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
-          spacing="15" style="-fx-padding: 20; -fx-background-color: #e74c3c;">
-
-        <HBox spacing="15" alignment="CENTER_LEFT">
-
-            <!-- Back Button -->
-            <Button fx:id="backButton"
-                   text="← Retour"
-                   onMouseClicked="#handleBack"
-                   style="-fx-font-size: 28px; -fx-cursor: hand; -fx-text-fill: white;"/>
-
-            <!-- Title -->
-            <Label text="❤️ Mes animaux favoris"
-                   style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
-
-            <!-- Spacer -->
+    <top>
+        <HBox styleClass="top-bar">
+            <Button fx:id="backButton" text="%nav.back" onAction="#handleBack" styleClass="button-secondary"/>
+            <Button text="%nav.home" onAction="#goHome" styleClass="button-secondary"/>
+            <Label text="%page.favorites.title" styleClass="page-title"/>
             <Region HBox.hgrow="ALWAYS"/>
-
-            <!-- Stats Button -->
-            <Button text="📊 Statistiques"
-                    onAction="#showStats"
-                    style="-fx-font-size: 12px; -fx-padding: 8 15; -fx-background-color: #c0392b; -fx-text-fill: white; -fx-border-radius: 5;"/>
-
-            <!-- Clear Button -->
-            <Button text="🗑️ Supprimer tout"
-                    onAction="#clearAllFavorites"
-                    style="-fx-font-size: 12px; -fx-padding: 8 15; -fx-background-color: #a93226; -fx-text-fill: white; -fx-border-radius: 5;"/>
+            <Button text="%menu.statistics" onAction="#showStats" styleClass="menu-button"/>
+            <Button text="%menu.clearAll" onAction="#clearAllFavorites" styleClass="button-danger"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
         </HBox>
-    </VBox>
+    </top>
 
-    <!-- Content ScrollPane -->
-    <ScrollPane fitToWidth="true" fitToHeight="true"
-                AnchorPane.topAnchor="100"
-                AnchorPane.bottomAnchor="0"
-                AnchorPane.leftAnchor="0"
-                AnchorPane.rightAnchor="0"
-                style="-fx-background-color: #ecf0f1;">
-
-        <content>
-            <VBox spacing="20" style="-fx-padding: 20;">
-
-                <!-- Empty Message Label -->
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <VBox spacing="14" style="-fx-padding: 16;">
                 <Label fx:id="emptyLabel"
-                       text="❤️ Aucun animal favori pour le moment."
+                       text="%favorites.empty"
                        textAlignment="CENTER"
                        wrapText="true"
                        visible="false"
-                       style="-fx-font-size: 16px; -fx-text-fill: #7f8c8d; -fx-padding: 40;"/>
+                       styleClass="section-value"/>
 
-                <!-- Favorites Grid (2 columns) -->
-                <GridPane fx:id="favoritesGrid"
-                          hgap="20" vgap="20"
-                          style="-fx-padding: 10;">
+                <GridPane fx:id="favoritesGrid" hgap="20" vgap="20">
                     <columnConstraints>
                         <ColumnConstraints prefWidth="500" hgrow="SOMETIMES"/>
                         <ColumnConstraints prefWidth="500" hgrow="SOMETIMES"/>
                     </columnConstraints>
                 </GridPane>
             </VBox>
-        </content>
-    </ScrollPane>
+        </ScrollPane>
+    </center>
 
-</AnchorPane>
+    <bottom>
+        <HBox spacing="10" style="-fx-padding: 0 16 16 16;">
+            <Button text="%nav.back" onAction="#handleBack" styleClass="button-secondary"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

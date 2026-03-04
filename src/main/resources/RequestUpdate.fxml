@@ -1,71 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+<BorderPane xmlns="http://javafx.com/javafx/22"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.esprit.controllers.requestupdate"
-            prefHeight="500.0" prefWidth="600.0"
+            prefHeight="760.0"
+            prefWidth="920.0"
             styleClass="root"
-            stylesheets="style.css">
+            stylesheets="@style.css">
 
-    <VBox alignment="CENTER"
-          spacing="18"
-          styleClass="card"
-          AnchorPane.leftAnchor="50.0"
-          AnchorPane.rightAnchor="50.0"
-          AnchorPane.topAnchor="50.0"
-          AnchorPane.bottomAnchor="50.0">
+    <top>
+        <HBox styleClass="top-bar">
+            <Button text="%nav.back" onAction="#goBack" styleClass="button-secondary"/>
+            <Button text="%nav.home" onAction="#goHome" styleClass="button-secondary"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
+        </HBox>
+    </top>
 
-        <!-- Animal ID -->
-        <VBox alignment="CENTER_LEFT" spacing="5" styleClass="text-field-wrapper">
-            <Label text="Animal ID" styleClass="label-bold"/>
-            <TextField fx:id="animalidfield" styleClass="input-field"/>
+    <center>
+        <VBox alignment="CENTER_LEFT"
+              spacing="12"
+              style="-fx-padding: 18;"
+              maxWidth="760">
+
+            <VBox spacing="5" styleClass="text-field-wrapper">
+                <Label text="%request.field.animalId" styleClass="label-bold"/>
+                <TextField fx:id="animalidfield" styleClass="input-field"/>
+            </VBox>
+
+            <VBox spacing="5" styleClass="text-field-wrapper">
+                <Label text="%request.field.clientCompteId" styleClass="label-bold"/>
+                <TextField fx:id="clientidfield" styleClass="input-field"/>
+            </VBox>
+
+            <VBox spacing="5" styleClass="text-field-wrapper">
+                <Label text="%addRequest.message" styleClass="label-bold"/>
+                <TextArea fx:id="messagefield" wrapText="true" prefHeight="90" styleClass="input-field"/>
+            </VBox>
+
+            <VBox spacing="5" styleClass="text-field-wrapper">
+                <Label text="%request.card.phone" styleClass="label-bold"/>
+                <TextField fx:id="phonefield" styleClass="input-field"/>
+            </VBox>
+
+            <VBox spacing="5" styleClass="text-field-wrapper">
+                <Label text="%request.card.address" styleClass="label-bold"/>
+                <TextField fx:id="addressfield" styleClass="input-field"/>
+            </VBox>
+
+            <VBox spacing="5" styleClass="text-field-wrapper">
+                <Label text="%field.status" styleClass="label-bold"/>
+                <TextField fx:id="statusField" styleClass="input-field"/>
+            </VBox>
         </VBox>
+    </center>
 
-        <!-- Client ID -->
-        <VBox alignment="CENTER_LEFT" spacing="5" styleClass="text-field-wrapper">
-            <Label text="Client ID" styleClass="label-bold"/>
-            <TextField fx:id="clientidfield" styleClass="input-field"/>
-        </VBox>
-
-        <!-- Message -->
-        <VBox alignment="CENTER_LEFT" spacing="5" styleClass="text-field-wrapper">
-            <Label text="Message" styleClass="label-bold"/>
-            <TextArea fx:id="messagefield"
-                      wrapText="true"
-                      prefHeight="80"
-                      styleClass="input-field"/>
-        </VBox>
-
-        <!-- Phone -->
-        <VBox alignment="CENTER_LEFT" spacing="5" styleClass="text-field-wrapper">
-            <Label text="Phone" styleClass="label-bold"/>
-            <TextField fx:id="phonefield" styleClass="input-field"/>
-        </VBox>
-
-        <!-- Address -->
-        <VBox alignment="CENTER_LEFT" spacing="5" styleClass="text-field-wrapper">
-            <Label text="Address" styleClass="label-bold"/>
-            <TextField fx:id="addressfield" styleClass="input-field"/>
-        </VBox>
-
-        <!-- Status -->
-        <VBox alignment="CENTER_LEFT" spacing="5" styleClass="text-field-wrapper">
-            <Label text="Status" styleClass="label-bold"/>
-            <TextField fx:id="statusField" styleClass="input-field"/>
-        </VBox>
-
-        <!-- Save Button -->
-        <HBox alignment="CENTER">
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 18 16 18;">
             <Button fx:id="saveButton"
                     onAction="#handleSave"
-                    text="Save"
+                    text="%save"
                     styleClass="button-save"
-                    prefWidth="130"/>
+                    prefWidth="140"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
         </HBox>
+    </bottom>
 
-    </VBox>
-
-</AnchorPane>
+</BorderPane>

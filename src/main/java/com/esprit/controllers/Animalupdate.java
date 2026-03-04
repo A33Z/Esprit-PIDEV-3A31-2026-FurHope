@@ -2,6 +2,7 @@ package com.esprit.controllers;
 
 import com.esprit.Services.animalServices;
 import com.esprit.entities.animal;
+import com.esprit.i18n.LanguageManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -123,7 +124,7 @@ public class Animalupdate {
             currentStage.close();
 
 // Load the new FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherAnimal.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherAnimal.fxml"), LanguageManager.getBundle());
             Parent root = loader.load();
 
 // Open the new window

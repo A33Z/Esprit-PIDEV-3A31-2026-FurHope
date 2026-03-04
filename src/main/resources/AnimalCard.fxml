@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.effect.DropShadow?>
-<AnchorPane xmlns="http://javafx.com/javafx/25"
+<AnchorPane xmlns="http://javafx.com/javafx/22"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.esprit.controllers.AnimalCard"
             prefHeight="160" prefWidth="1200"
@@ -16,7 +20,6 @@
 
     <children>
 
-        <!-- Main HBox Container -->
         <HBox spacing="20"
               AnchorPane.leftAnchor="20"
               AnchorPane.topAnchor="20"
@@ -24,58 +27,50 @@
               AnchorPane.bottomAnchor="20"
               alignment="CENTER_LEFT">
 
-            <!-- Animal Image -->
             <ImageView fx:id="animalImage"
                        fitHeight="120"
                        fitWidth="120"
                        preserveRatio="true"
                        style="-fx-border-color: #bdc3c7; -fx-border-width: 2; -fx-border-radius: 8;"/>
 
-            <!-- Animal Info VBox -->
             <VBox spacing="10" HBox.hgrow="ALWAYS">
 
-                <!-- Name -->
                 <Label fx:id="nameLabel"
                        style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"
-                       text="Nom de l'animal"/>
+                       text="%animal.card.nameDefault"/>
 
-                <!-- Species & Age HBox -->
                 <HBox spacing="20">
                     <Label fx:id="speciesLabel"
                            style="-fx-font-size: 13px; -fx-text-fill: #34495e;"
-                           text="Espèce"/>
+                           text="%animal.card.speciesLabel"/>
                     <Separator orientation="VERTICAL"/>
                     <Label fx:id="ageLabel"
                            style="-fx-font-size: 13px; -fx-text-fill: #34495e;"
-                           text="Âge"/>
+                           text="%animal.card.ageLabel"/>
                 </HBox>
 
-                <!-- Status Badge -->
                 <HBox spacing="10">
-                    <Label text="Statut:"
+                    <Label text="%animal.card.statusLabel"
                            style="-fx-font-weight: bold; -fx-text-fill: #7f8c8d;"/>
                     <Label fx:id="statusLabel"
                            style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #27ae60; -fx-padding: 5 12; -fx-background-color: #d5f4e6; -fx-border-radius: 15; -fx-background-radius: 15;"
-                           text="Disponible"/>
+                           text="%animal.card.statusDefault"/>
                 </HBox>
             </VBox>
         </HBox>
 
-        <!-- Favorite Button (Heart) -->
         <Button fx:id="favoriteButton"
                 onAction="#handleFavoriteButton"
-                text="🤍"
-                style="-fx-font-size: 28px; -fx-background-color: transparent; -fx-padding: 0; -fx-focus-traversable: false; -fx-cursor: hand;"
+                text="♡"
+                style="-fx-font-size: 20px; -fx-background-color: transparent; -fx-padding: 0; -fx-focus-traversable: false; -fx-cursor: hand;"
                 AnchorPane.topAnchor="15"
                 AnchorPane.rightAnchor="20"
                 prefWidth="50"
                 prefHeight="50">
             <tooltip>
-                <Tooltip text="Ajouter aux favoris"/>
+                <Tooltip text="%animal.card.favoriteAdd"/>
             </tooltip>
         </Button>
-
-
 
     </children>
 

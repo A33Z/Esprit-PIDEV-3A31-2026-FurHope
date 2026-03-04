@@ -1,34 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.ScrollPane?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+<BorderPane xmlns="http://javafx.com/javafx/22"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.esprit.controllers.myanimals"
-            prefHeight="400.0" prefWidth="600.0"
+            prefHeight="760.0" prefWidth="1100.0"
             styleClass="root"
-            stylesheets="style.css">
+            stylesheets="@style.css">
 
-    <children>
-        <ScrollPane fitToWidth="true" fitToHeight="true"
-                    AnchorPane.topAnchor="0"
-                    AnchorPane.bottomAnchor="0"
-                    AnchorPane.leftAnchor="0"
-                    AnchorPane.rightAnchor="0"
-                    style="-fx-background-color: transparent;">
+    <top>
+        <HBox styleClass="top-bar">
+            <Button text="%nav.back" onAction="#goBack" styleClass="button-secondary"/>
+            <Button text="%nav.home" onAction="#goHome" styleClass="button-secondary"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
+        </HBox>
+    </top>
 
-            <content>
-                <GridPane fx:id="myanimalsGrid" hgap="15" vgap="15"
-                          styleClass="grid-container">
-                    <padding>
-                        <Insets top="15" right="15" bottom="15" left="15"/>
-                    </padding>
-                </GridPane>
-            </content>
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent;">
+            <GridPane fx:id="myanimalsGrid" hgap="15" vgap="15" style="-fx-padding: 15;">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
+            </GridPane>
         </ScrollPane>
-    </children>
-</AnchorPane>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" style="-fx-padding: 0 16 16 16;">
+            <Button text="%nav.back" onAction="#goBack" styleClass="button-secondary"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

@@ -2,153 +2,113 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="750.0" prefWidth="1000.0"
-            xmlns="http://javafx.com/javafx/25"
+<BorderPane prefHeight="760.0" prefWidth="1160.0"
+            xmlns="http://javafx.com/javafx/22"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.esprit.controllers.AjouterAnimal"
-            stylesheets="style.css"
+            stylesheets="@style.css"
             styleClass="root">
 
-    <!-- Header avec bouton retour -->
-    <HBox layoutX="20" layoutY="20" spacing="10">
-        <Label text="←"
-               onMouseClicked="#handleRetour"
-               styleClass="back-icon"
-               style="-fx-font-size: 24px; -fx-cursor: hand;"/>
-        <Label text="🐾 Ajouter un nouvel animal"
-               style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
-    </HBox>
+    <top>
+        <HBox styleClass="top-bar">
+            <Button text="%nav.back" onAction="#handleRetour" styleClass="button-secondary"/>
+            <Button text="%nav.home" onAction="#goHome" styleClass="button-secondary"/>
+            <Label text="%page.addAnimal.title" styleClass="page-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
+        </HBox>
+    </top>
 
-    <ScrollPane fitToWidth="true"
-                AnchorPane.topAnchor="70.0"
-                AnchorPane.bottomAnchor="20.0"
-                AnchorPane.leftAnchor="50.0"
-                AnchorPane.rightAnchor="50.0"
-                style="-fx-background-color:transparent;">
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <VBox spacing="16" style="-fx-padding: 18;">
+                <VBox spacing="12" styleClass="card">
+                    <Label text="%addAnimal.section.image" styleClass="label-bold"/>
 
-        <VBox alignment="TOP_CENTER"
-              spacing="20"
-              styleClass="card"
-              style="-fx-padding: 30;">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Button text="%addAnimal.chooseImage" onAction="#chooseimage" styleClass="menu-button"/>
+                        <Label fx:id="imagePathLabel" text="%addAnimal.noImage" styleClass="section-value"/>
+                    </HBox>
 
-            <!-- 📸 Section Image & Reconnaissance -->
-            <VBox spacing="15" style="-fx-border-color: #bdc3c7; -fx-border-width: 2; -fx-padding: 20; -fx-border-radius: 10;">
-                <Label text="📸 Image et Reconnaissance Automatique"
-                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                    <HBox spacing="18" alignment="CENTER_LEFT">
+                        <ImageView fx:id="imagePreview" fitHeight="190" fitWidth="190" preserveRatio="true" styleClass="section-container"/>
+                        <VBox spacing="10" HBox.hgrow="ALWAYS">
+                            <Button text="%addAnimal.autoRecognize" onAction="#autoRecognize" styleClass="menu-button" prefWidth="190"/>
+                            <Label fx:id="confidenceLabel" text="" styleClass="readonly-label" wrapText="true"/>
+                            <Label text="%addAnimal.tip" wrapText="true" styleClass="page-subtitle"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
 
-                <HBox spacing="10" alignment="CENTER">
-                    <Button text="📁 Choisir une image"
-                            onAction="#chooseimage"
-                            style="-fx-font-size: 12px; -fx-padding: 10 20; -fx-background-color: #3498db; -fx-text-fill: white;"/>
-                    <Label fx:id="imagePathLabel"
-                           text="Aucune image sélectionnée"
-                           style="-fx-text-fill: #7f8c8d; -fx-font-style: italic;"/>
-                </HBox>
+                <VBox spacing="12" styleClass="card">
+                    <Label text="%addAnimal.section.info" styleClass="label-bold"/>
 
-                <HBox spacing="20" alignment="CENTER">
-                    <ImageView fx:id="imagePreview"
-                               fitHeight="200"
-                               fitWidth="200"
-                               preserveRatio="true"
-                               style="-fx-border-color: #95a5a6; -fx-border-width: 2; -fx-border-radius: 10;"/>
+                    <HBox spacing="14">
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Label text="%field.nameRequired" styleClass="label-bold"/>
+                            <TextField fx:id="name" promptText="%addAnimal.prompt.name" styleClass="input-field"/>
+                        </VBox>
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Label text="%field.ageRequired" styleClass="label-bold"/>
+                            <TextField fx:id="age" promptText="%addAnimal.prompt.age" styleClass="input-field"/>
+                        </VBox>
+                    </HBox>
 
-                    <VBox spacing="12" prefWidth="300">
-                        <Button text="🤖 Reconnaissance Automatique"
-                                onAction="#autoRecognize"
-                                style="-fx-font-size: 14px; -fx-padding: 15 30; -fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-radius: 8;"/>
+                    <HBox spacing="14">
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Label text="%field.speciesRequired" styleClass="label-bold"/>
+                            <TextField fx:id="species" promptText="%addAnimal.prompt.species" styleClass="input-field"/>
+                        </VBox>
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Label text="%field.breedRequired" styleClass="label-bold"/>
+                            <TextField fx:id="breed" promptText="%addAnimal.prompt.breed" styleClass="input-field"/>
+                        </VBox>
+                    </HBox>
 
-                        <Label fx:id="confidenceLabel"
-                               text=""
-                               style="-fx-padding: 10; -fx-border-color: #f39c12; -fx-border-width: 1; -fx-border-radius: 5; -fx-background-color: #fef5e7;"/>
-
-                        <Label text="💡 Conseil: Sélectionnez une image contenant 'chien', 'chat', 'lapin', etc. pour une meilleure reconnaissance."
-                               wrapText="true"
-                               style="-fx-font-size: 11px; -fx-font-style: italic; -fx-text-fill: #7f8c8d;"/>
+                    <VBox spacing="5">
+                        <Label text="%field.genderRequired" styleClass="label-bold"/>
+                        <ComboBox fx:id="gender" promptText="%addAnimal.prompt.gender" styleClass="combo-box"/>
                     </VBox>
-                </HBox>
-            </VBox>
+                </VBox>
 
-            <Separator/>
+                <VBox spacing="12" styleClass="card">
+                    <Label text="%addAnimal.section.description" styleClass="label-bold"/>
+                    <TextArea fx:id="description"
+                              promptText="%addAnimal.prompt.description"
+                              wrapText="true"
+                              prefRowCount="5"
+                              styleClass="input-field"/>
 
-            <!-- ℹ️ Informations de base -->
-            <VBox spacing="12">
-                <Label text="ℹ️ Informations de l'animal"
-                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-
-                <HBox spacing="20">
-                    <VBox spacing="5" HBox.hgrow="ALWAYS">
-                        <Label text="Nom *" style="-fx-font-weight: bold;"/>
-                        <TextField fx:id="name" promptText="Ex: Max, Luna..." styleClass="input-field"/>
-                    </VBox>
-                    <VBox spacing="5" HBox.hgrow="ALWAYS">
-                        <Label text="Âge (ans) *" style="-fx-font-weight: bold;"/>
-                        <TextField fx:id="age" promptText="Ex: 3" styleClass="input-field"/>
-                    </VBox>
-                </HBox>
-
-                <HBox spacing="20">
-                    <VBox spacing="5" HBox.hgrow="ALWAYS">
-                        <Label text="Espèce *" style="-fx-font-weight: bold;"/>
-                        <TextField fx:id="species"
-                                  promptText="Choisir une espèce"
-                                  styleClass="combo-box"/>
-                    </VBox>
-                    <VBox spacing="5" HBox.hgrow="ALWAYS">
-                        <Label text="Race *" style="-fx-font-weight: bold;"/>
-                        <TextField fx:id="breed" promptText="Ex: Labrador..." styleClass="input-field"/>
-                    </VBox>
-                </HBox>
-
-                <VBox spacing="5">
-                    <Label text="Sexe *" style="-fx-font-weight: bold;"/>
-                    <ComboBox fx:id="gender"
-                              promptText="Sélectionner le sexe"
-                              styleClass="combo-box"/>
+                    <Button text="%addAnimal.generateDescription"
+                            onAction="#generateDescription"
+                            styleClass="button-secondary"
+                            prefWidth="210"/>
                 </VBox>
             </VBox>
+        </ScrollPane>
+    </center>
 
-            <Separator/>
+    <bottom>
+        <HBox spacing="12" alignment="CENTER_LEFT" style="-fx-padding: 0 18 16 18;">
+            <Button text="%addAnimal.save" onAction="#save" styleClass="button-save" prefWidth="170"/>
+            <Button text="%nav.cancel" onAction="#handleRetour" styleClass="button-danger" prefWidth="140"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
+        </HBox>
+    </bottom>
 
-            <!-- 📝 Description -->
-            <VBox spacing="12">
-                <Label text="📝 Description et caractéristiques"
-                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-
-                <TextField fx:id="description"
-                           promptText="Décrivez le tempérament, caractéristiques spéciales..."
-                           styleClass="input-field"
-                           style="-fx-min-height: 80px; -fx-wrap-text: true;"/>
-            </VBox>
-
-            <Separator/>
-
-            <!-- Boutons d'action -->
-            <HBox spacing="15" alignment="CENTER" style="-fx-padding: 20;">
-                <Button text="✓ Ajouter l'animal"
-                        onAction="#save"
-                        styleClass="button-save"
-                        style="-fx-font-size: 14px; -fx-padding: 15 40; -fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold;"
-                        prefWidth="200" prefHeight="50"/>
-
-                <Button text="✕ Annuler"
-                        onAction="#handleRetour"
-                        style="-fx-font-size: 14px; -fx-padding: 15 40; -fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;"
-                        prefWidth="150" prefHeight="50"/>
-            </HBox>
-
-        </VBox>
-
-    </ScrollPane>
-
-</AnchorPane>
+</BorderPane>

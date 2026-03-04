@@ -17,12 +17,17 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-public class AfficherRequest {
+public class AfficherRequest extends BaseUIController {
 
     @FXML
     private ListView<adoptionRequest> Listview;
 
     adoptionservices as = new adoptionservices();
+
+    @Override
+    protected String getViewPath() {
+        return "/AfficherRequest.fxml";
+    }
 
     @FXML
     void initialize() {
@@ -38,7 +43,7 @@ public class AfficherRequest {
                 }
 
                 try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/Myrequestcard.fxml"));
+                    FXMLLoader loader = createLoader("/Myrequestcard.fxml");
                     Parent root = loader.load();
 
                     MyrequestCard controller = loader.getController();
@@ -62,12 +67,12 @@ public class AfficherRequest {
 
             // Filtrer uniquement les demandes du current user
             List<adoptionRequest> myRequests = allRequests.stream()
-                    .filter(r -> r.getClient_id() == com.esprit.utils.Session.getUserId())
+                    .filter(r -> r.getClientCompteId() == com.esprit.utils.Session.getCompteId())
                     .toList();
 
             Listview.getItems().setAll(FXCollections.observableList(myRequests));
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -76,7 +81,7 @@ public class AfficherRequest {
     @FXML
     void handleRetour(ActionEvent event) {
         try {
-            Parent previousPage = FXMLLoader.load(getClass().getResource("/AfficherAnimal.fxml"));
+            Parent previousPage = loadView("/AfficherAnimal.fxml");
 
             // Create a new stage for the details page
             Stage stage = new Stage();
@@ -100,7 +105,7 @@ public class AfficherRequest {
     void voirdetails(ActionEvent event) {
         adoptionRequest selected = Listview.getSelectionModel().getSelectedItem();
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/requestDetails.fxml"));
+            FXMLLoader loader = createLoader("/RequestDetails.fxml");
             Parent root = loader.load();
 
             // envoyer l'animal au controller détails

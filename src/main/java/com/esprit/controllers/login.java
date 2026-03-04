@@ -1,63 +1,107 @@
 package com.esprit.controllers;
 
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
 import com.esprit.utils.MyDataBase;
 import com.esprit.utils.Session;
 import com.esprit.utils.ViewNavigator;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-public class login {
+public class login extends BaseUIController {
 
-    @FXML private TextField emailField;
-    @FXML private PasswordField passwordField;
-    @FXML private Label errorLabel;
+    @FXML
+    private TextField emailField;
+    @FXML
+    private PasswordField passwordField;
+    @FXML
+    private Label errorLabel;
+
+    @Override
+    protected String getViewPath() {
+        return "/login.fxml";
+    }
+
+    @Override
+    protected String getBackViewPath() {
+        return "/Home.fxml";
+    }
 
     @FXML
     private void login(ActionEvent event) {
-        String email = emailField.getText().trim();
+        String identifier = emailField.getText().trim();
         String password = passwordField.getText().trim();
 
-        if (email.isEmpty() || password.isEmpty()) {
-            errorLabel.setText("⚠️ Remplissez tous les champs !");
+        if (identifier.isEmpty() || password.isEmpty()) {
+            errorLabel.setText("Fill all fields.");
             return;
         }
 
         try {
             Connection conn = MyDataBase.getInstance().getConnection();
-            String query = "SELECT * FROM user WHERE email = ? AND password = ?";
-            PreparedStatement ps = conn.prepareStatement(query);
-            ps.setString(1, email);
-            ps.setString(2, password);
 
-            ResultSet rs = ps.executeQuery();
+            // New auth model: compte is the principal identity.
+            String compteQuery = "SELECT c.id_compte, c.role, u.id_user, u.name, u.email, u.phone " +
+                    "FROM compte c " +
+                    "JOIN user u ON c.user_id = u.id_user " +
+                    "WHERE (c.username = ? OR u.email = ?) AND c.password = ? " +
+                    "LIMIT 1";
 
+            try (PreparedStatement ps = conn.prepareStatement(compteQuery)) {
+                ps.setString(1, identifier);
+                ps.setString(2, identifier);
+                ps.setString(3, password);
 
-            if (rs.next()) {
-                // ✅ Stocker les infos dans SessionManager
-                Session.setUserId(rs.getInt("id"));
-                Session.setUserName(rs.getString("name") );
-                Session.setUserRole(rs.getString("role"));
-
-                // Redirection vers AfficherAnimal (tous les animaux)
-                ViewNavigator.goTo(event, "/AfficherAnimal.fxml");
-
-            } else {
-                errorLabel.setText("❌ Email ou mot de passe incorrect !");
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        Session.setCompteId(rs.getInt("id_compte"));
+                        Session.setUserId(rs.getInt("id_user"));
+                        Session.setUserName(rs.getString("name"));
+                        Session.setUserEmail(rs.getString("email"));
+                        Session.setUserPhone(rs.getInt("phone"));
+                        Session.setUserRole(rs.getString("role"));
+                        ViewNavigator.goTo(event, "/AfficherAnimal.fxml");
+                        return;
+                    }
+                }
             }
 
+            // Fallback for legacy schemas where user table still authenticates directly.
+            String[] legacyQueries = {
+                    "SELECT id_user, name, email, phone, role FROM user WHERE email = ? AND password = ? LIMIT 1",
+                    "SELECT id AS id_user, name, email, phone, role FROM user WHERE email = ? AND password = ? LIMIT 1"
+            };
+            for (String legacyQuery : legacyQueries) {
+                try (PreparedStatement ps = conn.prepareStatement(legacyQuery)) {
+                    ps.setString(1, identifier);
+                    ps.setString(2, password);
+
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            Session.setUserId(rs.getInt("id_user"));
+                            Session.setUserName(rs.getString("name"));
+                            Session.setUserEmail(rs.getString("email"));
+                            Session.setUserPhone(rs.getInt("phone"));
+                            Session.setUserRole(rs.getString("role"));
+                            ViewNavigator.goTo(event, "/AfficherAnimal.fxml");
+                            return;
+                        }
+                    }
+                } catch (Exception ignored) {
+                    // Ignore legacy schema mismatch and continue.
+                }
+            }
+
+            errorLabel.setText("Invalid credentials.");
         } catch (Exception e) {
-            errorLabel.setText("Erreur login : " + e.getMessage());
+            errorLabel.setText("Login error: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    @FXML
-    private void goBack(ActionEvent event) {
-        ViewNavigator.goTo(event, "/Home.fxml");
-    }
 }

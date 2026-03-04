@@ -1,63 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="700.0" prefWidth="900.0"
-            xmlns="http://javafx.com/javafx/25"
+<BorderPane prefHeight="760.0" prefWidth="1080.0"
+            xmlns="http://javafx.com/javafx/22"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.esprit.controllers.AjouterRequest"
             styleClass="root"
-            stylesheets="style.css">
+            stylesheets="@style.css">
 
-    <VBox spacing="20" alignment="CENTER"
-          AnchorPane.topAnchor="0.0"
-          AnchorPane.leftAnchor="0.0"
-          AnchorPane.rightAnchor="0.0"
-          AnchorPane.bottomAnchor="0.0"
-          styleClass="v-box">
+    <top>
+        <HBox styleClass="top-bar">
+            <Button text="%nav.back" onAction="#goBack" styleClass="button-secondary"/>
+            <Button text="%nav.home" onAction="#goHome" styleClass="button-secondary"/>
+            <Label text="%page.addRequest.title" styleClass="page-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
+        </HBox>
+    </top>
 
-        <!-- Title -->
-        <Text text="Adoption Request" styleClass="title">
-            <font>
-                <Font size="36"/>
-            </font>
-        </Text>
+    <center>
+        <VBox spacing="14" alignment="TOP_CENTER" style="-fx-padding: 18;">
+            <HBox spacing="18" alignment="CENTER_LEFT" styleClass="card">
+                <ImageView fx:id="animalImageView" fitWidth="220" fitHeight="160" preserveRatio="true" styleClass="section-container"/>
+                <VBox spacing="8">
+                    <Label fx:id="animalNameLabel" text="%request.label.nameDefault" styleClass="section-value"/>
+                    <Label fx:id="animalSpeciesLabel" text="%request.label.speciesDefault" styleClass="section-value"/>
+                    <Label fx:id="animalBreedLabel" text="%request.label.breedDefault" styleClass="section-value"/>
+                    <Label fx:id="animalAgeGenderLabel" text="%request.label.ageGender" styleClass="section-value"/>
+                </VBox>
+            </HBox>
 
-        <!-- Animal Info Card -->
-        <HBox spacing="20" alignment="CENTER" styleClass="animal-card">
-            <ImageView fx:id="animalImageView" fitWidth="200" fitHeight="150" preserveRatio="true" styleClass="pet-image"/>
-            <VBox spacing="10">
-                <Label fx:id="animalNameLabel" text="Name: Luna" styleClass="pet-info-label"/>
-                <Label fx:id="animalSpeciesLabel" text="Species: Dog" styleClass="pet-info-label"/>
-                <Label fx:id="animalBreedLabel" text="Breed: Husky" styleClass="pet-info-label"/>
-                <Label fx:id="animalAgeGenderLabel" text="2 Years / Male" styleClass="pet-info-label"/>
+            <VBox spacing="8" styleClass="card" maxWidth="600">
+                <Label text="%addRequest.requesterInfo" styleClass="label-bold"/>
+                <Label fx:id="clientNameLabel" text="%request.label.nameDefault" styleClass="section-value"/>
+                <Label fx:id="clientEmailLabel" text="%request.label.emailDefault" styleClass="section-value"/>
+                <Label fx:id="clientPhoneLabel" text="%request.label.phoneDefault" styleClass="section-value"/>
             </VBox>
-        </HBox>
 
-        <Separator/>
-
-        <!-- Client Info Card -->
-        <VBox spacing="10" styleClass="client-card">
-            <Label fx:id="clientNameLabel" text="Name: Joumana" styleClass="client-info-label"/>
-            <Label fx:id="clientEmailLabel" text="Email: example@mail.com" styleClass="client-info-label"/>
-            <Label fx:id="clientPhoneLabel" text="Phone: 12345678" styleClass="client-info-label"/>
+            <VBox spacing="8" styleClass="card" maxWidth="760">
+                <Label text="%addRequest.message" styleClass="label-bold"/>
+                <TextArea fx:id="message"
+                          promptText="%addRequest.prompt.message"
+                          wrapText="true"
+                          prefRowCount="6"
+                          styleClass="input-field"/>
+            </VBox>
         </VBox>
+    </center>
 
-        <!-- Message Section -->
-        <VBox spacing="10" styleClass="message-section">
-            <Label text="Your Message" styleClass="section-title"/>
-            <TextArea fx:id="message" promptText="Write your message here..." wrapText="true" prefRowCount="5" styleClass="text-area"/>
-        </VBox>
-
-        <!-- Send Button -->
-        <HBox alignment="CENTER" spacing="20">
-            <Button text="Send" fx:id="sendButton" onAction="#Envoyer"
-                    prefWidth="180" prefHeight="50" styleClass="button-save"/>
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 0 18 16 18;">
+            <Button text="%addRequest.send"
+                    fx:id="sendButton"
+                    onAction="#Envoyer"
+                    prefWidth="180"
+                    styleClass="button-save"/>
+            <Button text="%nav.back" onAction="#goBack" styleClass="button-secondary" prefWidth="120"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
         </HBox>
+    </bottom>
 
-    </VBox>
-</AnchorPane>
+</BorderPane>

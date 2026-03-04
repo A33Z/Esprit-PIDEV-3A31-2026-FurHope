@@ -12,12 +12,17 @@ import javafx.stage.Stage;
 
 import java.util.List;
 
-    public class myanimals {
+    public class myanimals extends BaseUIController {
 
         @FXML
         private GridPane myanimalsGrid;
 
         private animalServices service = new animalServices();
+
+        @Override
+        protected String getViewPath() {
+            return "/MyAnimals.fxml";
+        }
 
         @FXML
         public void initialize() {
@@ -31,13 +36,13 @@ import java.util.List;
                 List<animal> animals = service.afficher();
                 int column = 0;
                 int row = 0;
-                int currentUserId = com.esprit.utils.Session.getUserId();
+                int currentCompteId = com.esprit.utils.Session.getCompteId();
 
                 for (animal a : animals) {
 
-                    if (a.getOwnerid() == currentUserId) {
+                    if (a.getOwnerCompteId() == currentCompteId) {
 
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AnimalCard.fxml"));
+                        FXMLLoader loader = createLoader("/AnimalCard.fxml");
                         Node card = loader.load();
 
                         AnimalCard controller = loader.getController();
@@ -66,7 +71,7 @@ import java.util.List;
         }
         private void openAnimalDetails(animal selectedAnimal) {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/AnimalDetails.fxml"));
+                FXMLLoader loader = createLoader("/animalDetails.fxml");
                 Parent root = loader.load();
 
                 // 🔹 Important : passer l'animal au controller

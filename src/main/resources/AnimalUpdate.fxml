@@ -6,11 +6,11 @@
 <?import javafx.scene.text.Font?>
 
 <?import javafx.geometry.Insets?>
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+<AnchorPane xmlns="http://javafx.com/javafx/22"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.esprit.controllers.Animalupdate"
             styleClass="root"
-            stylesheets="style.css"
+            stylesheets="@style.css"
             prefHeight="400.0" prefWidth="600.0">
 
     <!-- Scrollable container -->
@@ -36,7 +36,7 @@
                            fitWidth="150"
                            preserveRatio="true"
                            styleClass="animal-image"/>
-                <Button text="Change Image"
+                <Button text="%animal.update.changeImage"
                         fx:id="changeImageButton"
                         onAction="#handleChangeImage"
                         styleClass="button"/>
@@ -44,43 +44,43 @@
 
             <!-- Name -->
             <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
-                <Label text="Name:" styleClass="label-bold"/>
+                <Label text="%owner.name" styleClass="label-bold"/>
                 <TextField fx:id="nameField" styleClass="text-field"/>
             </VBox>
 
             <!-- Species -->
             <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
-                <Label text="Species:" styleClass="label-bold"/>
+                <Label text="%field.species" styleClass="label-bold"/>
                 <TextField fx:id="speciesField" styleClass="text-field"/>
             </VBox>
 
             <!-- Breed -->
             <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
-                <Label text="Breed:" styleClass="label-bold"/>
+                <Label text="%field.breed" styleClass="label-bold"/>
                 <TextField fx:id="breedField" styleClass="text-field"/>
             </VBox>
 
             <!-- Age -->
             <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
-                <Label text="Age:" styleClass="label-bold"/>
+                <Label text="%age" styleClass="label-bold"/>
                 <TextField fx:id="ageField" styleClass="text-field"/>
             </VBox>
 
             <!-- Gender -->
             <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
-                <Label text="Gender:" styleClass="label-bold"/>
+                <Label text="%field.gender" styleClass="label-bold"/>
                 <TextField fx:id="genderField" styleClass="text-field"/>
             </VBox>
 
             <!-- Description -->
             <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
-                <Label text="Description:" styleClass="label-bold"/>
+                <Label text="%field.description" styleClass="label-bold"/>
                 <TextArea fx:id="descriptionField" wrapText="true" prefHeight="60" styleClass="text-field"/>
             </VBox>
 
             <!-- Status -->
             <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
-                <Label text="Status:" styleClass="label-bold"/>
+                <Label text="%field.status" styleClass="label-bold"/>
                 <TextField fx:id="statusField" styleClass="text-field"/>
             </VBox>
 
@@ -88,7 +88,7 @@
             <HBox alignment="CENTER" spacing="20">
                 <Button fx:id="saveButton"
                         onAction="#handleSave"
-                        text="Save"
+                        text="%save"
                         styleClass="button-save"
                         prefHeight="38"
                         prefWidth="106"/>

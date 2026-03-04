@@ -1,108 +1,121 @@
 package com.esprit.Services;
 
+import com.esprit.entities.Compte;
 import com.esprit.entities.User;
 import com.esprit.entities.animal;
 import com.esprit.utils.MyDataBase;
 import com.esprit.utils.Session;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class animalServices implements ICrud<animal> {
-    Connection con;
+    private final Connection con;
 
     public animalServices() {
         con = MyDataBase.getInstance().getConnection();
     }
-    @Override
-    public void ajouter(animal Animal) throws SQLException {
-        int ownerId = Session.getUserId();
-        String sql = "INSERT INTO animal(name, species, breed, age, gender, description, status, image, ownerid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        PreparedStatement ps = con.prepareStatement(sql);
-        ps.setString(1, Animal.getName());
-        ps.setString(2, Animal.getSpecies());
-        ps.setString(3, Animal.getBreed());
-        ps.setInt(4, Animal.getAge());
-        ps.setString(5, Animal.getGender().toString()); // MALE ou FEMALE
-        ps.setString(6, Animal.getDescription());
-        ps.setString(7, Animal.getStatus().toString()); // AVAILABLE, ADOPTED, etc.
-        ps.setString(8, Animal.getImage());
-        ps.setInt(9, ownerId);
 
-        ps.executeUpdate();
-        System.out.println("Animal ajouté avec succès !");
+    @Override
+    public void ajouter(animal pet) throws SQLException {
+        int ownerCompteId = pet.getOwnerCompteId() > 0 ? pet.getOwnerCompteId() : Session.getCompteId();
+        if (ownerCompteId <= 0) {
+            throw new SQLException("Invalid owner compte id.");
+        }
+
+        String sql = "INSERT INTO animal(name, species, breed, age, gender, description, status, image, owner_compte_id) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, pet.getName());
+            ps.setString(2, pet.getSpecies());
+            ps.setString(3, pet.getBreed());
+            ps.setInt(4, pet.getAge());
+            ps.setString(5, pet.getGender().toString());
+            ps.setString(6, pet.getDescription());
+            ps.setString(7, pet.getStatus().toString());
+            ps.setString(8, pet.getImage());
+            ps.setInt(9, ownerCompteId);
+            ps.executeUpdate();
+        }
     }
 
     @Override
     public void supprimer(int idAnimal) throws SQLException {
-        String sql = "DELETE FROM `animal` WHERE `idAnimal`=?";
-        PreparedStatement preparedStatement = con.prepareStatement(sql);
-        preparedStatement.setInt(1, idAnimal);
-        preparedStatement.executeUpdate();
-        System.out.println("animal suupprimer");
-
-
+        String sql = "DELETE FROM animal WHERE idAnimal = ?";
+        try (PreparedStatement preparedStatement = con.prepareStatement(sql)) {
+            preparedStatement.setInt(1, idAnimal);
+            preparedStatement.executeUpdate();
+        }
     }
 
     @Override
     public List<animal> afficher() throws SQLException {
         List<animal> animals = new ArrayList<>();
 
-        String sql = "SELECT a.*, u.name as ownerName, u.email as ownerEmail, u.phone as ownerPhone, u.role as ownerRole " +
+        String sql = "SELECT a.*, " +
+                "c.id_compte AS owner_compte_id, c.user_id AS owner_user_id, c.username AS owner_username, c.role AS owner_role, c.status AS owner_compte_status, " +
+                "u.id_user AS owner_id_user, u.name AS owner_name, u.email AS owner_email, u.phone AS owner_phone " +
                 "FROM animal a " +
-                "JOIN user u ON a.ownerid = u.id";
+                "JOIN compte c ON a.owner_compte_id = c.id_compte " +
+                "JOIN user u ON c.user_id = u.id_user";
 
-        Statement stmt = con.createStatement();
-        ResultSet rs = stmt.executeQuery(sql);
+        try (PreparedStatement stmt = con.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                animal pet = new animal();
+                pet.setId(rs.getInt("idAnimal"));
+                pet.setName(rs.getString("name"));
+                pet.setSpecies(rs.getString("species"));
+                pet.setBreed(rs.getString("breed"));
+                pet.setAge(rs.getInt("age"));
+                pet.setGender(animal.gender.valueOf(rs.getString("gender")));
+                pet.setDescription(rs.getString("description"));
+                pet.setStatus(animal.status.valueOf(rs.getString("status")));
+                pet.setImage(rs.getString("image"));
+                pet.setOwnerCompteId(rs.getInt("owner_compte_id"));
 
-        while (rs.next()) {
-            animal a = new animal();
-            a.setId(rs.getInt("idAnimal"));
-            a.setName(rs.getString("name"));
-            a.setSpecies(rs.getString("species"));
-            a.setBreed(rs.getString("breed"));
-            a.setAge(rs.getInt("age"));
-            a.setGender(animal.gender.valueOf(rs.getString("gender")));
-            a.setDescription(rs.getString("description"));
-            a.setStatus(animal.status.valueOf(rs.getString("status")));
-            a.setImage(rs.getString("image"));
-            a.setOwnerid(rs.getInt("ownerid"));
+                User ownerUser = new User();
+                ownerUser.setId(rs.getInt("owner_id_user"));
+                ownerUser.setName(rs.getString("owner_name"));
+                ownerUser.setEmail(rs.getString("owner_email"));
+                ownerUser.setPhone(rs.getInt("owner_phone"));
+                ownerUser.setRole(rs.getString("owner_role"));
 
-            // 🔹 Créer l'objet User pour le propriétaire
-            User owner = new User();
-            owner.setId(rs.getInt("ownerid"));
-            owner.setName(rs.getString("ownerName"));
-            owner.setEmail(rs.getString("ownerEmail"));
-            owner.setPhone(rs.getInt("ownerPhone"));
-            owner.setRole(rs.getString("ownerRole"));
+                Compte ownerCompte = new Compte();
+                ownerCompte.setIdCompte(rs.getInt("owner_compte_id"));
+                ownerCompte.setUserId(rs.getInt("owner_user_id"));
+                ownerCompte.setUsername(rs.getString("owner_username"));
+                ownerCompte.setRole(rs.getString("owner_role"));
+                ownerCompte.setStatus(rs.getString("owner_compte_status"));
+                ownerCompte.setUser(ownerUser);
 
-            // 🔹 Associer le propriétaire à l'animal
-            a.setOwner(owner);
-
-            animals.add(a);
+                pet.setOwnerCompte(ownerCompte);
+                animals.add(pet);
+            }
         }
 
         return animals;
     }
 
     @Override
-    public void modifier(animal animal) throws SQLException {
-        String sql ="UPDATE `animal` SET `name`=? ,`species`=?,`breed`=?,`age`=?,`gender`=?,`description`=?,`status`=?  WHERE `idAnimal`=?";
-        PreparedStatement preparedStatement = con.prepareStatement(sql);
-        preparedStatement.setString(1, animal.getName());
-        preparedStatement.setString(2, animal.getSpecies());
-        preparedStatement.setString(3, animal.getBreed());
-        preparedStatement.setInt(4, animal.getAge());
-        preparedStatement.setString(5, animal.getGender().toString());
-        preparedStatement.setString(6, animal.getDescription());
-        preparedStatement.setString(7, animal.getStatus().toString());
-        preparedStatement.setInt(8, animal.getId());
-
-
-        preparedStatement.executeUpdate();
-
-
+    public void modifier(animal pet) throws SQLException {
+        String sql = "UPDATE animal SET name = ?, species = ?, breed = ?, age = ?, gender = ?, description = ?, status = ? " +
+                "WHERE idAnimal = ?";
+        try (PreparedStatement preparedStatement = con.prepareStatement(sql)) {
+            preparedStatement.setString(1, pet.getName());
+            preparedStatement.setString(2, pet.getSpecies());
+            preparedStatement.setString(3, pet.getBreed());
+            preparedStatement.setInt(4, pet.getAge());
+            preparedStatement.setString(5, pet.getGender().toString());
+            preparedStatement.setString(6, pet.getDescription());
+            preparedStatement.setString(7, pet.getStatus().toString());
+            preparedStatement.setInt(8, pet.getId());
+            preparedStatement.executeUpdate();
+        }
     }
 }
-

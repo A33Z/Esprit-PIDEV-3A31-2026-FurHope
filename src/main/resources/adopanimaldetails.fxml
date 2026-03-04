@@ -1,122 +1,150 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.image.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<StackPane xmlns="http://javafx.com/javafx"
-           xmlns:fx="http://javafx.com/fxml"
-           fx:controller="com.esprit.controllers.adopdetails"
-           styleClass="root"
-           stylesheets="style.css">
+<BorderPane xmlns="http://javafx.com/javafx/22"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.esprit.controllers.adopdetails"
+            styleClass="root"
+            stylesheets="@style.css">
 
-    <ScrollPane fx:id="scrollPane"
-                fitToWidth="true"
-                hbarPolicy="NEVER"
-                vbarPolicy="AS_NEEDED"
-                styleClass="scroll-pane">
+    <top>
+        <HBox styleClass="top-bar">
+            <Button text="%nav.back" onAction="#goBack" styleClass="button-secondary"/>
+            <Button text="%nav.home" onAction="#goHome" styleClass="button-secondary"/>
+            <Label text="%page.animalDetails.title" styleClass="page-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
+        </HBox>
+    </top>
 
-        <StackPane fx:id="centerContainer" alignment="CENTER">
+    <center>
+        <ScrollPane fx:id="scrollPane"
+                    fitToWidth="true"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED">
 
-            <VBox alignment="TOP_CENTER"
-                  spacing="25"
-                  maxWidth="500"
-                  minWidth="300"
-                  prefWidth="400"
-                  prefHeight="750"
-                  styleClass="card">
+            <StackPane fx:id="centerContainer" alignment="CENTER">
+                <VBox alignment="TOP_CENTER"
+                      spacing="14"
+                      maxWidth="760"
+                      prefWidth="760"
+                      style="-fx-padding: 16;">
 
-                <!-- IMAGE -->
-                <ImageView fx:id="petImage"
-                           fitWidth="360"
-                           fitHeight="300"
-                           preserveRatio="false"
-                           styleClass="pet-image"/>
+                    <VBox spacing="12" styleClass="card">
+                        <ImageView fx:id="petImage"
+                                   fitWidth="360"
+                                   fitHeight="240"
+                                   preserveRatio="true"
+                                   styleClass="section-container"/>
 
-                <HBox alignment="CENTER_LEFT"
-                      spacing="15"
-                      styleClass="name-status-container">
+                        <HBox alignment="CENTER_LEFT" spacing="12">
+                            <Label fx:id="petName" text="%animal.card.nameDefault" styleClass="pet-name"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="petStatus" text="%animal.card.statusDefault" styleClass="status-badge"/>
+                        </HBox>
 
-                    <Label fx:id="petName"
-                           text="Luna"
-                           styleClass="pet-name"/>
+                        <HBox spacing="12" alignment="CENTER" styleClass="section-container">
+                            <VBox alignment="CENTER" spacing="4" styleClass="mini-box">
+                                <Label text="%field.gender" styleClass="mini-title"/>
+                                <Label fx:id="petGender" text="-" styleClass="mini-value"/>
+                            </VBox>
 
-                    <Region HBox.hgrow="ALWAYS"/>
+                            <VBox alignment="CENTER" spacing="4" styleClass="mini-box">
+                                <Label text="%age" styleClass="mini-title"/>
+                                <Label fx:id="petAge" text="-" styleClass="mini-value"/>
+                            </VBox>
 
-                    <Label fx:id="petStatus"
-                           text="AVAILABLE"
-                           styleClass="status-badge"/>
-                </HBox>
+                            <VBox alignment="CENTER" spacing="4" styleClass="mini-box">
+                                <Label text="%field.species" styleClass="mini-title"/>
+                                <Label fx:id="petSpecies" text="-" styleClass="mini-value"/>
+                            </VBox>
 
-                <!-- INFO BOX -->
-                <HBox spacing="15"
-                      alignment="CENTER"
-                      styleClass="section-container">
-
-                    <VBox alignment="CENTER" spacing="5" styleClass="mini-box">
-                        <Label text="Gender" styleClass="mini-title"/>
-                        <Label fx:id="petGender" text="Male" styleClass="mini-value"/>
+                            <VBox alignment="CENTER" spacing="4" styleClass="mini-box">
+                                <Label text="%field.breed" styleClass="mini-title"/>
+                                <Label fx:id="petBreed" text="-" styleClass="mini-value"/>
+                            </VBox>
+                        </HBox>
                     </VBox>
 
-                    <VBox alignment="CENTER" spacing="5" styleClass="mini-box">
-                        <Label text="Age" styleClass="mini-title"/>
-                        <Label fx:id="petAge" text="2 Years" styleClass="mini-value"/>
+                    <VBox spacing="10" styleClass="card">
+                        <Label text="%field.description" styleClass="label-bold"/>
+                        <Label fx:id="petDescription" wrapText="true" text="-" styleClass="section-value"/>
                     </VBox>
 
-                    <VBox alignment="CENTER" spacing="5" styleClass="mini-box">
-                        <Label text="Species" styleClass="mini-title"/>
-                        <Label fx:id="petSpecies" text="Dog" styleClass="mini-value"/>
+                    <VBox spacing="10" styleClass="card">
+                        <Label text="%care.title" styleClass="label-bold"/>
+
+                        <VBox spacing="4">
+                            <Label text="%care.exercise" styleClass="info-title"/>
+                            <Label fx:id="careExerciseLabel" wrapText="true" styleClass="section-value"/>
+                        </VBox>
+
+                        <VBox spacing="4">
+                            <Label text="%care.diet" styleClass="info-title"/>
+                            <Label fx:id="careDietLabel" wrapText="true" styleClass="section-value"/>
+                        </VBox>
+
+                        <VBox spacing="4">
+                            <Label text="%care.environment" styleClass="info-title"/>
+                            <Label fx:id="careEnvironmentLabel" wrapText="true" styleClass="section-value"/>
+                        </VBox>
+
+                        <VBox spacing="4">
+                            <Label text="%care.grooming" styleClass="info-title"/>
+                            <Label fx:id="careGroomingLabel" wrapText="true" styleClass="section-value"/>
+                        </VBox>
+
+                        <VBox spacing="4">
+                            <Label text="%care.training" styleClass="info-title"/>
+                            <Label fx:id="careTrainingLabel" wrapText="true" styleClass="section-value"/>
+                        </VBox>
                     </VBox>
 
-                    <VBox alignment="CENTER" spacing="5" styleClass="mini-box">
-                        <Label text="Breed" styleClass="mini-title"/>
-                        <Label fx:id="petBreed" text="Husky" styleClass="mini-value"/>
+                    <VBox spacing="8" styleClass="card">
+                        <Label text="%owner.info" styleClass="label-bold"/>
+                        <HBox spacing="8" styleClass="info-container">
+                            <Label text="%owner.name" styleClass="info-title"/>
+                            <Label fx:id="ownerNameLabel" styleClass="info-value"/>
+                        </HBox>
+                        <HBox spacing="8" styleClass="info-container">
+                            <Label text="%owner.email" styleClass="info-title"/>
+                            <Label fx:id="ownerEmailLabel" styleClass="info-value"/>
+                        </HBox>
+                        <HBox spacing="8" styleClass="info-container">
+                            <Label text="%owner.phone" styleClass="info-title"/>
+                            <Label fx:id="ownerPhoneLabel" styleClass="info-value"/>
+                        </HBox>
+                        <HBox spacing="8" styleClass="info-container">
+                            <Label text="%owner.role" styleClass="info-title"/>
+                            <Label fx:id="ownerRoleLabel" styleClass="info-value"/>
+                        </HBox>
                     </VBox>
-
-                </HBox>
-
-                <!-- DESCRIPTION BOX -->
-                <VBox spacing="10"
-                      styleClass="section-container">
-
-                    <Label text="Description"
-                           styleClass="section-title"/>
-
-                    <Label fx:id="petDescription"
-                           wrapText="true"
-                           text="Pet description here..."
-                           styleClass="section-value"/>
                 </VBox>
+            </StackPane>
+        </ScrollPane>
+    </center>
 
-                <!-- OWNER INFO -->
-                <VBox spacing="10" styleClass="section-container">
-                    <Label text="Owner Information" styleClass="section-title"/>
-                    <HBox spacing="10" styleClass="info-container">
-                        <Label text="Name:" styleClass="info-title"/>
-                        <Label fx:id="ownerNameLabel" styleClass="info-value"/>
-                    </HBox>
-                    <HBox spacing="10" styleClass="info-container">
-                        <Label text="Email:" styleClass="info-title"/>
-                        <Label fx:id="ownerEmailLabel" styleClass="info-value"/>
-                    </HBox>
-                    <HBox spacing="10" styleClass="info-container">
-                        <Label text="Phone:" styleClass="info-title"/>
-                        <Label fx:id="ownerPhoneLabel" styleClass="info-value"/>
-                    </HBox>
-                    <HBox spacing="10" styleClass="info-container">
-                        <Label text="Role:" styleClass="info-title"/>
-                        <Label fx:id="ownerRoleLabel" styleClass="info-value"/>
-                    </HBox>
-                </VBox>
-
-                <!-- BUTTON -->
-                <Button fx:id="adoptButton"
-                        text="Adopt Now"
-                        onAction="#handleAdopt"
-                        maxWidth="Infinity"
-                        styleClass="button-save"/>
-
-            </VBox>
-        </StackPane>
-    </ScrollPane>
-</StackPane>
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 0 16 16 16;">
+            <Button fx:id="adoptButton"
+                    text="%action.adoptNow"
+                    onAction="#handleAdopt"
+                    prefWidth="170"
+                    styleClass="button-save"/>
+            <Button text="%nav.back" onAction="#goBack" styleClass="button-secondary" prefWidth="120"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
+        </HBox>
+    </bottom>
+</BorderPane>

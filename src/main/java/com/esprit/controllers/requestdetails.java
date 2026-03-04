@@ -15,7 +15,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-    public class requestdetails {
+    public class requestdetails extends BaseUIController {
         @FXML
         private Label animalidlabel ;
 
@@ -38,12 +38,22 @@ import java.io.IOException;
         private adoptionRequest requestSelected;
         private ListView<adoptionRequest> listView;
 
+        @Override
+        protected String getViewPath() {
+            return "/RequestDetails.fxml";
+        }
+
+        @Override
+        protected String getBackViewPath() {
+            return "/AfficherRequest.fxml";
+        }
+
         public void setRequest(adoptionRequest request) {
             this.requestSelected = request;
 
 
             animalidlabel.setText(String.valueOf(request.getAnimal_id()));
-            clientidlabel.setText(String.valueOf(request.getClient_id()));
+            clientidlabel.setText(String.valueOf(request.getClientCompteId()));
             messagelabel.setText(request.getMessage());
             phonelabel.setText(request.getPhone());
             addresslabel.setText(request.getAddress());
@@ -71,7 +81,7 @@ import java.io.IOException;
                 currentStage.close();
 
                 // Charger le formulaire de modification
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/RequestUpdate.fxml"));
+                FXMLLoader loader = createLoader("/RequestUpdate.fxml");
                 Parent root = loader.load();
 
                 // Passer la demande sélectionnée et la listview au controller
@@ -133,7 +143,7 @@ import java.io.IOException;
                 currentStage.close();
 
                 // Recharge la liste
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherRequest.fxml"));
+                FXMLLoader loader = createLoader("/AfficherRequest.fxml");
                 Parent root = loader.load();
 
                 AfficherRequest controller = loader.getController();
