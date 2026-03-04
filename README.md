@@ -11,8 +11,6 @@ The system aims to provide a structured and efficient solution using a layered J
 
 ## Features
 
-## Features
-
 - Secure user authentication with role-based access control (Admin / User)
 
 - Multiple AI Assistants integrated to support users with intelligent recommendations and automated assistance
