@@ -36,7 +36,7 @@ The system aims to provide a structured and efficient solution using a layered J
 - MySQL Database Integration with structured relational data management
 
 - Modern JavaFX User Interface built using FXML and CSS
-- 
+  
 - Modular and Layered Architecture ensuring scalability and maintainability
 
 ## Tech Stack
