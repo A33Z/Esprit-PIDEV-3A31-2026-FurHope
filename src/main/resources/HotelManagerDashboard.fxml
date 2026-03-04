@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane fx:id="rootPane"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.HotelManagerDashboardController"
+            styleClass="manager-page"
+            stylesheets="@AppTheme.css"
+            prefHeight="860.0" prefWidth="1380.0">
+
+    <children>
+        <VBox styleClass="page-content" spacing="14.0"
+              AnchorPane.topAnchor="0.0"
+              AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0"
+              AnchorPane.rightAnchor="0.0">
+
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                <children>
+                    <VBox spacing="2.0">
+                        <children>
+                            <Label text="Hotel Manager Admin Dashboard" styleClass="header-title" />
+                            <Label text="Secure operations view for hotels, reservations, and resources." styleClass="header-subtitle" />
+                        </children>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Label fx:id="sessionLabel" styleClass="session-chip manager-chip" />
+                    <Button text="Analytics" styleClass="button secondary-button" onAction="#handleOpenAnalytics" />
+                    <Button text="Refresh" styleClass="button secondary-button" onAction="#handleRefreshData" />
+                    <Button text="Back" styleClass="button ghost-button" onAction="#gotoacceuil" />
+                    <Button text="Logout" styleClass="button ghost-button" onAction="#gotowelcome" />
+                </children>
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <children>
+                    <Button fx:id="dashboardNavButton" text="Dashboard" styleClass="button secondary-button" onAction="#handleShowDashboardView" />
+                    <Button fx:id="manageHotelsNavButton" text="Manage Hotels" styleClass="button secondary-button" onAction="#handleShowHotelManagementView" />
+                    <Button fx:id="checkReservationsNavButton" text="Check Reservations" styleClass="button secondary-button" onAction="#handleShowReservationTicketsView" />
+                </children>
+            </HBox>
+
+            <AnchorPane fx:id="contentContainer" VBox.vgrow="ALWAYS" />
+        </VBox>
+    </children>
+</AnchorPane>

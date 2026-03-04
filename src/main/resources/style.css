@@ -1,0 +1,222 @@
+/* =========================================================
+   GLOBAL ROOT
+========================================================= */
+
+.root {
+    -fx-background-color: linear-gradient(to bottom, #fdf8f3, #f4ede4);
+    -fx-font-family: "Segoe UI", "Arial";
+}
+
+/* =========================================================
+   TOP BAR (LIGHTER & PREMIUM)
+========================================================= */
+
+.topbar {
+    -fx-background-color: linear-gradient(to right, #6f4e37, #8b5e3c);
+    -fx-padding: 14 30;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 12, 0.4, 0, 4);
+}
+
+.title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #fffaf5;
+}
+
+/* =========================================================
+   PRODUCT CARDS
+========================================================= */
+
+.product-card {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-padding: 18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 20, 0.3, 0, 8);
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+}
+
+.product-card:hover {
+    -fx-background-color: #fff8f1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 25, 0.4, 0, 10);
+}
+
+.product-title {
+    -fx-text-fill: #5c4033;
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+}
+
+/* =========================================================
+   INPUTS
+========================================================= */
+
+.text-field, .text-area {
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: #e2d3c5;
+    -fx-padding: 12;
+    -fx-background-color: white;
+    -fx-font-size: 14px;
+}
+
+.text-field:focused, .text-area:focused {
+    -fx-border-color: #c56a2d;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.primary-button {
+    -fx-background-color: linear-gradient(to right, #c56a2d, #e6891c);
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-font-size: 14px;
+    -fx-padding: 10 22;
+    -fx-cursor: hand;
+}
+
+.primary-button:hover {
+    -fx-background-color: linear-gradient(to right, #a95522, #d97706);
+}
+
+.secondary-button {
+    -fx-background-color: #f3e4d7;
+    -fx-text-fill: #5c4033;
+    -fx-background-radius: 18;
+    -fx-padding: 8 18;
+    -fx-font-size: 13px;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #e8d4c2;
+}
+
+.danger-button {
+    -fx-background-color: #a94442;
+    -fx-text-fill: white;
+    -fx-background-radius: 18;
+}
+
+.danger-button:hover {
+    -fx-background-color: #843534;
+}
+
+/* =========================================================
+   DRAWER
+========================================================= */
+
+.drawer {
+    -fx-background-color: linear-gradient(to bottom, #6f4e37, #5c4033);
+    -fx-padding: 20;
+}
+
+.drawer-title {
+    -fx-text-fill: #fff4ea;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.drawer-button {
+    -fx-background-color: #c56a2d;
+    -fx-text-fill: white;
+    -fx-background-radius: 14;
+    -fx-padding: 8 16;
+}
+
+.drawer-button:hover {
+    -fx-background-color: #a95522;
+}
+
+/* =========================================================
+   TABLE (CART)
+========================================================= */
+
+.table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: #f0e2d6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 15, 0.3, 0, 6);
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #f3e4d7;
+    -fx-background-radius: 18 18 0 0;
+}
+
+.table-row-cell {
+    -fx-background-color: #fffaf5;
+    -fx-padding: 8;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #f9f0e7;
+}
+
+/* =========================================================
+   CART TOTAL SECTION
+========================================================= */
+
+.cart-total-box {
+    -fx-background-color: linear-gradient(to right, #6f4e37, #8b5e3c);
+    -fx-background-radius: 20;
+    -fx-padding: 20;
+}
+
+.cart-total-label {
+    -fx-text-fill: #fbe8d8;
+    -fx-font-size: 18px;
+}
+
+.cart-total-value {
+    -fx-text-fill: #ffd166;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.checkout-button {
+    -fx-background-color: linear-gradient(to right, #c56a2d, #e6891c);
+    -fx-text-fill: white;
+    -fx-background-radius: 25;
+    -fx-padding: 12 28;
+    -fx-font-size: 15px;
+}
+
+.checkout-button:hover {
+    -fx-background-color: linear-gradient(to right, #a95522, #d97706);
+}
+
+/* =========================================================
+   DETAIL PAGE
+========================================================= */
+
+.detail-root {
+    -fx-background-color: #fdf8f3;
+}
+
+.detail-name {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #5c4033;
+}
+
+.detail-price {
+    -fx-font-size: 20px;
+    -fx-text-fill: #c56a2d;
+}
+
+.detail-description {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-padding: 12;
+}
+
+/* =========================================================
+   SMOOTH EFFECTS
+========================================================= */
+
+.button, .product-card {
+    -fx-transition: all 0.2s ease-in-out;
+}

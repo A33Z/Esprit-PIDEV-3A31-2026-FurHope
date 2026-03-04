@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<AnchorPane stylesheets="@style.css"
+            xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.projet.controller.ajouterproduit">
+
+    <children>
+
+
+
+        <!-- Center container -->
+        <VBox alignment="CENTER"
+              AnchorPane.topAnchor="0"
+              AnchorPane.bottomAnchor="0"
+              AnchorPane.leftAnchor="0"
+              AnchorPane.rightAnchor="0">
+
+            <VBox spacing="12"
+                  maxWidth="420"
+                  alignment="CENTER"
+                  styleClass="card">
+
+                <Button text="Retour"
+                        onAction="#controlproduit"
+                        styleClass="secondary-button"
+                        AnchorPane.topAnchor="20"
+                        AnchorPane.leftAnchor="20"/>
+
+                <Label text="Ajouter Produit"
+                       styleClass="title"/>
+
+                <TextField fx:id="titleField" promptText="Titre"/>
+                <TextField fx:id="priceField" promptText="Prix"/>
+                <TextField fx:id="tvaField" promptText="TVA"/>
+                <TextField fx:id="stockField" promptText="Stock"/>
+
+                <TextArea fx:id="descriptionField"
+                          promptText="Description"
+                          prefRowCount="3"/>
+
+                <Button text="Choisir image"
+                        onAction="#uploadImage"
+                        styleClass="secondary-button"/>
+
+                <ImageView fx:id="imagePreview"
+                           fitWidth="160"
+                           fitHeight="120"
+                           preserveRatio="true"/>
+
+                <Button text="Ajouter Produit"
+                        onAction="#ajouterProduit"
+                        styleClass="primary-button"/>
+
+            </VBox>
+        </VBox>
+
+    </children>
+</AnchorPane>

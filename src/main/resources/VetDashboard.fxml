@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.VetDashboardController"
+      spacing="0"
+      style="-fx-background-color: #fff7ed;">
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="16"
+          style="-fx-background-color: #f97316; -fx-padding: 16 24;">
+        <Label text="ðŸ¾ Clinique VÃ©tÃ©rinaire"
+               style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        <Label fx:id="welcomeLabel" text=""
+               style="-fx-font-size: 13; -fx-text-fill: #ffedd5;"/>
+        <HBox HBox.hgrow="ALWAYS"/>
+        <Button text="Back" onAction="#goBack"
+                style="-fx-background-color: #ffedd5; -fx-text-fill: #f97316;
+                       -fx-font-weight: bold; -fx-background-radius: 8;
+                       -fx-cursor: hand; -fx-padding: 6 14;"/>
+        <Button text="ðŸšª DÃ©connexion" onAction="#logout"
+                style="-fx-background-color: white; -fx-text-fill: #f97316;
+                       -fx-font-weight: bold; -fx-background-radius: 8;
+                       -fx-cursor: hand; -fx-padding: 6 14;"/>
+    </HBox>
+
+    <!-- Boutons navigation -->
+    <HBox spacing="12" alignment="CENTER"
+          style="-fx-padding: 20; -fx-background-color: #ffedd5;">
+        <Button text="ðŸ“… Mes DisponibilitÃ©s" onAction="#goDisponibilites"
+                style="-fx-font-size: 14; -fx-background-color: #f97316;
+                       -fx-text-fill: white; -fx-background-radius: 10;
+                       -fx-padding: 12 24; -fx-font-weight: bold; -fx-cursor: hand;"/>
+        <Button text="ðŸ“‹ GÃ©rer Rendez-vous" onAction="#goRendezvous"
+                style="-fx-font-size: 14; -fx-background-color: #eab308;
+                       -fx-text-fill: white; -fx-background-radius: 10;
+                       -fx-padding: 12 24; -fx-font-weight: bold; -fx-cursor: hand;"/>
+        <!-- âœ… NOUVEAU bouton Stats -->
+        <Button text="ðŸ“Š Mes Statistiques" onAction="#goStats"
+                style="-fx-font-size: 14; -fx-background-color: #7c3aed;
+                       -fx-text-fill: white; -fx-background-radius: 10;
+                       -fx-padding: 12 24; -fx-font-weight: bold; -fx-cursor: hand;"/>
+    </HBox>
+
+</VBox>
+

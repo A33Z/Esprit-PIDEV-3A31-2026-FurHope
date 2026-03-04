@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.DashboardClientController"
+      spacing="0"
+      style="-fx-background-color: linear-gradient(to bottom right, #fff7ed, #ffedd5);">
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="16"
+          style="-fx-background-color: #eab308; -fx-padding: 16 24;">
+        <Label text="ÃƒÂ°Ã…Â¸Ã‚ÂÃ‚Â¾ FurHope"
+               style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        <Label fx:id="welcomeLabel" text=""
+               style="-fx-font-size: 13; -fx-text-fill: #fef9c3;"/>
+        <HBox HBox.hgrow="ALWAYS"/>
+        <Button text="ÃƒÂ°Ã…Â¸Ã…Â¡Ã‚Âª DÃƒÆ’Ã‚Â©connexion" onAction="#logout"
+                style="-fx-background-color: white; -fx-text-fill: #eab308;
+                       -fx-font-weight: bold; -fx-background-radius: 8;
+                       -fx-cursor: hand; -fx-padding: 6 14;"/>
+    </HBox>
+
+    <VBox alignment="CENTER" spacing="16" VBox.vgrow="ALWAYS"
+          style="-fx-padding: 40;">
+
+        <Label text="Que souhaitez-vous faire ?"
+               style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #92400e;"/>
+
+        <Button text="Dashboard"
+                onAction="#goDashboard" maxWidth="350"
+                style="-fx-font-size: 14; -fx-background-color: #78716c;
+                       -fx-text-fill: white; -fx-background-radius: 12;
+                       -fx-padding: 14 30; -fx-font-weight: bold; -fx-cursor: hand;
+                       -fx-effect: dropshadow(gaussian,rgba(120,113,108,0.35),8,0,0,3);"/>
+
+
+        <Button text="ÃƒÂ°Ã…Â¸Ã¢â‚¬ËœÃ‚Â¨ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã…Â¡Ã¢â‚¬Â¢ÃƒÂ¯Ã‚Â¸Ã‚Â Trouver un VÃƒÆ’Ã‚Â©tÃƒÆ’Ã‚Â©rinaire &amp; Prendre RDV"
+                onAction="#goListeVets" maxWidth="350"
+                style="-fx-font-size: 14; -fx-background-color: #f97316;
+                       -fx-text-fill: white; -fx-background-radius: 12;
+                       -fx-padding: 14 30; -fx-font-weight: bold; -fx-cursor: hand;
+                       -fx-effect: dropshadow(gaussian,rgba(249,115,22,0.4),8,0,0,3);"/>
+
+        <!-- ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Nouveau bouton Laisser un avis -->
+        <Button text="ÃƒÂ¢Ã‚Â­Ã‚Â Laisser un Avis"
+                onAction="#goMesAvis" maxWidth="350"
+                style="-fx-font-size: 14; -fx-background-color: #eab308;
+                       -fx-text-fill: white; -fx-background-radius: 12;
+                       -fx-padding: 14 30; -fx-font-weight: bold; -fx-cursor: hand;
+                       -fx-effect: dropshadow(gaussian,rgba(234,179,8,0.4),8,0,0,3);"/>
+
+        <Button text="ÃƒÂ°Ã…Â¸Ã‚Â©Ã‚Âº Assistant IA MÃƒÆ’Ã‚Â©dical"
+                onAction="#openChatbot" maxWidth="350"
+                style="-fx-font-size: 14; -fx-background-color: #10b981;
+                       -fx-text-fill: white; -fx-background-radius: 12;
+                       -fx-padding: 14 30; -fx-font-weight: bold; -fx-cursor: hand;
+                       -fx-effect: dropshadow(gaussian,rgba(16,185,129,0.4),8,0,0,3);"/>
+    </VBox>
+</VBox>
