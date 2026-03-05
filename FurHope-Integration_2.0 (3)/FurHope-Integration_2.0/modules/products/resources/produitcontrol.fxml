@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane stylesheets="@style.css"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.projet.controller.produitcontrol">
+    <children>
+
+        <Button text="Retour"
+                onAction="#goBack"
+                styleClass="secondary-button"/>
+
+        <VBox spacing="15"
+              alignment="CENTER"
+              AnchorPane.topAnchor="20"
+              AnchorPane.bottomAnchor="20"
+              AnchorPane.leftAnchor="40"
+              AnchorPane.rightAnchor="40">
+
+            <Label text="Gestion des Produits"
+                   styleClass="title"/>
+
+
+            <ListView fx:id="listView" prefHeight="500"/>
+
+            <Button text="+ Ajouter"
+                    onAction="#addproduit"
+                    styleClass="primary-button"
+                    AnchorPane.bottomAnchor="20"
+                    AnchorPane.rightAnchor="20"/>
+
+        </VBox>
+
+    </children>
+
+</AnchorPane>
+

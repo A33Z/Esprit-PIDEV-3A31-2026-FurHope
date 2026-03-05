@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane stylesheets="@style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.projet.controller.modifierproduit">
+
+    <children>
+
+
+
+        <!-- Center container -->
+        <VBox alignment="CENTER" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+
+            <VBox alignment="CENTER" maxWidth="420" spacing="12" styleClass="card">
+
+                <Button onAction="#goBack" styleClass="secondary-button" text="Retour" AnchorPane.leftAnchor="20" AnchorPane.topAnchor="20" />
+
+                <Label styleClass="title" text="Modifier Produit" />
+
+                <TextField fx:id="titleField" promptText="Titre" />
+                <TextField fx:id="priceField" promptText="Prix" />
+                <TextField fx:id="tvaField" promptText="TVA" />
+                <TextField fx:id="stockField" promptText="Stock" />
+
+                <TextArea fx:id="descriptionField" prefRowCount="3" promptText="Description" />
+
+                <Button onAction="#uploadImage" styleClass="secondary-button" text="Choisir image" />
+
+                <ImageView fx:id="imagePreview" fitHeight="120" fitWidth="160" preserveRatio="true" />
+
+                <Button onAction="#modifierproduit" styleClass="primary-button" text="Enregistrer" />
+
+            </VBox>
+        </VBox>
+
+    </children>
+</AnchorPane>

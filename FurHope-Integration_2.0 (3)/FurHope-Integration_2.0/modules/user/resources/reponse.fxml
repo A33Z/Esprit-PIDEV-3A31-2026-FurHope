@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="TOP_CENTER" spacing="14" fillWidth="true" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.esprit.controllers.ReponseController"
+      stylesheets="@styles.css" styleClass="modern-ui page">
+
+    <padding>
+        <Insets top="18" right="24" bottom="24" left="24"/>
+    </padding>
+
+    <Label text="Reponse Management - Admin" styleClass="title"/>
+
+    <FlowPane hgap="10" vgap="10" alignment="CENTER" prefWrapLength="900">
+        <TextField fx:id="reclamationIdField" promptText="Reclamation ID" prefWidth="180" minWidth="140"/>
+    </FlowPane>
+
+    <TextArea fx:id="messageArea" promptText="Write admin response" prefHeight="90" maxWidth="1.7976931348623157E308" wrapText="true"/>
+
+    <FlowPane hgap="10" vgap="10" alignment="CENTER">
+        <Button text="Add" styleClass="primary-button action-button" onAction="#addReponse"/>
+        <Button text="Update" styleClass="primary-button action-button" onAction="#updateReponse"/>
+        <Button text="Delete" styleClass="secondary-button action-button" onAction="#deleteReponse"/>
+        <Button text="Refresh" styleClass="secondary-button action-button" onAction="#refreshTable"/>
+        <Button text="Back" styleClass="secondary-button action-button" onAction="#goBack"/>
+    </FlowPane>
+
+    <ScrollPane fitToWidth="true"
+                prefHeight="420"
+                styleClass="hotel-scroll-pane"
+                maxWidth="1.7976931348623157E308"
+                VBox.vgrow="ALWAYS">
+        <content>
+            <VBox fx:id="reponseCardsPane"
+                  spacing="10"
+                  maxWidth="1.7976931348623157E308"/>
+        </content>
+    </ScrollPane>
+
+</VBox>
+

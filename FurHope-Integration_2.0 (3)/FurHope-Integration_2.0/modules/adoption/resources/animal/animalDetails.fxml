@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="760.0" prefWidth="1060.0"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.esprit.animal.controllers.AnimalDetails"
+            styleClass="root"
+            stylesheets="@style.css">
+
+    <top>
+        <HBox styleClass="top-bar">
+            <Button text="%nav.back" onAction="#goBack" styleClass="button-secondary"/>
+            <Button text="%nav.home" onAction="#goHome" styleClass="button-secondary"/>
+            <Label text="%page.animalDetails.title" styleClass="page-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <VBox alignment="CENTER" spacing="14.0" style="-fx-padding:16;">
+
+                <ImageView fx:id="imageView"
+                           fitHeight="150.0"
+                           fitWidth="150.0"
+                           preserveRatio="true"
+                           styleClass="section-container"/>
+
+                <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="info-container">
+                    <Label text="%name" styleClass="info-title"/>
+                    <Label fx:id="nameLabel" styleClass="info-value"/>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="info-container">
+                    <Label text="%field.species" styleClass="info-title"/>
+                    <Label fx:id="speciesLabel" styleClass="info-value"/>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="info-container">
+                    <Label text="%field.breed" styleClass="info-title"/>
+                    <Label fx:id="breedLabel" styleClass="info-value"/>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="info-container">
+                    <Label text="%age" styleClass="info-title"/>
+                    <Label fx:id="ageLabel" styleClass="info-value"/>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="info-container">
+                    <Label text="%field.gender" styleClass="info-title"/>
+                    <Label fx:id="genderLabel" styleClass="info-value"/>
+                </HBox>
+
+                <VBox spacing="8.0" styleClass="info-container">
+                    <Label text="%field.description" styleClass="info-title"/>
+                    <Label fx:id="descriptionLabel" wrapText="true" styleClass="info-value"/>
+                </VBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="info-container">
+                    <Label text="%field.status" styleClass="info-title"/>
+                    <Label fx:id="statusLabel" styleClass="info-value"/>
+                </HBox>
+
+                <VBox spacing="8.0" styleClass="card">
+                    <Label text="%owner.info" styleClass="label-bold"/>
+
+                    <HBox spacing="8.0" styleClass="info-container">
+                        <Label text="%owner.name" styleClass="info-title"/>
+                        <Label fx:id="ownerNameLabel" styleClass="info-value"/>
+                    </HBox>
+
+                    <HBox spacing="8.0" styleClass="info-container">
+                        <Label text="%owner.email" styleClass="info-title"/>
+                        <Label fx:id="ownerEmailLabel" styleClass="info-value"/>
+                    </HBox>
+
+                    <HBox spacing="8.0" styleClass="info-container">
+                        <Label text="%owner.phone" styleClass="info-title"/>
+                        <Label fx:id="ownerPhoneLabel" styleClass="info-value"/>
+                    </HBox>
+
+                    <HBox spacing="8.0" styleClass="info-container">
+                        <Label text="%owner.role" styleClass="info-title"/>
+                        <Label fx:id="ownerRoleLabel" styleClass="info-value"/>
+                    </HBox>
+                </VBox>
+
+                <VBox spacing="8.0" styleClass="card">
+                    <Label text="%care.title" styleClass="label-bold"/>
+
+                    <VBox spacing="4.0">
+                        <Label text="%care.exercise" styleClass="info-title"/>
+                        <Label fx:id="careExerciseLabel" wrapText="true" styleClass="info-value"/>
+                    </VBox>
+
+                    <VBox spacing="4.0">
+                        <Label text="%care.diet" styleClass="info-title"/>
+                        <Label fx:id="careDietLabel" wrapText="true" styleClass="info-value"/>
+                    </VBox>
+
+                    <VBox spacing="4.0">
+                        <Label text="%care.environment" styleClass="info-title"/>
+                        <Label fx:id="careEnvironmentLabel" wrapText="true" styleClass="info-value"/>
+                    </VBox>
+
+                    <VBox spacing="4.0">
+                        <Label text="%care.grooming" styleClass="info-title"/>
+                        <Label fx:id="careGroomingLabel" wrapText="true" styleClass="info-value"/>
+                    </VBox>
+
+                    <VBox spacing="4.0">
+                        <Label text="%care.training" styleClass="info-title"/>
+                        <Label fx:id="careTrainingLabel" wrapText="true" styleClass="info-value"/>
+                    </VBox>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="12.0" style="-fx-padding: 0 16 16 16;">
+            <Button fx:id="modifyButton"
+                    onAction="#handlemodifier"
+                    text="%update"
+                    styleClass="button-save"
+                    prefWidth="120.0"/>
+
+            <Button fx:id="deleteButton"
+                    onAction="#handlesupprimer"
+                    text="%delete"
+                    styleClass="button-danger"
+                    prefWidth="120.0"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
+

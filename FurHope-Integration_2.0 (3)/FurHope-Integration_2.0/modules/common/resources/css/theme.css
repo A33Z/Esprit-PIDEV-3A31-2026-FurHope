@@ -1,0 +1,421 @@
+/* FurHope non-feed design system */
+
+.modern-ui {
+    -app-bg: #f2f6ff;
+    -app-bg-soft: #e8effd;
+    -app-surface: #ffffff;
+    -app-surface-2: #f3f8ff;
+    -app-border: #cfdcf3;
+    -app-border-strong: #b9cdee;
+    -app-text: #12233a;
+    -app-text-muted: #5f728d;
+    -app-accent: #1877f2;
+    -app-accent-strong: #165dc0;
+    -app-accent-soft: #e7f1ff;
+    -app-success: #1f9a5a;
+    -app-danger: #cf3f56;
+    -fx-font-family: "Segoe UI", "Inter", "Arial", sans-serif;
+    -fx-background-color: linear-gradient(to bottom, #f3f7ff, #e8effd);
+    -fx-text-fill: -app-text;
+    -fx-accent: -app-accent;
+    -fx-focus-color: -app-accent;
+    -fx-faint-focus-color: rgba(24, 119, 242, 0.2);
+}
+
+.modern-ui.page,
+.modern-ui .page,
+.modern-ui .root,
+.modern-ui {
+    -fx-background-color: linear-gradient(to bottom, #f3f7ff, #e8effd);
+}
+
+.modern-ui .page-content {
+    -fx-padding: 30;
+    -fx-spacing: 20;
+}
+
+.modern-ui .card,
+.modern-ui .card-box,
+.modern-ui .form-card,
+.modern-ui .hero-card,
+.modern-ui .auth-frame,
+.modern-ui .dashboard-card,
+.modern-ui .reclamation-card,
+.modern-ui .response-card {
+    -fx-background-color: -app-surface;
+    -fx-border-color: -app-border;
+    -fx-border-width: 1;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(15, 35, 62, 0.14), 18, 0.18, 0, 4);
+}
+
+.modern-ui .title,
+.modern-ui .page-title,
+.modern-ui .section-title,
+.modern-ui .card-title,
+.modern-ui .brand-title,
+.modern-ui .header-title {
+    -fx-text-fill: -app-text;
+    -fx-font-size: 30px;
+    -fx-font-weight: 800;
+}
+
+.modern-ui .subtitle,
+.modern-ui .page-subtitle,
+.modern-ui .card-subtitle,
+.modern-ui .field-label,
+.modern-ui .header-subtitle,
+.modern-ui .muted {
+    -fx-text-fill: -app-text-muted;
+    -fx-font-size: 14px;
+}
+
+.modern-ui .toolbar,
+.modern-ui .topbar,
+.modern-ui .top-bar,
+.modern-ui .nav,
+.modern-ui .nav-bar,
+.modern-ui .sidebar {
+    -fx-background-color: linear-gradient(to bottom, rgba(255, 255, 255, 0.92), rgba(235, 243, 255, 0.86));
+    -fx-border-color: -app-border;
+    -fx-border-width: 1;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-padding: 14;
+    -fx-effect: dropshadow(gaussian, rgba(22, 45, 72, 0.14), 18, 0.18, 0, 3);
+}
+
+.modern-ui .separator *.line {
+    -fx-border-color: -app-border;
+    -fx-border-width: 1;
+}
+
+.modern-ui .chip,
+.modern-ui .pill,
+.modern-ui .status-badge {
+    -fx-background-color: -app-accent-soft;
+    -fx-text-fill: -app-accent-strong;
+    -fx-border-color: #c8daf8;
+    -fx-border-width: 1;
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-padding: 5 12;
+    -fx-font-weight: 700;
+    -fx-font-size: 12px;
+}
+
+.modern-ui .button,
+.modern-ui .action-button,
+.modern-ui .action-button-small {
+    -fx-background-color: linear-gradient(to bottom, #2f86f8, #1664cf);
+    -fx-text-fill: #ffffff;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-padding: 11 18;
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+    -fx-cursor: hand;
+    -fx-min-height: 42;
+}
+
+.modern-ui .button:hover,
+.modern-ui .action-button:hover,
+.modern-ui .action-button-small:hover {
+    -fx-background-color: linear-gradient(to bottom, #3f90fb, #1c6fdc);
+}
+
+.modern-ui .button:pressed,
+.modern-ui .action-button:pressed,
+.modern-ui .action-button-small:pressed {
+    -fx-background-color: linear-gradient(to bottom, #1b6fd8, #1459b7);
+}
+
+.modern-ui .primary-button,
+.modern-ui .btn-primary,
+.modern-ui .cheerful-primary-button,
+.modern-ui .composer-btn-primary,
+.modern-ui .btn-save {
+    -fx-background-color: linear-gradient(to bottom, -app-accent, -app-accent-strong);
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+}
+
+.modern-ui .primary-button:hover,
+.modern-ui .btn-primary:hover,
+.modern-ui .cheerful-primary-button:hover,
+.modern-ui .composer-btn-primary:hover,
+.modern-ui .btn-save:hover {
+    -fx-background-color: linear-gradient(to bottom, #3f7af0, #2c60c4);
+}
+
+.modern-ui .secondary-button,
+.modern-ui .btn-secondary,
+.modern-ui .cheerful-secondary-button,
+.modern-ui .composer-btn-secondary,
+.modern-ui .ghost-button,
+.modern-ui .sidebar-button,
+.modern-ui .nav-button,
+.modern-ui .nav-pill,
+.modern-ui .theme-toggle-button {
+    -fx-background-color: linear-gradient(to bottom, rgba(255, 255, 255, 0.96), rgba(235, 243, 255, 0.96));
+    -fx-text-fill: #213d62;
+    -fx-border-color: #b8cdef;
+}
+
+.modern-ui .sidebar-button,
+.modern-ui .nav-button,
+.modern-ui .nav-pill {
+    -fx-background-color: rgba(23, 119, 242, 0.12);
+    -fx-text-fill: #194b89;
+    -fx-border-color: rgba(23, 119, 242, 0.25);
+}
+
+.modern-ui .sidebar-button:hover,
+.modern-ui .nav-button:hover,
+.modern-ui .nav-pill:hover {
+    -fx-background-color: rgba(23, 119, 242, 0.2);
+    -fx-text-fill: #173e71;
+}
+
+.modern-ui .ghost-button {
+    -fx-background-color: rgba(255, 255, 255, 0.88);
+    -fx-text-fill: #29476b;
+    -fx-border-color: #bfd2ee;
+}
+
+.modern-ui .danger-button,
+.modern-ui .button-danger,
+.modern-ui .danger-button-small {
+    -fx-background-color: linear-gradient(to bottom, #dd6175, -app-danger);
+    -fx-border-color: transparent;
+    -fx-text-fill: white;
+}
+
+.modern-ui .danger-button:hover,
+.modern-ui .button-danger:hover,
+.modern-ui .danger-button-small:hover {
+    -fx-background-color: linear-gradient(to bottom, #e26e81, #b43c50);
+}
+
+.modern-ui .text-field,
+.modern-ui .password-field,
+.modern-ui .text-area,
+.modern-ui .combo-box,
+.modern-ui .date-picker,
+.modern-ui .input,
+.modern-ui .input-field,
+.modern-ui .dialog-input,
+.modern-ui .pill-input {
+    -fx-background-color: -app-surface;
+    -fx-text-fill: -app-text;
+    -fx-border-color: -app-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 11 14;
+    -fx-font-size: 14px;
+    -fx-prompt-text-fill: #8a99ad;
+}
+
+.modern-ui .text-field:focused,
+.modern-ui .password-field:focused,
+.modern-ui .text-area:focused,
+.modern-ui .combo-box:focused,
+.modern-ui .date-picker:focused,
+.modern-ui .input:focused,
+.modern-ui .input-field:focused,
+.modern-ui .dialog-input:focused,
+.modern-ui .pill-input:focused,
+.modern-ui .button:focused,
+.modern-ui .action-button:focused,
+.modern-ui .action-button-small:focused {
+    -fx-border-color: -app-accent;
+    -fx-effect: dropshadow(gaussian, rgba(47, 111, 237, 0.18), 12, 0.14, 0, 2);
+}
+
+.modern-ui .button:disabled,
+.modern-ui .text-field:disabled,
+.modern-ui .password-field:disabled,
+.modern-ui .text-area:disabled,
+.modern-ui .combo-box:disabled {
+    -fx-opacity: 0.68;
+}
+
+.modern-ui .table-view,
+.modern-ui .list-view {
+    -fx-background-color: -app-surface;
+    -fx-control-inner-background: -app-surface;
+    -fx-border-color: -app-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+}
+
+.modern-ui .table-view .column-header-background {
+    -fx-background-color: #f1f5fb;
+    -fx-background-radius: 12 12 0 0;
+}
+
+.modern-ui .table-view .column-header .label {
+    -fx-text-fill: #2c3f57;
+    -fx-font-weight: 700;
+}
+
+.modern-ui .list-cell,
+.modern-ui .table-row-cell {
+    -fx-padding: 10 12;
+}
+
+.modern-ui .list-cell:filled:selected,
+.modern-ui .table-row-cell:filled:selected {
+    -fx-background-color: -app-accent-soft;
+    -fx-text-fill: -app-text;
+}
+
+.modern-ui .scroll-pane,
+.modern-ui .scroll-pane > .viewport {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.modern-ui .inline-link-button,
+.modern-ui .link-button,
+.modern-ui .hyperlink {
+    -fx-text-fill: -app-accent-strong;
+    -fx-font-weight: 700;
+}
+
+.modern-ui .inline-link-button:hover,
+.modern-ui .link-button:hover,
+.modern-ui .hyperlink:hover {
+    -fx-text-fill: -app-accent;
+}
+
+.modern-ui .form-error,
+.modern-ui .field-error {
+    -fx-text-fill: -app-danger;
+    -fx-font-size: 12px;
+}
+
+.modern-ui .empty-state,
+.modern-ui .placeholder-subtitle {
+    -fx-text-fill: -app-text-muted;
+    -fx-font-size: 14px;
+}
+
+.modern-ui .home-profile-avatar-shell {
+    -fx-min-width: 50;
+    -fx-min-height: 50;
+    -fx-max-width: 50;
+    -fx-max-height: 50;
+}
+
+.modern-ui .home-profile-avatar-fallback,
+.modern-ui .home-profile-avatar-image {
+    -fx-background-radius: 999;
+}
+
+.modern-ui .home-profile-avatar-core {
+    -fx-fill: linear-gradient(to bottom right, #2f86f8, #1c5ec4);
+}
+
+.modern-ui .home-profile-avatar-heart {
+    -fx-fill: #ffffff;
+}
+
+.modern-ui .home-profile-avatar-image {
+    -fx-effect: dropshadow(gaussian, rgba(18, 52, 88, 0.24), 10, 0.2, 0, 2);
+    -fx-border-color: #ffffff;
+    -fx-border-width: 2;
+    -fx-border-radius: 999;
+}
+
+.modern-ui .dashboard-shell {
+    -fx-spacing: 24;
+    -fx-fill-width: true;
+}
+
+.modern-ui .dashboard-module-grid {
+    -fx-padding: 4 0 2 0;
+    -fx-alignment: top-left;
+}
+
+.modern-ui .dashboard-hero-card {
+    -fx-background-color: linear-gradient(to right, rgba(255, 255, 255, 0.98), rgba(233, 244, 255, 0.98));
+    -fx-border-color: #bed6f8;
+    -fx-border-width: 1.2;
+}
+
+.modern-ui .dashboard-module-card {
+    -fx-background-color: linear-gradient(to bottom, rgba(255, 255, 255, 0.99), rgba(244, 249, 255, 0.98));
+    -fx-border-color: #c8dbf7;
+    -fx-border-width: 1.2;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-min-height: 208;
+    -fx-padding: 18;
+}
+
+.modern-ui .dashboard-module-card:hover {
+    -fx-border-color: #8fb7f3;
+    -fx-effect: dropshadow(gaussian, rgba(18, 58, 101, 0.2), 20, 0.2, 0, 6);
+}
+
+.modern-ui .dashboard-sidebar {
+    -fx-background-color: linear-gradient(to bottom, rgba(255, 255, 255, 0.98), rgba(230, 241, 255, 0.92));
+    -fx-border-color: transparent #bfd4f4 transparent transparent;
+    -fx-border-width: 0 1.2 0 0;
+}
+
+.dialog-pane,
+.app-dialog-pane {
+    -fx-background-color: linear-gradient(to bottom right, #ffffff, #f5f8fd);
+    -fx-border-color: #d6e2f2;
+    -fx-border-width: 1;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+}
+
+.dialog-pane .header-panel,
+.app-dialog-pane .header-panel {
+    -fx-background-color: transparent;
+}
+
+.dialog-pane .header-panel .label,
+.app-dialog-pane .header-panel .label {
+    -fx-font-size: 15px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #23364d;
+}
+
+.dialog-pane .button-bar .button,
+.app-dialog-pane .button-bar .button {
+    -fx-background-color: #edf3fd;
+    -fx-text-fill: #27405c;
+    -fx-border-color: #d4e0f1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-font-weight: 700;
+}
+
+.dialog-pane .button-bar .button:hover,
+.app-dialog-pane .button-bar .button:hover {
+    -fx-background-color: #e5edf9;
+}
+
+.dark-mode.modern-ui {
+    -app-bg: #0e1623;
+    -app-bg-soft: #121d2d;
+    -app-surface: #162233;
+    -app-surface-2: #1b2a3f;
+    -app-border: #2c3f59;
+    -app-border-strong: #3a5376;
+    -app-text: #e5edf7;
+    -app-text-muted: #9ab0ca;
+    -app-accent-soft: #1c365f;
+    -fx-background-color: linear-gradient(to bottom, #0e1623, #121d2d);
+}

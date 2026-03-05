@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.StatsDashboardController"
+      spacing="0" stylesheets="@css/app.css">
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="16"
+          style="-fx-padding: 16 24; -fx-border-width: 0 0 1 0;">
+        <Label text="🐾 FurHope Analytics"
+               style="-fx-font-size: 20; -fx-font-weight: bold;"/>
+        <Label fx:id="welcomeLabel"
+               style="-fx-font-size: 13;"/>
+        <HBox HBox.hgrow="ALWAYS"/>
+        <Button text="Back" onAction="#goBackAccueil"
+                style="-fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 8 16;"/>
+        <Button text="📅 Disponibilités" onAction="#goDisponibilites"
+                style="-fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 8 16;"/>
+        <Button text="📋 Rendez-vous" onAction="#goRendezvous"
+                style="-fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 8 16;"/>
+    </HBox>
+
+    <!-- WebView Dashboard -->
+    <WebView fx:id="webView" VBox.vgrow="ALWAYS"/>
+
+</VBox>
+
+

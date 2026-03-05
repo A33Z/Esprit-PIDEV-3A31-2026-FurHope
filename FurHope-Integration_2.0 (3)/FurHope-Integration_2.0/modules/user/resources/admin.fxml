@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="14"
+      alignment="TOP_CENTER"
+      fillWidth="true"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.AdminController"
+      stylesheets="@styles.css"
+      styleClass="modern-ui page">
+
+    <padding>
+        <Insets top="24" right="24" bottom="24" left="24"/>
+    </padding>
+
+    <Label text="Pending Veterinaires"
+           styleClass="title" />
+
+    <ScrollPane fitToWidth="true"
+                maxWidth="1.7976931348623157E308"
+                prefHeight="420"
+                styleClass="hotel-scroll-pane"
+                VBox.vgrow="ALWAYS">
+        <content>
+            <FlowPane fx:id="pendingCardsPane"
+                      hgap="14"
+                      vgap="14"
+                      prefWrapLength="980"
+                      maxWidth="1.7976931348623157E308"/>
+        </content>
+    </ScrollPane>
+
+    <FlowPane hgap="12" vgap="12" alignment="CENTER">
+        <Button text="Refresh"
+                styleClass="secondary-button action-button"
+                onAction="#refreshTable"/>
+        <Button text="Back"
+                styleClass="secondary-button action-button"
+                onAction="#goBack"/>
+    </FlowPane>
+
+</VBox>
+

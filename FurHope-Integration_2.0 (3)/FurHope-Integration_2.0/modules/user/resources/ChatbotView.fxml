@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.ChatbotController"
+      spacing="10" prefWidth="620" prefHeight="550"
+      style="-fx-padding: 15;" stylesheets="@css/app.css">
+
+    <!-- En-tÃªte -->
+    <HBox alignment="CENTER_LEFT" spacing="10"
+          style="-fx-padding: 12; -fx-background-radius: 10;">
+        <Label text="ðŸ©º Assistant MÃ©dical IA"
+               style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+        <Label text="Gemini AI"
+               style="-fx-font-size: 11px; -fx-padding: 2 8; -fx-background-radius: 10;"/>
+    </HBox>
+
+    <!-- Zone messages -->
+    <ScrollPane fx:id="scrollPane" VBox.vgrow="ALWAYS"
+                fitToWidth="true" hbarPolicy="NEVER">
+        <VBox fx:id="messagesContainer" spacing="6"
+              style="-fx-padding: 8;"/>
+    </ScrollPane>
+
+    <!-- Suggestions -->
+    <HBox spacing="6" alignment="CENTER_LEFT">
+        <Label text="Suggestions :"
+               style="-fx-font-size: 11px;"/>
+        <Button text="ðŸ’‰ Vaccins enfants" onAction="#onSuggestionVaccin"
+                style="-fx-border-radius: 12; -fx-background-radius: 12; -fx-font-size: 11px; -fx-cursor: hand;"/>
+        <Button text="ðŸ¶ Vaccins animaux" onAction="#onSuggestionAnimal"
+                style="-fx-border-radius: 12; -fx-background-radius: 12; -fx-font-size: 11px; -fx-cursor: hand;"/>
+        <Button text="ðŸŒ¡ï¸ SymptÃ´mes" onAction="#onSuggestionSymptomes"
+                style="-fx-border-radius: 12; -fx-background-radius: 12; -fx-font-size: 11px; -fx-cursor: hand;"/>
+    </HBox>
+
+    <!-- Zone de saisie -->
+    <HBox spacing="8" alignment="CENTER"
+          style="-fx-padding: 8; -fx-background-radius: 25;">
+        <TextField fx:id="messageField"
+                   promptText="Posez votre question mÃ©dicale..."
+                   HBox.hgrow="ALWAYS"
+                   onAction="#onSendMessage"
+                   style="-fx-font-size: 13px;"/>
+        <Button fx:id="sendButton" text="âž¤"
+                onAction="#onSendMessage"
+                style="-fx-font-size: 16px; -fx-background-radius: 50; -fx-min-width: 36; -fx-min-height: 36; -fx-cursor: hand;"/>
+    </HBox>
+</VBox>
+
+

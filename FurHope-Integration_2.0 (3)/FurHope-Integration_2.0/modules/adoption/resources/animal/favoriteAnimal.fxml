@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.esprit.animal.controllers.favoritecontroller"
+            prefHeight="760.0"
+            prefWidth="1160.0"
+            styleClass="root adoption-page"
+            stylesheets="@style.css">
+
+    <top>
+        <HBox styleClass="top-bar adoption-top-bar">
+            <Button fx:id="backButton" text="%nav.back" onAction="#handleBack" styleClass="button-secondary"/>
+            <Button text="%nav.home" onAction="#goHome" styleClass="button-secondary"/>
+            <Label text="%page.favorites.title" styleClass="page-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%menu.statistics" onAction="#showStats" styleClass="menu-button"/>
+            <Button text="%menu.clearAll" onAction="#clearAllFavorites" styleClass="button-danger"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="adoption-scroll">
+            <VBox spacing="14" styleClass="adoption-section-stack">
+                <Label fx:id="emptyLabel"
+                       text="%favorites.empty"
+                       textAlignment="CENTER"
+                       wrapText="true"
+                       visible="false"
+                       styleClass="section-value adoption-empty-label"/>
+
+                <GridPane fx:id="favoritesGrid" hgap="20" vgap="20" styleClass="adoption-grid-panel">
+                    <columnConstraints>
+                        <ColumnConstraints prefWidth="500" hgrow="SOMETIMES"/>
+                        <ColumnConstraints prefWidth="500" hgrow="SOMETIMES"/>
+                    </columnConstraints>
+                </GridPane>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" styleClass="adoption-footer-bar">
+            <Button text="%nav.back" onAction="#handleBack" styleClass="button-secondary"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
+

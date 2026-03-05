@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="controllers.ProfileController"
+           stylesheets="@styles.css"
+           styleClass="modern-ui page profile-page">
+
+    <ScrollPane fitToWidth="true" styleClass="modern-ui page-scroll" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+        <content>
+            <VBox alignment="TOP_CENTER" spacing="20" styleClass="modern-ui page-content profile-shell-root">
+                <padding>
+                    <Insets top="24" right="24" bottom="30" left="24"/>
+                </padding>
+
+                <HBox spacing="18" maxWidth="1420" fillHeight="true" styleClass="profile-layout-row profile-shell">
+                    <VBox spacing="14" prefWidth="340" minWidth="300" styleClass="card profile-left-card profile-sidebar-card">
+                        <StackPane alignment="CENTER" prefHeight="210">
+                            <ImageView fx:id="avatarImageView" fitWidth="170" fitHeight="170" preserveRatio="false" styleClass="profile-avatar-image"/>
+                            <Button text="Photo"
+                                    onAction="#changeAvatarImage"
+                                    styleClass="profile-camera-button"
+                                    StackPane.alignment="BOTTOM_RIGHT">
+                                <StackPane.margin>
+                                    <Insets top="0" right="40" bottom="12" left="0"/>
+                                </StackPane.margin>
+                            </Button>
+                        </StackPane>
+
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <Label fx:id="displayNameLabel" styleClass="profile-name-label"/>
+                            <Button fx:id="editInfoButton"
+                                    text="Edit"
+                                    styleClass="profile-mini-edit-button"
+                                    onAction="#toggleEditMode"/>
+                        </HBox>
+
+                        <Label fx:id="displayEmailLabel" styleClass="subtitle" wrapText="true"/>
+                        <Label text="Keep your profile complete so other teams recognize you quickly."
+                               wrapText="true"
+                               styleClass="profile-tagline-label"/>
+
+                        <Button text="Back"
+                                styleClass="profile-back-pill"
+                                maxWidth="Infinity"
+                                onAction="#goBack"/>
+                    </VBox>
+
+                    <VBox spacing="12" HBox.hgrow="ALWAYS" styleClass="card profile-right-card profile-details-card">
+                        <HBox alignment="CENTER_LEFT">
+                            <VBox spacing="2" HBox.hgrow="ALWAYS">
+                                <Label text="Profile Details" styleClass="card-title"/>
+                                <Label text="Identity, contact information and credentials" styleClass="subtitle"/>
+                            </VBox>
+                            <Label fx:id="statusLabel" styleClass="field-label"/>
+                        </HBox>
+
+                        <Label fx:id="editHintLabel"
+                               text="Click Edit to modify your information and upload a profile image."
+                               wrapText="true"
+                               styleClass="profile-edit-hint"/>
+
+                        <VBox fx:id="editSection" spacing="10" styleClass="form-card profile-edit-form" visible="false" managed="false">
+                            <HBox spacing="12">
+                                <VBox spacing="6" styleClass="field-group" HBox.hgrow="ALWAYS">
+                                    <Label text="First name" styleClass="field-label" />
+                                    <TextField fx:id="firstNameField" styleClass="input" />
+                                </VBox>
+                                <VBox spacing="6" styleClass="field-group" HBox.hgrow="ALWAYS">
+                                    <Label text="Last name" styleClass="field-label" />
+                                    <TextField fx:id="lastNameField" styleClass="input" />
+                                </VBox>
+                            </HBox>
+
+                            <VBox spacing="6" styleClass="field-group">
+                                <Label text="Email" styleClass="field-label" />
+                                <TextField fx:id="emailField" styleClass="input" />
+                            </VBox>
+
+                            <HBox spacing="12">
+                                <VBox spacing="6" styleClass="field-group" HBox.hgrow="ALWAYS">
+                                    <Label text="Phone" styleClass="field-label" />
+                                    <TextField fx:id="phoneField" styleClass="input" />
+                                </VBox>
+                                <VBox spacing="6" styleClass="field-group" HBox.hgrow="ALWAYS">
+                                    <Label text="City" styleClass="field-label" />
+                                    <TextField fx:id="cityField" styleClass="input" />
+                                </VBox>
+                            </HBox>
+
+                            <VBox spacing="6" styleClass="field-group">
+                                <Label text="Address" styleClass="field-label" />
+                                <TextField fx:id="addressField" styleClass="input" />
+                            </VBox>
+
+                            <HBox spacing="12">
+                                <VBox spacing="6" styleClass="field-group" HBox.hgrow="ALWAYS">
+                                    <Label text="New password" styleClass="field-label" />
+                                    <PasswordField fx:id="passwordField" promptText="Leave blank to keep current" styleClass="input" />
+                                </VBox>
+                                <VBox spacing="6" styleClass="field-group" HBox.hgrow="ALWAYS">
+                                    <Label text="Confirm password" styleClass="field-label" />
+                                    <PasswordField fx:id="confirmPasswordField" promptText="Confirm new password" styleClass="input" />
+                                </VBox>
+                            </HBox>
+
+                            <HBox spacing="10" alignment="CENTER_RIGHT">
+                                <Button text="Cancel" styleClass="secondary-button action-button" onAction="#cancelEditMode"/>
+                                <Button text="Save Changes" styleClass="primary-button action-button" onAction="#saveProfile"/>
+                            </HBox>
+                        </VBox>
+                    </VBox>
+                </HBox>
+            </VBox>
+        </content>
+    </ScrollPane>
+</StackPane>
+

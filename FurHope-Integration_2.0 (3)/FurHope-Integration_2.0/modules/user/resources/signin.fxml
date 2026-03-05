@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="controllers.SignInController"
+           stylesheets="@styles.css"
+           styleClass="modern-ui page signin-page">
+
+    <ScrollPane fitToWidth="true" fitToHeight="true" maxWidth="Infinity" maxHeight="Infinity" styleClass="modern-ui page-scroll" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+        <content>
+            <StackPane alignment="CENTER" maxWidth="Infinity">
+                <VBox alignment="CENTER" spacing="18" styleClass="modern-ui page-content auth-shell" maxWidth="1420" fillWidth="true">
+                    <padding>
+                        <Insets top="26" right="30" bottom="30" left="30"/>
+                    </padding>
+
+                    <HBox spacing="24" alignment="TOP_CENTER" fillHeight="true" maxWidth="1380" styleClass="auth-main-row">
+                        <VBox spacing="14" alignment="TOP_LEFT" HBox.hgrow="ALWAYS" styleClass="card auth-marketing-card">
+                            <Label text="FurHope" styleClass="brand-title auth-brand-title" />
+                            <Label text="Care, social stories, and shelter operations in one place."
+                                   wrapText="true"
+                                   styleClass="subtitle auth-brand-subtitle" />
+
+                            <FlowPane hgap="10" vgap="10" prefWrapLength="640" styleClass="auth-feature-chips">
+                                <Label text="Community Feed" styleClass="pill" />
+                                <Label text="Adoption Tracking" styleClass="pill" />
+                                <Label text="Reclamation Support" styleClass="pill" />
+                                <Label text="Vet Coordination" styleClass="pill" />
+                                <Label text="Hotel Reservations" styleClass="pill" />
+                            </FlowPane>
+
+                            <VBox spacing="10" styleClass="auth-copy-list">
+                                <Label text="- Manage everything from one dashboard" styleClass="subtitle" />
+                                <Label text="- Keep notifications and social activity synchronized" styleClass="subtitle" />
+                                <Label text="- Respond to users with a clear workflow" styleClass="subtitle" />
+                            </VBox>
+                        </VBox>
+
+                        <VBox spacing="14" alignment="TOP_CENTER" styleClass="card auth-frame form-card auth-login-card" prefWidth="430" minWidth="390" maxWidth="470">
+                            <Label text="Sign In" styleClass="title auth-login-title" />
+
+                            <Label fx:id="formErrorLabel" styleClass="form-error" managed="false" visible="false" wrapText="true"/>
+
+                            <VBox spacing="6" styleClass="field-group" maxWidth="Infinity" fillWidth="true">
+                                <Label text="Email" styleClass="field-label"/>
+                                <TextField fx:id="emailField" promptText="name@example.com" styleClass="input" />
+                                <Label fx:id="emailErrorLabel" styleClass="field-error" managed="false" visible="false" wrapText="true"/>
+                            </VBox>
+
+                            <VBox spacing="6" styleClass="field-group" maxWidth="Infinity" fillWidth="true">
+                                <Label text="Password" styleClass="field-label"/>
+                                <PasswordField fx:id="passwordField" promptText="Your password" styleClass="input" />
+                                <Label fx:id="passwordErrorLabel" styleClass="field-error" managed="false" visible="false" wrapText="true"/>
+                            </VBox>
+
+                            <Button text="Login" styleClass="cheerful-primary-button login-cta action-button" onAction="#login" prefWidth="220"/>
+                            <Button text="Forgot password?" styleClass="ghost-button action-button" onAction="#goToForgotPassword"/>
+
+                            <Button fx:id="googleButton" styleClass="google-icon-button" onAction="#loginWithGoogle" prefWidth="54" prefHeight="54" minWidth="54" minHeight="54">
+                                <graphic>
+                                    <ImageView fitWidth="26" fitHeight="26" preserveRatio="true">
+                                        <image>
+                                            <Image url="@images/google-g.png"/>
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+
+                            <HBox spacing="10" alignment="CENTER">
+                                <Button text="Login with Face" styleClass="cheerful-secondary-button action-button" onAction="#loginWithFace" prefWidth="170"/>
+                                <Button text="Enroll Face" styleClass="secondary-button action-button" onAction="#enrollFace" prefWidth="140"/>
+                            </HBox>
+
+                            <HBox spacing="8" alignment="CENTER" styleClass="inline-link-row">
+                                <Label text="Don't have an account?" styleClass="field-label"/>
+                                <Button text="Sign up" styleClass="inline-link-button" onAction="#goToSignUp"/>
+                            </HBox>
+
+                            <HBox spacing="10" alignment="CENTER" styleClass="form-actions">
+                                <Button text="Back" styleClass="cheerful-secondary-button action-button" onAction="#goBack"/>
+                            </HBox>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </StackPane>
+        </content>
+    </ScrollPane>
+
+    <Button fx:id="themeToggleButton"
+            text="&#9728;"
+            onAction="#toggleDarkMode"
+            styleClass="theme-toggle-button"
+            StackPane.alignment="TOP_RIGHT">
+        <StackPane.margin>
+            <Insets top="14" right="14" bottom="0" left="0"/>
+        </StackPane.margin>
+    </Button>
+</StackPane>
+

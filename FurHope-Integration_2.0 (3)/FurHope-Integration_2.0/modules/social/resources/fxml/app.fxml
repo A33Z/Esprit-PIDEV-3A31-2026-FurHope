@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.esprit.furhope.controllers.navcontroller" styleClass="app-root" stylesheets="@../css/app.css">
+    <top>
+        <HBox styleClass="app-header" alignment="CENTER_LEFT" spacing="14">
+            <padding>
+                <Insets top="12" right="16" bottom="10" left="16"/>
+            </padding>
+
+            <VBox spacing="1">
+                <Label text="FurHope" styleClass="header-title"/>
+                <Label fx:id="sessionLabel" text="Care. Share. Adopt." styleClass="header-subtitle"/>
+            </VBox>
+
+            <Button fx:id="backHomeBtn" onAction="#onBackHomeClick" text="Back Home" styleClass="composer-btn-secondary"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <HBox styleClass="search-wrap" alignment="CENTER_LEFT" spacing="8">
+                <Label text="?" styleClass="search-icon"/>
+                <TextField fx:id="searchField" styleClass="search-input" promptText="Search users (e.g. User 1)"/>
+            </HBox>
+
+            <Button fx:id="addFriendBtn" onAction="#onAddFriendClick" text="Add Friend" styleClass="composer-btn-secondary"/>
+            <Button fx:id="refreshBtn" onAction="#onRefreshClick" text="Refresh" styleClass="composer-btn-secondary"/>
+            <Button fx:id="notifBtn" onAction="#onNotificationsClick" text=""/>
+            <Button fx:id="requestsBtn" onAction="#onRequestsClick" text="Requests" styleClass="composer-btn-secondary"/>
+            <Button fx:id="friendsBtn" onAction="#onFriendsClick" text="Friends" styleClass="composer-btn-secondary"/>
+            <Button fx:id="logoutBtn" onAction="#onLogoutClick" text="Logout" styleClass="composer-btn-secondary"/>
+        </HBox>
+    </top>
+
+    <center>
+        <StackPane fx:id="content" styleClass="content-shell"/>
+    </center>
+
+    <bottom>
+        <HBox styleClass="bottom-nav" alignment="CENTER" spacing="10">
+            <padding>
+                <Insets top="10" right="14" bottom="10" left="14"/>
+            </padding>
+
+            <Button fx:id="homeBtn" onAction="#onHomeClick" styleClass="nav-tab" text="Home"/>
+            <Button fx:id="profileBtn" onAction="#onProfileClick" styleClass="nav-tab" text="Profile"/>
+            <Button fx:id="shopBtn" onAction="#onShopClick" styleClass="nav-tab" text="Shop"/>
+            <Button fx:id="adoptBtn" onAction="#onAdoptClick" styleClass="nav-tab" text="Adopt"/>
+            <Button fx:id="pharmacyBtn" onAction="#onPharmacyClick" styleClass="nav-tab" text="Pharmacy"/>
+            <Button fx:id="locationsBtn" onAction="#onLocationsClick" styleClass="nav-tab" text="Locations"/>
+        </HBox>
+    </bottom>
+</BorderPane>
+
+
+

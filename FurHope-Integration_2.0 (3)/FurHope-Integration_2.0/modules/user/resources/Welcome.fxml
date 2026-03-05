@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="controllers.WelcomeController"
+           stylesheets="@styles.css"
+           styleClass="modern-ui page">
+
+    <ScrollPane fitToWidth="true" styleClass="modern-ui page-scroll" hbarPolicy="NEVER">
+        <content>
+            <VBox spacing="26" alignment="CENTER" styleClass="modern-ui page-content">
+                <padding>
+                    <Insets top="70" right="24" bottom="70" left="24" />
+                </padding>
+
+                <VBox spacing="16" alignment="CENTER" styleClass="card hero-card">
+                    <Label text="Welcome to FurHope" styleClass="title" />
+                    <Label text="A calm, caring place for every animal and every helper." styleClass="subtitle" />
+
+                    <Button text="Sign In" styleClass="primary-button" onAction="#goToSignIn" maxWidth="Infinity"/>
+                    <Button text="Sign Up" styleClass="secondary-button" onAction="#goToSignUp" maxWidth="Infinity"/>
+                    <Button text="Continue as Guest" styleClass="ghost-button" onAction="#continueAsGuest" maxWidth="Infinity"/>
+                </VBox>
+            </VBox>
+        </content>
+    </ScrollPane>
+</StackPane>
+
+

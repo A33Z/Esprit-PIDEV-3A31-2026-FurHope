@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.DisponibiliteController"
+            prefWidth="1100" prefHeight="700" stylesheets="@css/app.css">
+
+    <!-- En-tête -->
+    <top>
+        <VBox spacing="4"
+              style="-fx-padding: 16;">
+            <children>
+                <Label text="Gestion des disponibilités vétérinaires"
+                       style="-fx-font-size: 22; -fx-font-weight: bold;"/>
+                <Label text="CRUD + contrôle de saisie (date, heure, IDs, statut)"
+                       />
+            </children>
+        </VBox>
+    </top>
+
+    <!-- Formulaire à gauche -->
+    <left>
+        <VBox spacing="10" style="-fx-padding: 16;" prefWidth="350">
+            <children>
+                <Label text="Formulaire" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+                <!-- Champ ID vétérinaire -->
+                <Label text="Vet ID"/>
+                <TextField fx:id="vetIdField" promptText="Ex: 3"/>
+
+                <!-- Champ Nom vétérinaire -->
+                <Label text="Nom vétérinaire"/>
+                <TextField fx:id="vetNomField" promptText="Ex: Dr Sami"/>
+
+                <!-- Champ Date -->
+                <Label text="Date"/>
+                <DatePicker fx:id="dateField"/>
+
+                <!-- Heure début -->
+                <Label text="Heure début (HH:mm)"/>
+                <TextField fx:id="startTimeField" promptText="08:30"/>
+
+                <!-- Heure fin -->
+                <Label text="Heure fin (HH:mm)"/>
+                <TextField fx:id="endTimeField" promptText="11:00"/>
+
+                <!-- Statut -->
+                <Label text="Statut"/>
+                <ComboBox fx:id="statutBox" promptText="Sélectionner"/>
+
+                <!-- Boutons d’action -->
+                <HBox spacing="8">
+                    <children>
+                        <Button text="Ajouter" onAction="#onCreate"
+                                />
+                        <Button text="Modifier" onAction="#onUpdate"
+                                />
+                        <Button text="Supprimer" onAction="#onDelete"
+                                />
+                        <Button text="Vider" onAction="#onClear"/>
+                    </children>
+                </HBox>
+            </children>
+            <padding>
+                <Insets top="16" right="16" bottom="16" left="16"/>
+            </padding>
+        </VBox>
+    </left>
+
+    <!-- Tableau à droite -->
+    <center>
+        <VBox style="-fx-padding: 16;" spacing="10">
+            <children>
+                <Label text="Liste des disponibilités"
+                       style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                <TableView fx:id="disponibiliteTable" prefHeight="560">
+                    <columns>
+                        <TableColumn fx:id="colDispoId" text="ID" prefWidth="70"/>
+                        <TableColumn fx:id="colVetId" text="Vet ID" prefWidth="90"/>
+                        <TableColumn fx:id="colVetNom" text="Nom vétérinaire" prefWidth="150"/>
+                        <TableColumn fx:id="colStart" text="Début" prefWidth="180"/>
+                        <TableColumn fx:id="colEnd" text="Fin" prefWidth="180"/>
+                        <TableColumn fx:id="colStatut" text="Statut" prefWidth="120"/>
+                    </columns>
+                </TableView>
+            </children>
+        </VBox>
+    </center>
+</BorderPane>
+
+

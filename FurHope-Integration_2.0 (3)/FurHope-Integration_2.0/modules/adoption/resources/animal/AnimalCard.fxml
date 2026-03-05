@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.esprit.animal.controllers.AnimalCard"
+            prefHeight="160" prefWidth="1200"
+            maxWidth="1200"
+            styleClass="card adoption-animal-card" stylesheets="@style.css">
+
+    <children>
+
+        <HBox spacing="20"
+              AnchorPane.leftAnchor="20"
+              AnchorPane.topAnchor="20"
+              AnchorPane.rightAnchor="80"
+              AnchorPane.bottomAnchor="20"
+              alignment="CENTER_LEFT">
+
+            <ImageView fx:id="animalImage"
+                       fitHeight="120"
+                       fitWidth="120"
+                       preserveRatio="true"
+                       styleClass="adoption-animal-image"/>
+
+            <VBox spacing="10" HBox.hgrow="ALWAYS">
+
+                <Label fx:id="nameLabel"
+                       styleClass="card-title"
+                       text="%animal.card.nameDefault"/>
+
+                <HBox spacing="20">
+                    <Label fx:id="speciesLabel"
+                           styleClass="section-value"
+                           text="%animal.card.speciesLabel"/>
+                    <Separator orientation="VERTICAL"/>
+                    <Label fx:id="ageLabel"
+                           styleClass="section-value"
+                           text="%animal.card.ageLabel"/>
+                </HBox>
+
+                <HBox spacing="10">
+                    <Label text="%animal.card.statusLabel"
+                           styleClass="label-bold"/>
+                    <Label fx:id="statusLabel"
+                           styleClass="status-badge"
+                           text="%animal.card.statusDefault"/>
+                </HBox>
+            </VBox>
+        </HBox>
+
+        <Button fx:id="favoriteButton"
+                onAction="#handleFavoriteButton"
+                text="♡"
+                styleClass="adoption-favorite-btn"
+                AnchorPane.topAnchor="15"
+                AnchorPane.rightAnchor="20"
+                prefWidth="50"
+                prefHeight="50">
+            <tooltip>
+                <Tooltip text="%animal.card.favoriteAdd"/>
+            </tooltip>
+        </Button>
+
+    </children>
+
+</AnchorPane>
+
+
+
+

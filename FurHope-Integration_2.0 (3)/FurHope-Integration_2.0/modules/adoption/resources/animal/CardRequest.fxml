@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.esprit.animal.controllers.CardRequest"
+            prefHeight="260.0" prefWidth="500.0"
+            stylesheets="@style.css"
+            styleClass="root adoption-card-shell">
+
+    <VBox fx:id="cardRoot"
+          spacing="10"
+          alignment="TOP_LEFT"
+          styleClass="card adoption-request-card"
+          AnchorPane.topAnchor="0.0"
+          AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0"
+          AnchorPane.bottomAnchor="0.0">
+
+        <HBox spacing="12" alignment="TOP_LEFT">
+            <ImageView fx:id="animalImageView"
+                       fitWidth="86" fitHeight="86"
+                       preserveRatio="true"/>
+
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label fx:id="animalNameLabel" styleClass="card-title" text="%request.card.animalDefault"/>
+                <Label fx:id="applicantNameLabel" styleClass="section-value" text="%request.card.applicantDefault"/>
+                <Label fx:id="phoneLabel" styleClass="section-value" text="%request.card.phoneDefault"/>
+                <Label fx:id="addressLabel" styleClass="section-value" text="%request.card.addressDefault"/>
+            </VBox>
+        </HBox>
+
+        <Label fx:id="statusLabel" styleClass="status-badge"/>
+
+        <Label text="%request.card.message" styleClass="label-bold"/>
+        <Label fx:id="messageLabel"
+               wrapText="true"
+               styleClass="section-value"/>
+
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="approveButton" text="%request.action.approve" onAction="#approveFromCard" styleClass="button-save"/>
+            <Button fx:id="declineButton" text="%request.action.decline" onAction="#declineFromCard" styleClass="button-danger"/>
+        </HBox>
+
+    </VBox>
+</AnchorPane>
+

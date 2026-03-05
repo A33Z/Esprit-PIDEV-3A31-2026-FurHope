@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="TOP_CENTER" spacing="18" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.HomeGuestController"
+      stylesheets="@styles.css" styleClass="modern-ui page">
+
+    <padding>
+        <Insets top="20" right="26" bottom="20" left="26"/>
+    </padding>
+
+    <FlowPane hgap="10" vgap="10" alignment="CENTER" styleClass="nav-bar">
+        <Button text="Adoption" onAction="#openProtectedFeature" styleClass="nav-button"/>
+        <Button text="Products" onAction="#openProtectedFeature" styleClass="nav-button"/>
+        <Button text="Rendez-vous Vet" onAction="#openProtectedFeature" styleClass="nav-button"/>
+        <Button text="Social" onAction="#openProtectedFeature" styleClass="nav-button"/>
+        <Button text="Hostel Location" onAction="#openProtectedFeature" styleClass="nav-button"/>
+    </FlowPane>
+
+    <Label text="FurHope - Guest Home" styleClass="title"/>
+    <Label text="Discover the project: adoption flow, client support, and collaboration modules for shelter teams."
+           styleClass="subtitle" wrapText="true"/>
+
+    <VBox spacing="10" alignment="CENTER" styleClass="card-box">
+        <Label text="To access full modules, sign in first." styleClass="subtitle"/>
+        <FlowPane hgap="12" vgap="12" alignment="CENTER">
+            <Button text="Sign In" styleClass="primary-button" prefWidth="160" onAction="#goToSignIn"/>
+            <Button text="Sign Up" styleClass="secondary-button" prefWidth="160" onAction="#goToSignUp"/>
+            <Button text="Back" styleClass="secondary-button" prefWidth="120" onAction="#goBack"/>
+        </FlowPane>
+    </VBox>
+
+</VBox>
+
+

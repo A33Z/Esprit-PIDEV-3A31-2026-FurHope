@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="760.0" prefWidth="1260.0"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.esprit.animal.controllers.AfficherAnimal"
+            stylesheets="@style.css"
+            styleClass="root">
+
+    <top>
+        <HBox styleClass="top-bar">
+            <VBox spacing="2">
+                <Label text="%page.animals.title" styleClass="page-title"/>
+                <Label fx:id="statusLabel" text="%animals.loading" styleClass="page-subtitle"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
+        </HBox>
+    </top>
+
+    <center>
+        <HBox spacing="18" styleClass="adoption-layout">
+            <ListView fx:id="listview" HBox.hgrow="ALWAYS" styleClass="adoption-list-card"/>
+
+            <VBox spacing="10" styleClass="sidebar adoption-side-panel" prefWidth="320">
+                <Label text="%menu.actions" styleClass="label-bold"/>
+                <Separator/>
+
+                <Button fx:id="btnAddAnimal" text="%menu.addAnimal" styleClass="menu-button" maxWidth="Infinity"/>
+                <Button fx:id="btnFavorite" text="%menu.favorites" onAction="#openFavoriteList" styleClass="menu-button" maxWidth="Infinity"/>
+                <Button fx:id="btnMyRequests" text="%menu.myRequests" onAction="#openMessageRequests" styleClass="menu-button" maxWidth="Infinity"/>
+                <Button fx:id="btnRequests" text="%menu.receivedRequests" onAction="#openRequests" styleClass="menu-button" maxWidth="Infinity"/>
+                <Button fx:id="btnMyAnimals" text="%menu.myAnimals" onAction="#openMyAnimals" styleClass="menu-button" maxWidth="Infinity"/>
+                <Region VBox.vgrow="ALWAYS"/>
+                <Button text="%menu.logout" onAction="#logout" styleClass="button-danger" maxWidth="Infinity"/>
+            </VBox>
+        </HBox>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" style="-fx-padding: 0 18 14 18;">
+            <Button text="%nav.home" onAction="#goHome" styleClass="button-secondary"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
+

@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.projet.controller.cartcontrol"
+            stylesheets="@style.css"
+            prefHeight="650"
+            prefWidth="1000">
+
+    <!-- ðŸ” HEADER -->
+    <top>
+        <HBox alignment="CENTER_LEFT"
+              spacing="20"
+              style="-fx-padding: 20;">
+
+            <Button text="Shop"
+                    onAction="#backToShop"
+                    styleClass="secondary-button"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Label text="Shopping Cart"
+                   style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+        </HBox>
+    </top>
+
+    <!-- ðŸ§¾ CART CONTENT -->
+    <center>
+        <StackPane>
+
+            <!-- White Card Container -->
+            <VBox spacing="20"
+                  alignment="TOP_CENTER"
+                  prefWidth="800"
+                  style="-fx-padding: 30; -fx-background-radius: 15;">
+
+                <TableView fx:id="cartTable"
+                           prefHeight="400">
+
+                    <columns>
+                        <TableColumn text="Product" fx:id="colName" prefWidth="300"/>
+                        <TableColumn text="Qty" fx:id="colQty" prefWidth="100"/>
+                        <TableColumn text="Total" fx:id="colTotal" prefWidth="150"/>
+                        <TableColumn text="Remove Qty" fx:id="colDelete" prefWidth="220"/>
+                    </columns>
+
+                </TableView>
+
+                <Separator/>
+
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <Label text="Customer"
+                           style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+                    <TextField fx:id="customerNameField"
+                               promptText="Enter customer name"
+                               prefWidth="250"/>
+                    <Label text="Email"
+                           style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+                    <TextField fx:id="customerEmailField"
+                               promptText="customer@example.com"
+                               prefWidth="250"/>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <Label text="Payment"
+                           style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+                    <ChoiceBox fx:id="paymentMethodChoice"
+                               prefWidth="140"/>
+                    <Label text="Currency"
+                           style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+                    <ChoiceBox fx:id="currencyChoice"
+                               prefWidth="120"/>
+                    <Label fx:id="exchangeRateLabel"
+                           text="Rate: 1 USD = 1 USD"
+                           style="-fx-font-size: 12px; -fx-text-fill: #64748b;"/>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <Label text="Card Number"
+                           style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+                    <TextField fx:id="cardNumberField"
+                               promptText="16 digits"
+                               prefWidth="250"/>
+
+                    <Label text="PayPal Email"
+                           style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+                    <TextField fx:id="paypalEmailField"
+                               promptText="name@example.com"
+                               prefWidth="250"/>
+                </HBox>
+
+                <!-- TOTAL SECTION -->
+                <HBox alignment="CENTER_RIGHT" spacing="30">
+
+                    <Label text="Total:"
+                           style="-fx-font-size: 18px;"/>
+
+                    <Label fx:id="totalLabel"
+                           text="0"
+                           style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+
+                    <Button text="Checkout"
+                            onAction="#proceedPayment"
+                            style="-fx-font-weight: bold; -fx-padding: 10 25; -fx-background-radius: 10;"/>
+
+                </HBox>
+
+            </VBox>
+
+        </StackPane>
+    </center>
+
+</BorderPane>
+
+

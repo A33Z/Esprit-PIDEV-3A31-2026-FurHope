@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.esprit.animal.controllers.RequestDetailAdmin"
+            prefHeight="760.0"
+            prefWidth="920.0"
+            stylesheets="@style.css"
+            styleClass="root adoption-page">
+
+    <top>
+        <HBox styleClass="top-bar adoption-top-bar">
+            <Button text="%nav.back" onAction="#goBack" styleClass="button-secondary"/>
+            <Button text="%nav.home" onAction="#goHome" styleClass="button-secondary"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="12" styleClass="adoption-section-stack">
+            <VBox spacing="8" styleClass="card">
+                <Label text="%request.detail.animalInfo" styleClass="label-bold"/>
+                <Label fx:id="animalNameLabel" styleClass="pet-name"/>
+                <Label fx:id="animalSpeciesLabel" styleClass="section-value"/>
+                <Label fx:id="animalBreedLabel" styleClass="section-value"/>
+                <Label fx:id="animalAgeGenderLabel" styleClass="section-value"/>
+                <ImageView fx:id="animalImageView" fitWidth="140" fitHeight="140"/>
+            </VBox>
+
+            <VBox spacing="8" styleClass="card">
+                <Label text="%request.detail.requesterInfo" styleClass="label-bold"/>
+                <Label fx:id="requesterNameLabel" styleClass="section-value"/>
+                <Label fx:id="requesterEmailLabel" styleClass="section-value"/>
+                <Label fx:id="requesterPhoneLabel" styleClass="section-value"/>
+                <Label fx:id="requesterAddressLabel" styleClass="section-value"/>
+            </VBox>
+
+            <VBox spacing="8" styleClass="card">
+                <Label text="%request.detail.messageTitle" styleClass="label-bold"/>
+                <TextArea fx:id="messageArea"
+                          wrapText="true"
+                          editable="false"
+                          prefHeight="100"
+                          styleClass="input-field"/>
+            </VBox>
+
+            <Label fx:id="statusLabel" styleClass="status-badge" alignment="CENTER"/>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="adoption-footer-bar">
+            <Button fx:id="approveButton" text="%request.action.approve" styleClass="button-save"/>
+            <Button fx:id="declineButton" text="%request.action.decline" styleClass="button-danger"/>
+            <Button fx:id="closeButton" text="%nav.close" styleClass="button-secondary"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
+

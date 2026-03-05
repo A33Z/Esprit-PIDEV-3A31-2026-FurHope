@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.HotelManagerDashboardController" stylesheets="@css/app.css">
+
+    <children>
+        <VBox fx:id="allHotelsPanel"
+              styleClass="card manager-grid-panel manager-hotels-panel"
+              spacing="10.0"
+              AnchorPane.topAnchor="0.0"
+              AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0"
+              AnchorPane.rightAnchor="0.0">
+            <children>
+                <Label text="All Hotels" styleClass="section-title" />
+                <Label text="Operational hotel cards with thumbnail, rating, and quick pricing context." styleClass="header-subtitle" />
+
+                <HBox spacing="8.0" alignment="CENTER_LEFT">
+                    <children>
+                        <TextField fx:id="hotelSearchField" promptText="Search by hotel name or location" HBox.hgrow="ALWAYS" />
+                        <ComboBox fx:id="locationFilterCombo" promptText="Location" prefWidth="140.0" />
+                        <ComboBox fx:id="ratingFilterCombo" promptText="Rating" prefWidth="115.0" />
+                        <ComboBox fx:id="availabilityFilterCombo" promptText="Availability" prefWidth="150.0" />
+                        <Button text="Clear" styleClass="button ghost-button" onAction="#handleClearHotelFilters" />
+                    </children>
+                </HBox>
+
+                <Label fx:id="hotelResultsLabel" styleClass="header-subtitle" />
+
+                <ScrollPane fx:id="hotelCardsScrollPane"
+                            fitToWidth="true"
+                            fitToHeight="true"
+                            styleClass="hotel-scroll-pane manager-hotel-scroll"
+                            VBox.vgrow="ALWAYS">
+                    <content>
+                        <VBox fx:id="hotelCardContainer" spacing="10.0" styleClass="manager-hotel-list" />
+                    </content>
+                </ScrollPane>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>
+
+

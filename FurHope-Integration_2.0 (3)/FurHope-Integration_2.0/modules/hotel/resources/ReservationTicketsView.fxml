@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.HotelManagerDashboardController" stylesheets="@css/app.css">
+
+    <children>
+        <VBox fx:id="reservationPanel"
+              styleClass="card manager-grid-panel reservation-view-card"
+              spacing="10.0"
+              AnchorPane.topAnchor="0.0"
+              AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0"
+              AnchorPane.rightAnchor="0.0">
+            <children>
+                <Label text="Reservation Tickets" styleClass="section-title" />
+                <Label text="Structured ticket cards with operational actions and clear status hierarchy." styleClass="header-subtitle" />
+                <Label fx:id="reservationSummaryLabel" styleClass="header-subtitle" />
+                <ListView fx:id="reservationTicketListView" styleClass="manager-reservation-list" VBox.vgrow="ALWAYS" />
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>
+
+

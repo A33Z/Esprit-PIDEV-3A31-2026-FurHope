@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.RendezvousListController"
+            prefWidth="1200" prefHeight="700" stylesheets="@css/app.css">
+
+    <!-- HEADER -->
+    <top>
+        <VBox spacing="4" style="-fx-padding: 16;">
+            <Label text="Gestion des Rendez-vous" style="-fx-font-size: 24; -fx-font-weight: bold;"/>
+            <Label text="Liste des rendez-vous et formulaire d'ajout/modification" />
+        </VBox>
+    </top>
+
+    <!-- FORMULAIRE -->
+    <left>
+        <VBox spacing="10" style="-fx-padding: 16;" prefWidth="350">
+            <Label text="Formulaire rendez-vous" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+            <Label text="Status"/>
+            <ComboBox fx:id="statusBox" promptText="Sélectionner" prefWidth="300"/>
+
+            <Label text="Client ID"/>
+            <TextField fx:id="clientIdField" promptText="Ex: 12" prefWidth="300"/>
+
+            <Label text="Animal ID"/>
+            <TextField fx:id="animalIdField" promptText="Ex: 8" prefWidth="300"/>
+
+            <Label text="Description"/>
+            <TextArea fx:id="descriptionArea" promptText="Motif du rendez-vous" prefRowCount="3" prefWidth="300"/>
+
+            <Label text="Disponibilité vétérinaire"/>
+            <ComboBox fx:id="disponibiliteBox" promptText="Choisir une disponibilité" prefWidth="300"/>
+
+            <HBox spacing="8">
+                <TextField fx:id="vetIdField" editable="false" promptText="Vet ID auto" prefWidth="150"/>
+                <Button text="Actualiser" onAction="#onRefreshDisponibilites" />
+            </HBox>
+
+            <HBox spacing="8">
+                <Button text="Ajouter" onAction="#onAdd" />
+                <Button text="Modifier" onAction="#onEdit" />
+                <Button text="Supprimer" onAction="#onDelete" />
+                <Button text="Vider" onAction="#onRefresh" />
+            </HBox>
+        </VBox>
+    </left>
+
+    <!-- TABLEVIEW -->
+    <center>
+        <VBox style="-fx-padding: 16;" spacing="10">
+            <Label text="Liste des rendez-vous" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+            <TableView fx:id="rendezvousTable" prefHeight="620" prefWidth="800">
+                <columns>
+                    <TableColumn fx:id="colId" text="ID" prefWidth="60"/>
+                    <TableColumn fx:id="colStatus" text="Status" prefWidth="120"/>
+                    <TableColumn fx:id="colClientId" text="Client ID" prefWidth="80"/>
+                    <TableColumn fx:id="colVetId" text="Vet ID" prefWidth="80"/>
+                    <TableColumn fx:id="colAnimalId" text="Animal ID" prefWidth="80"/>
+                    <TableColumn fx:id="colDisponibiliteId" text="Disponibilité ID" prefWidth="100"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+</BorderPane>
+
+

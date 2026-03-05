@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.VetDashboardController"
+      stylesheets="@AppTheme.css"
+      styleClass="manager-page"
+      spacing="16">
+
+    <HBox alignment="CENTER_LEFT" spacing="12" styleClass="top-bar" prefHeight="68">
+        <Label text="FurHope Vet Dashboard" styleClass="header-title"/>
+        <Label fx:id="welcomeLabel" styleClass="page-subtitle"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Home" onAction="#goBack" styleClass="secondary-button"/>
+        <Button text="Logout" onAction="#logout" styleClass="secondary-button"/>
+    </HBox>
+
+    <VBox alignment="TOP_CENTER" spacing="14" styleClass="page-content" VBox.vgrow="ALWAYS">
+        <Label text="Veterinarian Workspace" styleClass="header-title"/>
+        <Label text="Manage availability, appointments, and analytics" styleClass="subtitle"/>
+
+        <HBox alignment="CENTER" spacing="12" styleClass="card" maxWidth="920">
+            <Button text="Mes Disponibilites" onAction="#goDisponibilites" styleClass="primary-button"/>
+            <Button text="Gerer Rendez-vous" onAction="#goRendezvous" styleClass="secondary-button"/>
+            <Button text="Mes Statistiques" onAction="#goStats" styleClass="secondary-button"/>
+        </HBox>
+    </VBox>
+</VBox>
+

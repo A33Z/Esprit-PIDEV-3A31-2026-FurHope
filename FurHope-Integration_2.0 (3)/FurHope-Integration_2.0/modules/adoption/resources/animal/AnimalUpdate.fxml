@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<?import javafx.geometry.Insets?>
+<AnchorPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.esprit.animal.controllers.Animalupdate"
+            styleClass="root"
+            stylesheets="@style.css"
+            prefHeight="400.0" prefWidth="600.0">
+
+    <!-- Scrollable container -->
+    <ScrollPane fitToWidth="true"
+                AnchorPane.leftAnchor="0.0"
+                AnchorPane.rightAnchor="0.0"
+                AnchorPane.topAnchor="0.0"
+                AnchorPane.bottomAnchor="0.0">
+
+        <VBox alignment="CENTER" spacing="10"
+              styleClass="v-box">
+            <!-- Padding correct -->
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+
+            <!-- Image + Button -->
+            <VBox alignment="CENTER" spacing="5">
+                <ImageView fx:id="imageView"
+                           fitHeight="150"
+                           fitWidth="150"
+                           preserveRatio="true"
+                           styleClass="animal-image"/>
+                <Button text="%animal.update.changeImage"
+                        fx:id="changeImageButton"
+                        onAction="#handleChangeImage"
+                        styleClass="button"/>
+            </VBox>
+
+            <!-- Name -->
+            <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
+                <Label text="%owner.name" styleClass="label-bold"/>
+                <TextField fx:id="nameField" styleClass="text-field"/>
+            </VBox>
+
+            <!-- Species -->
+            <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
+                <Label text="%field.species" styleClass="label-bold"/>
+                <TextField fx:id="speciesField" styleClass="text-field"/>
+            </VBox>
+
+            <!-- Breed -->
+            <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
+                <Label text="%field.breed" styleClass="label-bold"/>
+                <TextField fx:id="breedField" styleClass="text-field"/>
+            </VBox>
+
+            <!-- Age -->
+            <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
+                <Label text="%age" styleClass="label-bold"/>
+                <TextField fx:id="ageField" styleClass="text-field"/>
+            </VBox>
+
+            <!-- Gender -->
+            <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
+                <Label text="%field.gender" styleClass="label-bold"/>
+                <TextField fx:id="genderField" styleClass="text-field"/>
+            </VBox>
+
+            <!-- Description -->
+            <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
+                <Label text="%field.description" styleClass="label-bold"/>
+                <TextArea fx:id="descriptionField" wrapText="true" prefHeight="60" styleClass="text-field"/>
+            </VBox>
+
+            <!-- Status -->
+            <VBox alignment="CENTER_LEFT" styleClass="text-field-wrapper">
+                <Label text="%field.status" styleClass="label-bold"/>
+                <TextField fx:id="statusField" styleClass="text-field"/>
+            </VBox>
+
+            <!-- Save Button -->
+            <HBox alignment="CENTER" spacing="20">
+                <Button fx:id="saveButton"
+                        onAction="#handleSave"
+                        text="%save"
+                        styleClass="button-save"
+                        prefHeight="38"
+                        prefWidth="106"/>
+            </HBox>
+
+        </VBox>
+    </ScrollPane>
+
+</AnchorPane>
+
+

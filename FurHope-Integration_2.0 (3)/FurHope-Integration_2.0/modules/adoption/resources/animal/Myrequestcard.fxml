@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.esprit.animal.controllers.MyrequestCard"
+            prefHeight="400.0" prefWidth="600.0" stylesheets="@style.css"
+            styleClass="adoption-card-shell">
+
+    <VBox fx:id="cardRoot"
+          spacing="10"
+          styleClass="card adoption-myrequest-card">
+
+        <Label fx:id="titleLabel"
+               styleClass="card-title" />
+
+        <Label fx:id="animalLabel" styleClass="section-value"/>
+        <Label fx:id="clientLabel" styleClass="section-value"/>
+
+        <Label fx:id="statusLabel"
+               styleClass="status-badge" />
+
+    </VBox>
+
+</VBox>
+
+
+
+

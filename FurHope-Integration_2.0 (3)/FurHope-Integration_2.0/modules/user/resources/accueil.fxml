@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.SVGPath?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="controllers.AccueilController"
+           stylesheets="@styles.css"
+           styleClass="modern-ui page home-page">
+
+    <ScrollPane fitToWidth="true" styleClass="modern-ui page-scroll" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+        <content>
+            <VBox spacing="26" alignment="TOP_CENTER" styleClass="modern-ui page-content home-shell">
+                <padding>
+                    <Insets top="28" right="30" bottom="36" left="30"/>
+                </padding>
+
+                <HBox spacing="24" alignment="TOP_LEFT" maxWidth="1420" styleClass="home-hero home-hero-content">
+                    <VBox spacing="16" alignment="TOP_LEFT" HBox.hgrow="ALWAYS" styleClass="home-hero-text">
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <StackPane styleClass="home-profile-avatar-shell">
+                                <StackPane fx:id="profileAvatarFallback" styleClass="home-profile-avatar-fallback">
+                                    <Circle radius="24" styleClass="home-profile-avatar-core" />
+                                    <SVGPath content="M 0 -10 C 6 -18 18 -14 18 -2 C 18 10 0 18 0 18 C 0 18 -18 10 -18 -2 C -18 -14 -6 -18 0 -10 Z" styleClass="home-profile-avatar-heart"/>
+                                </StackPane>
+                                <ImageView fx:id="profileAvatarImageView"
+                                           fitWidth="48"
+                                           fitHeight="48"
+                                           preserveRatio="false"
+                                           managed="false"
+                                           visible="false"
+                                           styleClass="home-profile-avatar-image"/>
+                            </StackPane>
+                            <Label text="FurHope" styleClass="brand-title home-brand-title" />
+                        </HBox>
+
+                        <Label fx:id="welcomeLabel" text="Welcome" styleClass="title home-hero-title" />
+                        <Label text="A modern shelter platform for adoption, social engagement, support, and coordinated care."
+                               wrapText="true"
+                               maxWidth="780"
+                               styleClass="subtitle home-hero-subtitle" />
+
+                        <FlowPane hgap="10" vgap="10" alignment="CENTER_LEFT" styleClass="hero-nav home-module-nav">
+                            <Button text="Adoption" styleClass="nav-pill" onAction="#openAdoption"/>
+                            <Button text="Products" styleClass="nav-pill" onAction="#openProducts"/>
+                            <Button text="Vet Care" styleClass="nav-pill" onAction="#openVetCare"/>
+                            <Button text="Social" styleClass="nav-pill" onAction="#openSocial"/>
+                            <Button text="Hotel" styleClass="nav-pill" onAction="#openHostel"/>
+                        </FlowPane>
+
+                        <FlowPane hgap="12" vgap="12" alignment="CENTER_LEFT">
+                            <Button fx:id="signInButton" text="Sign In" styleClass="primary-button" onAction="#goToSignIn" />
+                            <Button fx:id="signUpButton" text="Create Account" styleClass="secondary-button" onAction="#goToSignUp" />
+                            <Button fx:id="dashboardButton" text="Open Dashboard" styleClass="primary-button" onAction="#goToDashboard" />
+                            <Button fx:id="profileButton" text="My Profile" styleClass="secondary-button" onAction="#goToProfile" />
+                            <Button fx:id="logoutButton" text="Logout" styleClass="ghost-button" onAction="#logout" />
+                        </FlowPane>
+
+                        <FlowPane hgap="10" vgap="10" alignment="CENTER_LEFT">
+                            <Hyperlink text="Donate to FurHope" styleClass="link-button" onAction="#openDonate"/>
+                            <Label text="Rescue" styleClass="pill" />
+                            <Label text="Vet Care" styleClass="pill" />
+                            <Label text="Community" styleClass="pill" />
+                        </FlowPane>
+                    </VBox>
+
+                    <VBox spacing="12" alignment="TOP_LEFT" styleClass="card home-info-card" prefWidth="360" minWidth="320">
+                        <Label text="Shelter Pulse" styleClass="section-title" />
+                        <Label text="Track real operations with one clear control center."
+                               wrapText="true"
+                               styleClass="subtitle" />
+                        <VBox spacing="10" styleClass="stat-grid">
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <Label text="24/7" styleClass="stat-number" />
+                                <Label text="Support for teams and adopters" styleClass="stat-label" />
+                            </HBox>
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <Label text="Live" styleClass="stat-number" />
+                                <Label text="Social feedback and notifications" styleClass="stat-label" />
+                            </HBox>
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <Label text="Fast" styleClass="stat-number" />
+                                <Label text="Reclamation follow-up workflow" styleClass="stat-label" />
+                            </HBox>
+                        </VBox>
+                    </VBox>
+                </HBox>
+
+                <VBox spacing="14" alignment="TOP_LEFT" maxWidth="1420" styleClass="card home-animals-section">
+                    <HBox alignment="CENTER_LEFT" spacing="14">
+                        <Label text="Meet Our Friends" styleClass="section-title" />
+                        <Label text="Ready for their next chapter" styleClass="subtitle" />
+                    </HBox>
+
+                    <FlowPane hgap="18" vgap="18" alignment="CENTER_LEFT" prefWrapLength="1340">
+                        <StackPane styleClass="animal-card home-animal-card">
+                            <VBox spacing="8" alignment="CENTER">
+                                <SVGPath content="M 0 -34 C 14 -48 34 -44 40 -26 C 46 -8 36 14 0 40 C -36 14 -46 -8 -40 -26 C -34 -44 -14 -48 0 -34 Z" styleClass="animal-icon" />
+                                <Label text="Luna" styleClass="card-title" />
+                                <Label text="Gentle kitten, 4 months" styleClass="card-subtitle" />
+                            </VBox>
+                        </StackPane>
+
+                        <StackPane styleClass="animal-card home-animal-card">
+                            <VBox spacing="8" alignment="CENTER">
+                                <SVGPath content="M 0 -30 C 10 -50 38 -44 40 -14 C 42 16 20 34 0 46 C -20 34 -42 16 -40 -14 C -38 -44 -10 -50 0 -30 Z" styleClass="animal-icon" />
+                                <Label text="Bento" styleClass="card-title" />
+                                <Label text="Playful pup, 1 year" styleClass="card-subtitle" />
+                            </VBox>
+                        </StackPane>
+
+                        <StackPane styleClass="animal-card home-animal-card">
+                            <VBox spacing="8" alignment="CENTER">
+                                <SVGPath content="M 0 -34 C 18 -52 44 -36 44 -8 C 44 20 22 38 0 48 C -22 38 -44 20 -44 -8 C -44 -36 -18 -52 0 -34 Z" styleClass="animal-icon" />
+                                <Label text="Milo" styleClass="card-title" />
+                                <Label text="Senior buddy, calm" styleClass="card-subtitle" />
+                            </VBox>
+                        </StackPane>
+                    </FlowPane>
+                </VBox>
+
+                <VBox fx:id="ctaSection" spacing="8" alignment="TOP_LEFT" maxWidth="1420" styleClass="card cta-section home-cta-section">
+                    <Label fx:id="ctaTitleLabel" text="Ready to help?" styleClass="section-title" />
+                    <Label fx:id="ctaBodyLabel"
+                           text="Sign in to adopt animals, book vet care, and manage your shelter workflow from one dashboard."
+                           styleClass="subtitle"
+                           wrapText="true"/>
+                </VBox>
+
+            </VBox>
+        </content>
+    </ScrollPane>
+</StackPane>
+

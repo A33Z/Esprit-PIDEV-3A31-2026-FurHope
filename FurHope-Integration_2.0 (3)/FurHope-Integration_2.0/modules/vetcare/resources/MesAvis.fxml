@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.MesAvisController"
+      spacing="0" stylesheets="@css/app.css">
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT"
+          style="-fx-padding: 18 28;">
+        <Label text="⭐ Mes Avis"
+               style="-fx-font-size: 20; -fx-font-weight: bold;"/>
+        <HBox HBox.hgrow="ALWAYS"/>
+        <Button text="← Retour" onAction="#goBack"
+                style="-fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 6 14;"/>
+    </HBox>
+
+    <Label text="Consultations terminées en attente d'avis"
+           style="-fx-font-size: 13; -fx-padding: 12 28;"/>
+
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+        <VBox fx:id="avisContainer" spacing="12"
+              style="-fx-padding: 0 24 24 24;"/>
+    </ScrollPane>
+</VBox>
+
+

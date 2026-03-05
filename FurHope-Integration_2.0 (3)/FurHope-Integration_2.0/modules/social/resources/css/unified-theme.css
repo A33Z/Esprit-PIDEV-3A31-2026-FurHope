@@ -1,0 +1,236 @@
+/*
+  FurHope Unified Theme
+  Palette extracted from reference image (pixel analysis) and validated via TheColorAPI:
+  - #DFE7F3 (Link Water)
+  - #AACAEA (Spindle)
+  - #5875C6 (Indigo)
+  - #263971 (Astronaut)
+  - #16223A (Big Stone)
+*/
+
+* {
+    -fh-bg-1: #DFE7F3;
+    -fh-bg-2: #AACAEA;
+    -fh-surface: #FFFFFF;
+    -fh-surface-soft: #F3F7FD;
+    -fh-border: #C8D6EA;
+    -fh-text: #16223A;
+    -fh-text-soft: #3E5374;
+    -fh-primary: #5875C6;
+    -fh-primary-dark: #263971;
+    -fh-primary-soft: #EAF1FF;
+    -fh-danger: #C9475C;
+    -fx-font-family: "Poppins", "Segoe UI", "Arial", sans-serif;
+    -fx-accent: -fh-primary;
+    -fx-focus-color: -fh-primary;
+    -fx-faint-focus-color: rgba(88, 117, 198, 0.18);
+}
+
+.root,
+.page,
+.landing-page,
+.manager-page,
+.user-page,
+.stack-pane,
+.border-pane,
+.anchor-pane {
+    -fx-background-color: linear-gradient(to bottom right, -fh-bg-1, -fh-bg-2);
+}
+
+.label {
+    -fx-text-fill: -fh-text;
+}
+
+.title,
+.header-title,
+.section-title,
+.brand-title,
+.page-title,
+.logo-title {
+    -fx-text-fill: -fh-text;
+}
+
+.subtitle,
+.header-subtitle,
+.page-subtitle,
+.field-label,
+.logo-subtitle {
+    -fx-text-fill: -fh-text-soft;
+}
+
+.button {
+    -fx-background-color: linear-gradient(to bottom, -fh-primary, -fh-primary-dark);
+    -fx-text-fill: white;
+    -fx-font-weight: 700;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: linear-gradient(to bottom, #6A87D7, #2E478A);
+}
+
+.button:pressed {
+    -fx-background-color: -fh-primary-dark;
+}
+
+.primary-button,
+.btn-primary,
+.composer-btn-primary,
+.primary-pill-button,
+.checkout-button,
+.button-save,
+.toolbar-button,
+.menu-button,
+.lang-button,
+.mobile-register-button {
+    -fx-background-color: linear-gradient(to bottom, -fh-primary, -fh-primary-dark);
+    -fx-text-fill: white;
+}
+
+.secondary-button,
+.ghost-button,
+.composer-btn-secondary,
+.secondary-pill-button,
+.button-secondary,
+.nav-button,
+.nav-pill,
+.sidebar-button,
+.theme-toggle-button {
+    -fx-background-color: -fh-surface;
+    -fx-text-fill: -fh-text;
+    -fx-border-color: -fh-border;
+    -fx-border-width: 1;
+}
+
+.secondary-button:hover,
+.ghost-button:hover,
+.composer-btn-secondary:hover,
+.secondary-pill-button:hover,
+.button-secondary:hover,
+.nav-button:hover,
+.nav-pill:hover,
+.sidebar-button:hover {
+    -fx-background-color: -fh-surface-soft;
+    -fx-border-color: #AFC0DC;
+}
+
+.danger-button,
+.button-danger,
+.danger-button-small {
+    -fx-background-color: linear-gradient(to bottom, #D35A6A, -fh-danger);
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+}
+
+.danger-button:hover,
+.button-danger:hover,
+.danger-button-small:hover {
+    -fx-background-color: linear-gradient(to bottom, #DC6575, #B83D52);
+}
+
+.text-field,
+.password-field,
+.text-area,
+.combo-box,
+.date-picker,
+.input-field,
+.dialog-input {
+    -fx-background-color: -fh-surface;
+    -fx-text-fill: -fh-text;
+    -fx-prompt-text-fill: #7E93B2;
+    -fx-border-color: -fh-border;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.text-field:focused,
+.password-field:focused,
+.text-area:focused,
+.combo-box:focused,
+.date-picker:focused,
+.input-field:focused,
+.dialog-input:focused {
+    -fx-border-color: -fh-primary;
+    -fx-effect: dropshadow(gaussian, rgba(88, 117, 198, 0.2), 12, 0.2, 0, 3);
+}
+
+.table-view,
+.list-view {
+    -fx-background-color: -fh-surface;
+    -fx-control-inner-background: -fh-surface;
+    -fx-border-color: -fh-border;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: -fh-surface-soft;
+    -fx-background-radius: 12 12 0 0;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: -fh-text;
+    -fx-font-weight: 700;
+}
+
+.table-row-cell:filled:selected,
+.list-cell:filled:selected {
+    -fx-background-color: -fh-primary-soft;
+}
+
+.scroll-pane,
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.card,
+.hero-card,
+.animal-card,
+.dashboard-card,
+.product-card,
+.app-dialog-pane,
+.dialog-pane {
+    -fx-background-color: rgba(255, 255, 255, 0.92);
+    -fx-border-color: -fh-border;
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-effect: dropshadow(gaussian, rgba(22, 34, 58, 0.14), 14, 0.16, 0, 3);
+}
+
+.dialog-pane .header-panel .label,
+.app-dialog-pane .header-panel .label {
+    -fx-text-fill: -fh-text;
+    -fx-font-weight: 700;
+}
+
+.dialog-pane .button-bar .button,
+.app-dialog-pane .button-bar .button {
+    -fx-background-color: -fh-surface;
+    -fx-text-fill: -fh-text;
+    -fx-border-color: -fh-border;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.dialog-pane .button-bar .button:hover,
+.app-dialog-pane .button-bar .button:hover {
+    -fx-background-color: -fh-surface-soft;
+}
+
+.hyperlink,
+.inline-link-button,
+.link-button {
+    -fx-text-fill: -fh-primary-dark;
+}
+
+.topbar,
+.top-bar,
+.bottom-nav,
+.nav-bar,
+.sidebar {
+    -fx-background-color: rgba(255, 255, 255, 0.86);
+    -fx-border-color: -fh-border;
+}

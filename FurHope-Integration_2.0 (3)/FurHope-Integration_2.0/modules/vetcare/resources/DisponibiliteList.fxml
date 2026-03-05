@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.effect.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.DisponibiliteListController"
+      spacing="0" stylesheets="@css/app.css">
+
+    <!-- Header orange -->
+    <HBox alignment="CENTER_LEFT" spacing="12"
+          style="-fx-padding: 18 28;">
+        <Label text="📅 Mes Disponibilités"
+               style="-fx-font-size: 20; -fx-font-weight: bold;"/>
+    </HBox>
+
+    <VBox spacing="16" VBox.vgrow="ALWAYS" style="-fx-padding: 24;">
+
+        <Label text="Cliquez sur une disponibilité pour la modifier ou supprimer."
+               style="-fx-font-size: 13;"/>
+
+        <ListView fx:id="disponibiliteList"
+                  VBox.vgrow="ALWAYS" prefHeight="400"
+                  style="-fx-border-radius: 12; -fx-background-radius: 12; -fx-font-size: 14; -fx-font-family: 'Segoe UI';"/>
+
+        <Label fx:id="detailsLabel"
+               text="Sélectionnez une disponibilité pour voir les détails."
+               wrapText="true"
+               style="-fx-font-size: 13; -fx-background-radius: 8; -fx-padding: 10 14; -fx-border-radius: 8;"/>
+
+        <HBox spacing="10" alignment="CENTER">
+            <Button text="➕ Ajouter" onAction="#onAdd"
+                    style="-fx-font-size: 13; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10 18; -fx-cursor: hand;"/>
+            <Button text="✏️ Modifier" onAction="#onEdit"
+                    style="-fx-font-size: 13; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10 18; -fx-cursor: hand;"/>
+            <Button text="🗑 Supprimer" onAction="#onDelete"
+                    style="-fx-font-size: 13; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10 18; -fx-cursor: hand;"/>
+            <Button text="🔄 Actualiser" onAction="#onRefresh"
+                    style="-fx-font-size: 13; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10 18; -fx-cursor: hand;"/>
+            <Button text="🏠 Dashboard" onAction="#onBackHome"
+                    style="-fx-font-size: 13; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10 18; -fx-cursor: hand;"/>
+        </HBox>
+
+    </VBox>
+</VBox>
+
+

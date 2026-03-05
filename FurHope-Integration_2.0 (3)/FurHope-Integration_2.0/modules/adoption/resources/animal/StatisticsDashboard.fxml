@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.esprit.animal.controllers.StatisticsController"
+            prefWidth="980.0"
+            prefHeight="740.0"
+            styleClass="root"
+            stylesheets="@style.css">
+
+    <top>
+        <HBox styleClass="top-bar">
+            <Button text="%nav.back" onAction="#goBack" styleClass="button-secondary"/>
+            <Button text="%nav.home" onAction="#goHome" styleClass="button-secondary"/>
+            <VBox spacing="2">
+                <Label text="%stats.title" styleClass="page-title"/>
+                <Label text="%stats.subtitle" styleClass="page-subtitle"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="14" style="-fx-padding: 16;">
+            <VBox spacing="10" styleClass="card">
+                <Label text="%stats.animalSection" styleClass="label-bold"/>
+                <GridPane hgap="20" vgap="12">
+                    <Label text="%stats.totalAnimals" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <Label fx:id="totalAnimalsLabel" text="0" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <Label text="%stats.availableAnimals" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <Label fx:id="availableAnimalsLabel" text="0" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                    <Label text="%stats.adoptedAnimals" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <Label fx:id="adoptedAnimalsLabel" text="0" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                    <Label text="%stats.commonSpecies" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <Label fx:id="mostCommonSpeciesLabel" text="%stats.na" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                </GridPane>
+            </VBox>
+
+            <VBox spacing="10" styleClass="card">
+                <Label text="%stats.requestsSection" styleClass="label-bold"/>
+                <GridPane hgap="20" vgap="12">
+                    <Label text="%stats.totalRequests" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <Label fx:id="totalRequestsLabel" text="0" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <Label text="%stats.pendingRequests" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <Label fx:id="pendingRequestsLabel" text="0" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                    <Label text="%stats.approvedRequests" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <Label fx:id="approvedRequestsLabel" text="0" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                    <Label text="%stats.rejectedRequests" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <Label fx:id="rejectedRequestsLabel" text="0" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                </GridPane>
+            </VBox>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" style="-fx-padding: 0 16 16 16;" alignment="CENTER_LEFT">
+            <Button text="%nav.refresh" onAction="#handleRefresh" styleClass="button-save"/>
+            <Button text="%nav.close" onAction="#handleClose" styleClass="button-danger"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="%lang.fr" onAction="#setFrench" styleClass="lang-button"/>
+            <Button text="%lang.en" onAction="#setEnglish" styleClass="lang-button"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
+

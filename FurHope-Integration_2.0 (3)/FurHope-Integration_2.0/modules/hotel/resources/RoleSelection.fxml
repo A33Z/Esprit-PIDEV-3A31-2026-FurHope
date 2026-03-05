@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane fx:id="rootPane"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.RoleSelectionController"
+            styleClass="landing-page"
+            stylesheets="@AppTheme.css"
+            prefHeight="720.0" prefWidth="1180.0">
+
+    <children>
+        <VBox alignment="CENTER" spacing="12.0" styleClass="landing-container"
+              AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <children>
+                <Label text="FurHope" styleClass="logo-title" />
+                <Label text="Secure Access Portal" styleClass="logo-subtitle" />
+
+                <VBox spacing="8.0" styleClass="card login-card">
+                    <children>
+                        <Label text="Hotel Manager Login" styleClass="section-title" />
+                        <TextField fx:id="managerIdField" promptText="Manager ID" styleClass="pill-input" />
+                        <PasswordField fx:id="managerPasswordField" promptText="Manager password" styleClass="pill-input" />
+                        <Button text="Login as Hotel Manager" styleClass="button primary-pill-button" onAction="#handleManagerLogin" />
+                    </children>
+                </VBox>
+
+                <VBox spacing="8.0" styleClass="card login-card">
+                    <children>
+                        <Label text="Normal User Access (No Authentication)" styleClass="section-title" />
+                        <TextField fx:id="userIdField" promptText="User ID (no password required)" styleClass="pill-input" />
+                        <Button text="Continue as User" styleClass="button secondary-pill-button" onAction="#handleContinueAsUser" />
+                    </children>
+                </VBox>
+
+                <Label fx:id="errorLabel" text="" styleClass="form-error" />
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>
